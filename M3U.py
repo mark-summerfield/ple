@@ -91,6 +91,7 @@ class M3U:
             y = self._tracks[index + 1]
             self._tracks[index] = y
             self._tracks[index + 1] = x
+            self.dirty = True
             return True
         return False
 
@@ -101,6 +102,7 @@ class M3U:
             y = self._tracks[index - 1]
             self._tracks[index] = y
             self._tracks[index - 1] = x
+            self.dirty = True
             return True
         return False
 
@@ -111,6 +113,7 @@ class M3U:
 
     def __iadd__(self, track):
         self._tracks.append(track)
+        self.dirty = True
         return self
 
 
@@ -120,9 +123,11 @@ class M3U:
 
     def __setitem__(self, index, track):
         self._tracks[index] = track
+        self.dirty = True
 
 
     def __delitem__(self, index):
+        self.dirty = True
         return self._tracks.pop(index)
 
 
