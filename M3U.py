@@ -122,8 +122,9 @@ class M3U:
 
 
     def __setitem__(self, index, track):
-        self._tracks[index] = track
-        self.dirty = True
+        if self._tracks[index] != track:
+            self._tracks[index] = track
+            self.dirty = True
 
 
     def __delitem__(self, index):
