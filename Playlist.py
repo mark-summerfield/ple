@@ -109,8 +109,42 @@ class Playlist:
             Version=2
 
         '''
+        item_rx = re.compile(r'^(?P<key>(?:File|Title|Length)(?P<n>\d+)|'
+                             r'NumberOfEntries|Version)\s*=\s*'
+                             r'(?P<value>.*)')
         self.clear()
-        raise NotImplementedError('_load_pls() not implemented yet')
+        filenames = {}
+        titles = {}
+        lengths = {}
+        state = Want.PLAYLIST
+        with open(self.filename, 'rt', encoding='utf-8') as file:
+            for lino, line in enumerate(file, 1):
+                line = line.strip()
+                if not line:
+                    continue # ignore blank lines
+                if line == PLAYLIST:
+                    continue # ignore
+                match = item.rx.match(line)
+                if match is not None:
+                    key = match.group('key')
+                    if key in {PLS_NUMENTRIES, PLS_VERSION}:
+                        continue # ignore these
+                    if key in {PLS_FILE, PLS_TITLE, PLS_LENGTH}:
+                        n = int(match.group('n'))
+                        value = match.group('value')
+                        if key == PLS_FILE:
+                            filenames[n] = value
+                        elif key == PLS_TITLE:
+                            titles[n] = value
+                        elif key == PLS_LENGTH:
+                            lengths[n] = int(value) or -1
+                        filename = filenames.get(n)
+                        title = titles.get(n)
+                        secs = lengths.get(n)
+                        if filename and title and secs:
+                            self._tracks.append(Track(filename, title,
+                                                      secs))
+        self.dirty = False
 
 
     def save(self, filename=None):
@@ -253,3 +287,6 @@ EXTINF = '#EXTINF:'
 PLS_PLAYLIST = '[playlist]'
 PLS_NUMENTRIES = 'NumberOfEntries'
 PLS_VERSION = 'Version'
+PLS_FILE = 'File'
+PLS_TITLE = 'Title'
+PLS_LENGTH = 'Length'
