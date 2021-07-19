@@ -17,6 +17,7 @@ def main():
         filename = pathlib.Path.home() / 'data/playlists/Van Morrison.m3u'
     playlist = Playlist.Playlist(filename)
     print(f'Playlist: {playlist.filename!r} of {len(playlist)} tracks:')
+    assert not playlist.dirty
     for i, track in enumerate(playlist, 1):
         print(f'{i: >4d}: {track.title}\t{track.filename}')
 

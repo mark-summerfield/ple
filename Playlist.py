@@ -12,10 +12,15 @@ class Playlist:
 
     def __init__(self, filename=None):
         self.filename = str(filename)
-        self.dirty = False
+        self._dirty = False
         self._tracks = []
         if filename is not None:
             self.load()
+
+
+    @property
+    def dirty(self):
+        return self._dirty
 
 
     def load(self, filename=None):
@@ -84,7 +89,7 @@ class Playlist:
                         raise Error(f'{lino}:missing filename: {line!r}')
                     title, secs = None, None
                     state = Want.INFO
-        self.dirty = False
+        self._dirty = False
 
 
     def _load_pls(self):
@@ -116,35 +121,33 @@ class Playlist:
         filenames = {}
         titles = {}
         lengths = {}
-        state = Want.PLAYLIST
         with open(self.filename, 'rt', encoding='utf-8') as file:
             for lino, line in enumerate(file, 1):
                 line = line.strip()
                 if not line:
                     continue # ignore blank lines
-                if line == PLAYLIST:
+                if line == PLS_PLAYLIST:
                     continue # ignore
-                match = item.rx.match(line)
+                match = item_rx.match(line)
                 if match is not None:
                     key = match.group('key')
                     if key in {PLS_NUMENTRIES, PLS_VERSION}:
                         continue # ignore these
-                    if key in {PLS_FILE, PLS_TITLE, PLS_LENGTH}:
+                    else:
                         n = int(match.group('n'))
                         value = match.group('value')
-                        if key == PLS_FILE:
+                        if key.startswith(PLS_FILE):
                             filenames[n] = value
-                        elif key == PLS_TITLE:
+                        elif key.startswith(PLS_TITLE):
                             titles[n] = value
-                        elif key == PLS_LENGTH:
+                        elif key.startswith(PLS_LENGTH):
                             lengths[n] = int(value) or -1
-                        filename = filenames.get(n)
-                        title = titles.get(n)
-                        secs = lengths.get(n)
-                        if filename and title and secs:
-                            self._tracks.append(Track(filename, title,
-                                                      secs))
-        self.dirty = False
+        for n, filename in sorted(filenames.items()):
+            title = titles.get(n, None)
+            secs = lengths.get(n, -1)
+            if filename and title:
+                self._tracks.append(Track(title, filename, secs))
+        self._dirty = False
 
 
     def save(self, filename=None):
@@ -165,23 +168,23 @@ class Playlist:
             for track in self._tracks:
                 file.write(f'{EXTINF}{track.secs},{track.title}\n'
                            f'{track.filename}\n\n')
-        self.dirty = False
+        self._dirty = False
 
 
     def _save_pls(self):
         with open(self.filename, 'wt', encoding='utf-8') as file:
             file.write(f'{PLS_PLAYLIST}\n\n')
             for i, track in enumerate(self._tracks, start=1):
-                file.write(f'File{i}={track.filename}\n'
-                           f'Title{i}={track.title}\n'
-                           f'Length{i}={track.secs}\n\n')
+                file.write(f'{PLS_FILE}{i}={track.filename}\n'
+                           f'{PLS_TITLE}{i}={track.title}\n'
+                           f'{PLS_LENGTH}{i}={track.secs}\n\n')
             file.write(f'{PLS_NUMENTRIES}={len(self._tracks)}\n')
             file.write(f'{PLS_VERSION}=2\n')
 
 
     def clear(self):
         self._tracks.clear()
-        self.dirty = True
+        self._dirty = True
 
 
     def movedown(self, index):
@@ -190,7 +193,7 @@ class Playlist:
             y = self._tracks[index + 1]
             self._tracks[index] = y
             self._tracks[index + 1] = x
-            self.dirty = True
+            self._dirty = True
             return True
         return False
 
@@ -201,7 +204,7 @@ class Playlist:
             y = self._tracks[index - 1]
             self._tracks[index] = y
             self._tracks[index - 1] = x
-            self.dirty = True
+            self._dirty = True
             return True
         return False
 
@@ -212,7 +215,7 @@ class Playlist:
 
     def __iadd__(self, track):
         self._tracks.append(track)
-        self.dirty = True
+        self._dirty = True
         return self
 
 
@@ -223,11 +226,11 @@ class Playlist:
     def __setitem__(self, index, track):
         if self._tracks[index] != track:
             self._tracks[index] = track
-            self.dirty = True
+            self._dirty = True
 
 
     def __delitem__(self, index):
-        self.dirty = True
+        self._dirty = True
         return self._tracks.pop(index)
 
 
