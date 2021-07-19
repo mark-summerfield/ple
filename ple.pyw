@@ -3,6 +3,7 @@
 # License: GPLv3
 
 import pathlib
+import sys
 
 import Playlist
 
@@ -10,7 +11,10 @@ import Playlist
 def main():
     # TODO replace with GUI
 
-    filename = pathlib.Path.home() / 'data/playlists/Van Morrison.m3u'
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+    else:
+        filename = pathlib.Path.home() / 'data/playlists/Van Morrison.m3u'
     playlist = Playlist.Playlist(filename)
     print(f'Playlist: {playlist.filename!r} of {len(playlist)} tracks:')
     for i, track in enumerate(playlist, 1):
