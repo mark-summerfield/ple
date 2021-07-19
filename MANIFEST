@@ -1,4 +1,7 @@
 ple.pyw # Use wxPython
-M3U.py
+Playlist.py
+# For fun/interest also support:
+# .pls  R + w: https://en.wikipedia.org/wiki/PLS_(file_format)
+# .xspf R + W: https://en.wikipedia.org/wiki/XML_Shareable_Playlist_Format
 
 st.sh
