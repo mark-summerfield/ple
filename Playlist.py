@@ -6,6 +6,7 @@ import collections
 import enum
 import os
 import re
+import xml.etree.ElementTree as etree
 
 
 class Playlist:
@@ -31,6 +32,8 @@ class Playlist:
             return self._load_m3u()
         if ufilename.endswith('.PLS'):
             return self._load_pls()
+        if ufilename.endswith('.XSPF'):
+            return self._load_xspf()
         raise Error(
             f'can\'t load unrecognized playlist format: {self.filename}')
 
@@ -150,6 +153,10 @@ class Playlist:
         self._dirty = False
 
 
+    def _load_xspf(self):
+        raise NotImplementedError()
+
+
     def save(self, filename=None):
         if filename is not None:
             self.filename = str(filename)
@@ -158,6 +165,8 @@ class Playlist:
             return self._save_m3u()
         if ufilename.endswith('.PLS'):
             return self._save_pls()
+        if ufilename.endswith('.XSPF'):
+            return self._save_xspf()
         raise Error(
             f'can\'t save unrecognized playlist format: {self.filename}')
 
@@ -180,6 +189,30 @@ class Playlist:
                            f'{PLS_LENGTH}{i}={track.secs}\n\n')
             file.write(f'{PLS_NUMENTRIES}={len(self._tracks)}\n')
             file.write(f'{PLS_VERSION}=2\n')
+
+
+    def _save_xspf(self):
+        builder = etree.TreeBuilder()
+        builder.start('playlist',
+                      dict(version='1', xmlns='http://xspf.org/ns/0/'))
+        builder.start('trackList')
+        for track in self._tracks:
+            builder.start('track')
+            builder.start('location')
+            builder.data(f'file://{track.filename}')
+            builder.end('location')
+            builder.start('title')
+            builder.data(track.title)
+            builder.end('title')
+            if track.secs > 0:
+                builder.start('duration')
+                builder.data(str(track.secs * 1000))
+                builder.end('duration')
+            builder.end('track')
+        builder.end('trackList')
+        builder.end('playlist')
+        tree = etree.ElementTree(builder.close())
+        tree.write(self.filename, encoding='utf-8', xml_declaration=True)
 
 
     def clear(self):
