@@ -24,6 +24,47 @@ class Playlist:
         return self._dirty
 
 
+    def clear(self):
+        self._tracks.clear()
+        self._dirty = True
+
+
+    def movedown(self, index):
+        if index + 1 < len(self._tracks):
+            x = self._tracks[index]
+            y = self._tracks[index + 1]
+            self._tracks[index] = y
+            self._tracks[index + 1] = x
+            self._dirty = True
+            return True
+        return False
+
+
+    def moveup(self, index):
+        if index > 0:
+            x = self._tracks[index]
+            y = self._tracks[index - 1]
+            self._tracks[index] = y
+            self._tracks[index - 1] = x
+            self._dirty = True
+            return True
+        return False
+
+
+    def save(self, filename=None):
+        if filename is not None:
+            self.filename = str(filename)
+        ufilename = self.filename.upper()
+        if ufilename.endswith('.M3U'):
+            return self._save_m3u()
+        if ufilename.endswith('.PLS'):
+            return self._save_pls()
+        if ufilename.endswith('.XSPF'):
+            return self._save_xspf()
+        raise Error(
+            f'can\'t save unrecognized playlist format: {self.filename}')
+
+
     def load(self, filename=None):
         if filename is not None:
             self.filename = str(filename)
@@ -36,6 +77,15 @@ class Playlist:
             return self._load_xspf()
         raise Error(
             f'can\'t load unrecognized playlist format: {self.filename}')
+
+
+    def _save_m3u(self):
+        with open(self.filename, 'wt', encoding='utf-8') as file:
+            file.write(f'{EXTM3U}\n\n')
+            for track in self._tracks:
+                file.write(f'{EXTINF}{track.secs},{track.title}\n'
+                           f'{track.filename}\n\n')
+        self._dirty = False
 
 
     def _load_m3u(self):
@@ -93,6 +143,17 @@ class Playlist:
                     title, secs = None, None
                     state = Want.INFO
         self._dirty = False
+
+
+    def _save_pls(self):
+        with open(self.filename, 'wt', encoding='utf-8') as file:
+            file.write(f'{PLS_PLAYLIST}\n\n')
+            for i, track in enumerate(self._tracks, start=1):
+                file.write(f'{PLS_FILE}{i}={track.filename}\n'
+                           f'{PLS_TITLE}{i}={track.title}\n'
+                           f'{PLS_LENGTH}{i}={track.secs}\n\n')
+            file.write(f'{PLS_NUMENTRIES}={len(self._tracks)}\n')
+            file.write(f'{PLS_VERSION}=2\n')
 
 
     def _load_pls(self):
@@ -154,41 +215,7 @@ class Playlist:
 
 
     def _load_xspf(self):
-        raise NotImplementedError()
-
-
-    def save(self, filename=None):
-        if filename is not None:
-            self.filename = str(filename)
-        ufilename = self.filename.upper()
-        if ufilename.endswith('.M3U'):
-            return self._save_m3u()
-        if ufilename.endswith('.PLS'):
-            return self._save_pls()
-        if ufilename.endswith('.XSPF'):
-            return self._save_xspf()
-        raise Error(
-            f'can\'t save unrecognized playlist format: {self.filename}')
-
-
-    def _save_m3u(self):
-        with open(self.filename, 'wt', encoding='utf-8') as file:
-            file.write(f'{EXTM3U}\n\n')
-            for track in self._tracks:
-                file.write(f'{EXTINF}{track.secs},{track.title}\n'
-                           f'{track.filename}\n\n')
-        self._dirty = False
-
-
-    def _save_pls(self):
-        with open(self.filename, 'wt', encoding='utf-8') as file:
-            file.write(f'{PLS_PLAYLIST}\n\n')
-            for i, track in enumerate(self._tracks, start=1):
-                file.write(f'{PLS_FILE}{i}={track.filename}\n'
-                           f'{PLS_TITLE}{i}={track.title}\n'
-                           f'{PLS_LENGTH}{i}={track.secs}\n\n')
-            file.write(f'{PLS_NUMENTRIES}={len(self._tracks)}\n')
-            file.write(f'{PLS_VERSION}=2\n')
+        raise NotImplementedError() # TODO
 
 
     def _save_xspf(self):
@@ -213,33 +240,6 @@ class Playlist:
         builder.end('playlist')
         tree = etree.ElementTree(builder.close())
         tree.write(self.filename, encoding='utf-8', xml_declaration=True)
-
-
-    def clear(self):
-        self._tracks.clear()
-        self._dirty = True
-
-
-    def movedown(self, index):
-        if index + 1 < len(self._tracks):
-            x = self._tracks[index]
-            y = self._tracks[index + 1]
-            self._tracks[index] = y
-            self._tracks[index + 1] = x
-            self._dirty = True
-            return True
-        return False
-
-
-    def moveup(self, index):
-        if index > 0:
-            x = self._tracks[index]
-            y = self._tracks[index - 1]
-            self._tracks[index] = y
-            self._tracks[index - 1] = x
-            self._dirty = True
-            return True
-        return False
 
 
     def __len__(self):
