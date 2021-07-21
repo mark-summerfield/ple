@@ -220,24 +220,24 @@ class Playlist:
 
     def _save_xspf(self):
         builder = etree.TreeBuilder()
-        builder.start('playlist',
+        builder.start(XSPF_PLAYLIST,
                       dict(version='1', xmlns='http://xspf.org/ns/0/'))
-        builder.start('trackList')
+        builder.start(XSPF_TRACKLIST)
         for track in self._tracks:
-            builder.start('track')
-            builder.start('location')
+            builder.start(XSPF_TRACK)
+            builder.start(XSPF_LOCATION)
             builder.data(f'file://{track.filename}')
-            builder.end('location')
-            builder.start('title')
+            builder.end(XSPF_LOCATION)
+            builder.start(XSPF_TITLE)
             builder.data(track.title)
-            builder.end('title')
+            builder.end(XSPF_TITLE)
             if track.secs > 0:
-                builder.start('duration')
+                builder.start(XSPF_DURATION)
                 builder.data(str(track.secs * 1000))
-                builder.end('duration')
-            builder.end('track')
-        builder.end('trackList')
-        builder.end('playlist')
+                builder.end(XSPF_DURATION)
+            builder.end(XSPF_TRACK)
+        builder.end(XSPF_TRACKLIST)
+        builder.end(XSPF_PLAYLIST)
         tree = etree.ElementTree(builder.close())
         tree.write(self.filename, encoding='utf-8', xml_declaration=True)
 
@@ -326,3 +326,9 @@ PLS_VERSION = 'Version'
 PLS_FILE = 'File'
 PLS_TITLE = 'Title'
 PLS_LENGTH = 'Length'
+XSPF_PLAYLIST = 'playlist'
+XSPF_TRACKLIST = 'trackList'
+XSPF_TRACK = 'track'
+XSPF_LOCATION = 'location'
+XSPF_TITLE = 'title'
+XSPF_DURATION = 'duration'
