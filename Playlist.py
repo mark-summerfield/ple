@@ -286,6 +286,7 @@ class Playlist:
 
 
 class Track(collections.namedtuple('Track', 'title filename secs')):
+
     __slots__ = ()
 
     def __bool__(self):
