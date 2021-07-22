@@ -215,13 +215,27 @@ class Playlist:
 
 
     def _load_xspf(self):
-        raise NotImplementedError() # TODO
+        self.clear()
+        tree = etree.parse(self.filename)
+        for track in tree.iter(f'{{{XSPF_NAMESPACE}}}{XSPF_TRACK}'):
+            filename = track.find(f'{{{XSPF_NAMESPACE}}}{XSPF_LOCATION}')
+            if filename is not None:
+                filename = filename.text
+                if filename.startswith('file://'):
+                    filename = filename[7:]
+            title = track.find(f'{{{XSPF_NAMESPACE}}}{XSPF_TITLE}')
+            title = title.text if title is not None else None
+            secs = track.find(f'{{{XSPF_NAMESPACE}}}{XSPF_DURATION}')
+            secs = int(secs.text) // 1000 if secs is not None else -1
+            if filename and title:
+                self._tracks.append(Track(title, filename, secs))
+        self._dirty = False
 
 
     def _save_xspf(self):
         builder = etree.TreeBuilder()
-        builder.start(XSPF_PLAYLIST,
-                      dict(version='1', xmlns='http://xspf.org/ns/0/'))
+        builder.start(XSPF_PLAYLIST, dict(version='1',
+                                          xmlns=XSPF_NAMESPACE))
         builder.start(XSPF_TRACKLIST)
         for track in self._tracks:
             builder.start(XSPF_TRACK)
@@ -326,6 +340,7 @@ PLS_VERSION = 'Version'
 PLS_FILE = 'File'
 PLS_TITLE = 'Title'
 PLS_LENGTH = 'Length'
+XSPF_NAMESPACE = 'http://xspf.org/ns/0/'
 XSPF_PLAYLIST = 'playlist'
 XSPF_TRACKLIST = 'trackList'
 XSPF_TRACK = 'track'
