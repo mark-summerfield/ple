@@ -31,36 +31,34 @@ class Playlist:
 
     def movedown(self, index):
         if index + 1 < len(self._tracks):
-            x = self._tracks[index]
-            y = self._tracks[index + 1]
-            self._tracks[index] = y
-            self._tracks[index + 1] = x
-            self._dirty = True
-            return True
+            return self._move(index, index + 1)
         return False
 
 
     def moveup(self, index):
         if index > 0:
-            x = self._tracks[index]
-            y = self._tracks[index - 1]
-            self._tracks[index] = y
-            self._tracks[index - 1] = x
-            self._dirty = True
-            return True
+            return self._move(index, index - 1)
         return False
+
+
+    def _move(self, a, b):
+        x = self._tracks[a]
+        y = self._tracks[b]
+        self._tracks[a] = y
+        self._tracks[b] = x
+        self._dirty = True
+        return True
 
 
     def save(self, filename=None):
         if filename is not None:
             self.filename = str(filename)
-        ufilename = self.filename.upper()
-        if ufilename.endswith('.M3U'):
-            return self._save_m3u()
-        if ufilename.endswith('.PLS'):
-            return self._save_pls()
-        if ufilename.endswith('.XSPF'):
-            return self._save_xspf()
+        suffix = os.path.splitext(self.filename)[1].upper()
+        saver = {'.M3U': self._save_m3u,
+                 '.PLS': self._save_pls,
+                 '.XSPF': self._save_xspf}.get(suffix, None)
+        if saver is not None:
+            return saver()
         raise Error(
             f'can\'t save unrecognized playlist format: {self.filename}')
 
@@ -68,13 +66,12 @@ class Playlist:
     def load(self, filename=None):
         if filename is not None:
             self.filename = str(filename)
-        ufilename = self.filename.upper()
-        if ufilename.endswith('.M3U'):
-            return self._load_m3u()
-        if ufilename.endswith('.PLS'):
-            return self._load_pls()
-        if ufilename.endswith('.XSPF'):
-            return self._load_xspf()
+        suffix = os.path.splitext(self.filename)[1].upper()
+        loader = {'.M3U': self._load_m3u,
+                  '.PLS': self._load_pls,
+                  '.XSPF': self._load_xspf}.get(suffix, None)
+        if loader is not None:
+            return loader()
         raise Error(
             f'can\'t load unrecognized playlist format: {self.filename}')
 
