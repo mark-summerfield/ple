@@ -299,10 +299,17 @@ class Error(Exception):
     pass
 
 
-def create(folder, filename=None):
+def create(folder, *, filename=None, suffix=None):
+    '''creates a playlist for the given folder (and subfolders)
+
+    If filename is specified the playlist's filename is set to it (so it
+    must have a valid suffix, e.g.: .m3u .pls .xspf);
+    Otherwise the filename is set to <folder>.m3u or to <folder><suffix> if
+    suffix is not None.
+    '''
     playlist = Playlist()
     playlist.filename = (str(filename) if filename is not None else
-                         os.path.basename(str(folder)) + '.m3u')
+                         os.path.basename(str(folder)) + (suffix or '.m3u'))
     for root, _, files in os.walk(folder):
         for filename in files:
             if filename.upper().endswith(('.MP3', '.OGG', '.OGA')):
