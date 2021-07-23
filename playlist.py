@@ -223,7 +223,7 @@ class Playlist:
             filename = track.find(f'{{{XSPF_NAMESPACE}}}{XSPF_LOCATION}')
             if filename is not None:
                 filename = filename.text
-                if filename.startswith('file://'):
+                if filename.startswith(FILE_SCHEME):
                     filename = filename[7:]
             title = track.find(f'{{{XSPF_NAMESPACE}}}{XSPF_TITLE}')
             title = title.text if title is not None else None
@@ -242,7 +242,7 @@ class Playlist:
         for track in self._tracks:
             builder.start(XSPF_TRACK)
             builder.start(XSPF_LOCATION)
-            builder.data(f'file://{track.filename}')
+            builder.data(f'{FILE_SCHEME}{track.filename}')
             builder.end(XSPF_LOCATION)
             builder.start(XSPF_TITLE)
             builder.data(track.title)
@@ -354,6 +354,7 @@ XSPF_TRACK = 'track'
 XSPF_LOCATION = 'location'
 XSPF_TITLE = 'title'
 XSPF_DURATION = 'duration'
+FILE_SCHEME = 'file://'
 
 
 if __name__ == '__main__':
@@ -396,7 +397,9 @@ if __name__ == '__main__':
                 try:
                     tracks = Playlist(filename)
                     print(f'{len(tracks): 5,d} tracks: {tracks.filename}')
-                except Error as err:
+                except Error:
+                    pass
+                except OSError as err:
                     print(err)
 
 

@@ -1,4 +1,4 @@
 ple.pyw # Use wxPython
-playlist.py # TODO cli_build() cli_convert()
+playlist.py # TODO cli_convert()
 
 st.sh
