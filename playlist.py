@@ -6,8 +6,12 @@ import collections
 import enum
 import os
 import re
-import sys
 import xml.etree.ElementTree as etree
+
+
+M3U = '.M3U'
+PLS = '.PLS'
+XSPF = '.XSPF'
 
 
 class Playlist:
@@ -55,9 +59,9 @@ class Playlist:
         if filename is not None:
             self.filename = str(filename)
         suffix = os.path.splitext(self.filename)[1].upper()
-        saver = {'.M3U': self._save_m3u,
-                 '.PLS': self._save_pls,
-                 '.XSPF': self._save_xspf}.get(suffix, None)
+        saver = {M3U: self._save_m3u,
+                 PLS: self._save_pls,
+                 XSPF: self._save_xspf}.get(suffix, None)
         if saver is not None:
             return saver()
         raise Error(
@@ -68,9 +72,9 @@ class Playlist:
         if filename is not None:
             self.filename = str(filename)
         suffix = os.path.splitext(self.filename)[1].upper()
-        loader = {'.M3U': self._load_m3u,
-                  '.PLS': self._load_pls,
-                  '.XSPF': self._load_xspf}.get(suffix, None)
+        loader = {M3U: self._load_m3u,
+                  PLS: self._load_pls,
+                  XSPF: self._load_xspf}.get(suffix, None)
         if loader is not None:
             return loader()
         raise Error(
@@ -300,17 +304,14 @@ class Error(Exception):
     pass
 
 
-def build(folder, *, filename=None, suffix=None):
+def build(folder, format=M3U):
     '''build a playlist for the given folder (and subfolders)
 
-    If filename is specified the playlist's filename is set to it (so it
-    must have a valid suffix, e.g.: .m3u .pls .xspf);
-    Otherwise the filename is set to <folder>.m3u or to <folder><suffix> if
-    suffix is not None.
+    The filename is set to <folder>.m3u or to <folder>.<format> if
+    format is not None.
     '''
     tracks = Playlist()
-    tracks.filename = (str(filename) if filename is not None else
-                       os.path.basename(str(folder)) + (suffix or '.m3u'))
+    tracks.filename = os.path.basename(str(folder)) + format.lower()
     for root, _, files in os.walk(folder):
         for filename in files:
             if filename.upper().endswith(('.MP3', '.OGG', '.OGA')):
@@ -356,24 +357,33 @@ XSPF_DURATION = 'duration'
 
 
 if __name__ == '__main__':
+    import sys
+
     USAGE = '''\
-{name} <b|build> <folder> [filename]
-    Build a playlist based on the music files in folder and its subfolders.
-    If filename is given, use that for the playlist name, otherwise call the
-    playlist dirname.m3u where dirname is the last component of folder's
-    name.
-{name} <c|convert> <playlist> [newplaylist]
-    Convert playlist.ext to playlist.m3u if .ext isn't .m3u and if
-    newplaylist isn't given.
-    If newplaylist is given its suffix must differ from playlist's and must
-    be one of .m3u, .pls, .xspf.
+{name} <b|build> [format] <folder>
+    Build a playlist based on the music files in folder and its subfolders
+    and save it as dirname.format where dirname is the last component of
+    folder's name and format is one of 'm3u', 'pls', 'xspf'.
+{name} <c|convert> <format> <playlist>
+    Convert playlist.ext to playlist.format where format is one of 'm3u',
+    'pls', 'xspf'.
 {name} <i|info> <playlist1> [playlist2 [... [playlistN]]]
     Output the name and number of tracks in the given playlist(s).
 {name} <h|help>
     Show this help message and quit.'''
 
     def cli_build(args):
-        pass # TODO
+        if len(args) == 2:
+            format = args[0].lower()
+            if not format.startswith('.'):
+                format = '.' + format
+            folder = args[1]
+        else:
+            format = M3U.lower()
+            folder = args[0]
+        tracks = build(folder, format)
+        tracks.save()
+        print(f'wrote {tracks.filename}')
 
 
     def cli_convert(args):
@@ -402,7 +412,7 @@ if __name__ == '__main__':
             raise SystemExit(usage)
         cli_build(args)
     elif what in {'c', 'convert'}:
-        if len(args) > 2:
+        if len(args) != 2:
             raise SystemExit(usage)
         cli_convert(args)
     elif what in {'i', 'info'}:
