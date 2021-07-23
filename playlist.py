@@ -385,7 +385,7 @@ if __name__ == '__main__':
             if os.path.isfile(filename):
                 try:
                     tracks = Playlist(filename)
-                    print(f'{len(tracks): 8,d} tracks: {tracks.filename}')
+                    print(f'{len(tracks): 5,d} tracks: {tracks.filename}')
                 except Error as err:
                     print(err)
 
