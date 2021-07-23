@@ -377,10 +377,10 @@ if __name__ == '__main__':
             format = args[0].lower()
             if not format.startswith('.'):
                 format = '.' + format
-            folder = args[1]
+            folder = args[1].rstrip('/\\')
         else:
             format = M3U.lower()
-            folder = args[0]
+            folder = args[0].rstrip('/\\')
         tracks = build(folder, format)
         tracks.save()
         print(f'wrote {tracks.filename}')
