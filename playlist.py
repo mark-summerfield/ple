@@ -299,8 +299,8 @@ class Error(Exception):
     pass
 
 
-def create(folder, *, filename=None, suffix=None):
-    '''creates a playlist for the given folder (and subfolders)
+def build(folder, *, filename=None, suffix=None):
+    '''build a playlist for the given folder (and subfolders)
 
     If filename is specified the playlist's filename is set to it (so it
     must have a valid suffix, e.g.: .m3u .pls .xspf);
@@ -352,3 +352,27 @@ XSPF_TRACK = 'track'
 XSPF_LOCATION = 'location'
 XSPF_TITLE = 'title'
 XSPF_DURATION = 'duration'
+
+
+if __name__ == '__main__':
+    import sys
+
+    name = os.path.basename(sys.argv[0])
+    USAGE = f'''\
+{name} <b|build> <folder> [filename]
+    Build a playlist based on the music files in folder and its subfolders.
+    If filename is given, use that for the playlist name, otherwise call the
+    playlist dirname.m3u where dirname is the last component of folder's
+    name.
+{name} <c|convert> <playlist> [newplaylist]
+    Convert playlist.ext to playlist.m3u if .ext isn't .m3u and if
+    newplaylist isn't given.
+    If newplaylist is given its suffix must differ from playlist's and must
+    be one of .m3u, .pls, .xspf.
+{name} <i|info> <playlist1> [playlist2 [... [playlistN]]]
+    Output the name and number of tracks in the given playlist(s).
+{name} <h|help>
+    Show this help message and quit.'''
+
+    if len(sys.argv) == 1 or sys.argv[1] in {'h', 'help', '-h', '--help'}:
+        raise SystemExit(USAGE)

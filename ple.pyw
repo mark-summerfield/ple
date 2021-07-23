@@ -5,7 +5,7 @@
 import pathlib
 import sys
 
-import Playlist
+import playlist
 
 
 def main():
@@ -15,10 +15,10 @@ def main():
         filename = sys.argv[1]
     else:
         filename = pathlib.Path.home() / 'data/playlists/Van Morrison.m3u'
-    playlist = Playlist.Playlist(filename)
-    print(f'Playlist: {playlist.filename!r} of {len(playlist)} tracks:')
-    assert not playlist.dirty
-    for i, track in enumerate(playlist, 1):
+    tracks = playlist.Playlist(filename)
+    print(f'Playlist: {tracks.filename!r} of {len(tracks)} tracks:')
+    assert not tracks.dirty
+    for i, track in enumerate(tracks, 1):
         print(f'{i: >4d}: {track.title}\t{track.filename}')
 
 
