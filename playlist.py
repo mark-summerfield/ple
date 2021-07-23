@@ -6,6 +6,7 @@ import collections
 import enum
 import os
 import re
+import sys
 import xml.etree.ElementTree as etree
 
 
@@ -307,16 +308,16 @@ def build(folder, *, filename=None, suffix=None):
     Otherwise the filename is set to <folder>.m3u or to <folder><suffix> if
     suffix is not None.
     '''
-    playlist = Playlist()
-    playlist.filename = (str(filename) if filename is not None else
-                         os.path.basename(str(folder)) + (suffix or '.m3u'))
+    tracks = Playlist()
+    tracks.filename = (str(filename) if filename is not None else
+                       os.path.basename(str(folder)) + (suffix or '.m3u'))
     for root, _, files in os.walk(folder):
         for filename in files:
             if filename.upper().endswith(('.MP3', '.OGG', '.OGA')):
                 fullname = os.path.join(root, filename)
-                playlist += Track(normalize_name(filename), fullname, -1)
-    playlist._tracks.sort(key=lambda track: track.filename.upper())
-    return playlist
+                tracks += Track(normalize_name(filename), fullname, -1)
+    tracks._tracks.sort(key=lambda track: track.filename.upper())
+    return tracks
 
 
 def normalize_name(name):
@@ -355,10 +356,7 @@ XSPF_DURATION = 'duration'
 
 
 if __name__ == '__main__':
-    import sys
-
-    name = os.path.basename(sys.argv[0])
-    USAGE = f'''\
+    USAGE = '''\
 {name} <b|build> <folder> [filename]
     Build a playlist based on the music files in folder and its subfolders.
     If filename is given, use that for the playlist name, otherwise call the
@@ -374,5 +372,40 @@ if __name__ == '__main__':
 {name} <h|help>
     Show this help message and quit.'''
 
+    def cli_build(args):
+        pass # TODO
+
+
+    def cli_convert(args):
+        pass # TODO
+
+
+    def cli_info(args):
+        for filename in args:
+            if os.path.isfile(filename):
+                try:
+                    tracks = Playlist(filename)
+                    print(f'{len(tracks): 8,d} tracks: {tracks.filename}')
+                except Error as err:
+                    print(err)
+
+
+    usage = USAGE.format(name=os.path.basename(sys.argv[0]))
     if len(sys.argv) == 1 or sys.argv[1] in {'h', 'help', '-h', '--help'}:
-        raise SystemExit(USAGE)
+        raise SystemExit(usage)
+    what = sys.argv[1]
+    args = sys.argv[2:]
+    if not args:
+        raise SystemExit(usage)
+    if what in {'b', 'build'}:
+        if len(args) > 2:
+            raise SystemExit(usage)
+        cli_build(args)
+    elif what in {'c', 'convert'}:
+        if len(args) > 2:
+            raise SystemExit(usage)
+        cli_convert(args)
+    elif what in {'i', 'info'}:
+        cli_info(args)
+    else:
+        raise SystemExit(usage)
