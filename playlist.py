@@ -365,9 +365,9 @@ if __name__ == '__main__':
     Build a playlist based on the music files in folder and its subfolders
     and save it as dirname.format where dirname is the last component of
     folder's name and format is one of 'm3u', 'pls', 'xspf'.
-{name} <c|convert> <format> <playlist>
-    Convert playlist.ext to playlist.format where format is one of 'm3u',
-    'pls', 'xspf'.
+{name} <c|convert> <format> <playlist1> [playlist2 [... [playlistN]]]
+    Convert the or each playlist.ext to playlist.format where format is one
+    of 'm3u', 'pls', 'xspf'.
 {name} <i|info> <playlist1> [playlist2 [... [playlistN]]]
     Output the name and number of tracks in the given playlist(s).
 {name} <h|help>
@@ -388,7 +388,20 @@ if __name__ == '__main__':
 
 
     def cli_convert(args):
-        pass # TODO
+        format = args[0].lower()
+        if not format.startswith('.'):
+            format = '.' + format
+        for filename in args[1:]:
+            i = filename.rfind('.')
+            suffix = filename[i:].upper() if i != -1 else None
+            if suffix is None or suffix not in {M3U, PLS, XSPF}:
+                print('ignoring {filename}: unknown format')
+            if suffix == format.upper():
+                print(f'skipping {filename}: already in target format')
+            else:
+                tracks = Playlist(filename)
+                tracks.save(filename[:i] + format)
+                print(f'wrote {tracks.filename}')
 
 
     def cli_info(args):
@@ -415,7 +428,7 @@ if __name__ == '__main__':
             raise SystemExit(usage)
         cli_build(args)
     elif what in {'c', 'convert'}:
-        if len(args) != 2:
+        if len(args) < 2:
             raise SystemExit(usage)
         cli_convert(args)
     elif what in {'i', 'info'}:
