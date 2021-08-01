@@ -304,6 +304,14 @@ class Error(Exception):
     pass
 
 
+def filter(folder):
+    '''yield all the supported music files in folder'''
+    for root, _, files in os.walk(folder):
+        for filename in files:
+            if filename.upper().endswith(('.MP3', '.OGG', '.OGA')):
+                yield os.path.join(root, filename)
+
+
 def build(folder, format=M3U):
     '''build a playlist for the given folder (and subfolders)
 
