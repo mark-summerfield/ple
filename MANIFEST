@@ -1,4 +1,5 @@
-ple.pyw # Use wxPython
+ple.pyw # use pygame (SDL) ???
+update_playlist.py
 playlist.py
 
 st.sh

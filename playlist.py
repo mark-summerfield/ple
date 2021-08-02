@@ -34,6 +34,22 @@ class Playlist:
         self._dirty = True
 
 
+    @property
+    def humanized_length(self):
+        missing = False
+        secs = 0
+        for track in self._tracks:
+            if track.secs <= 0:
+                missing = True
+            else:
+                secs += track.secs
+        if missing:
+            if not secs:
+                return 'unknown length'
+            return f'at least {humanized_time(secs)}'
+        return humanized_time(secs)
+
+
     def movedown(self, index):
         if index + 1 < len(self._tracks):
             return self._move(index, index + 1)
@@ -352,6 +368,22 @@ def normalize_name(name):
     return name.replace('_', ' ')
 
 
+def humanized_time(secs):
+    if secs <= 0:
+        return '0s'
+    hours, secs = divmod(secs, 3600)
+    hrs = '{}h'.format(int(hours)) if hours else ''
+    minutes, secs = divmod(secs, 60)
+    mins = '{}m'.format(int(minutes)) if minutes else ''
+    if hours:
+        return f'{hrs}{mins}'
+    if minutes > 30:
+        return f'{mins}'
+    if minutes:
+        return f'{mins}{int(secs)}s'
+    return f'{secs:.3}s'
+
+
 EXTM3U = '#EXTM3U'
 EXTINF = '#EXTINF:'
 PLS_PLAYLIST = '[playlist]'
@@ -373,7 +405,7 @@ FILE_SCHEME = 'file://'
 if __name__ == '__main__':
     import sys
 
-    USAGE = '''\
+    USAGE = '''usage:
 {name} <b|build> [format] <folder>
     Build a playlist based on the music files in folder and its subfolders
     and save it as dirname.format where dirname is the last component of
