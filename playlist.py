@@ -304,11 +304,19 @@ class Error(Exception):
     pass
 
 
+def is_playlist(filename):
+    return filename.upper().endswith((M3U, PLS, XSPF))
+
+
+def is_track(filename):
+    return filename.upper().endswith(('.MP3', '.OGG', '.OGA'))
+
+
 def filter(folder):
     '''yield all the supported music files in folder'''
     for root, _, files in os.walk(folder):
         for filename in files:
-            if filename.upper().endswith(('.MP3', '.OGG', '.OGA')):
+            if is_track(filename):
                 yield os.path.join(root, filename)
 
 
@@ -320,11 +328,8 @@ def build(folder, format=M3U):
     '''
     tracks = Playlist()
     tracks.filename = os.path.basename(str(folder)) + format.lower()
-    for root, _, files in os.walk(folder):
-        for filename in files:
-            if filename.upper().endswith(('.MP3', '.OGG', '.OGA')):
-                fullname = os.path.join(root, filename)
-                tracks += Track(normalize_name(filename), fullname, -1)
+    for filename in filter(folder):
+        tracks += Track(normalize_name(filename), filename, -1)
     tracks._tracks.sort(key=lambda track: track.filename.upper())
     return tracks
 
@@ -399,22 +404,21 @@ if __name__ == '__main__':
         format = args[0].lower()
         if not format.startswith('.'):
             format = '.' + format
+        uformat = format.upper()
         for filename in args[1:]:
-            i = filename.rfind('.')
-            suffix = filename[i:].upper() if i != -1 else None
-            if suffix is None or suffix not in {M3U, PLS, XSPF}:
-                print('ignoring {filename}: unknown format')
-            if suffix == format.upper():
+            if not is_playlist(filename):
+                print(f'ignoring {filename}: unknown format')
+            elif filename.upper().endswith(uformat):
                 print(f'skipping {filename}: already in target format')
-            else:
+            else: # filename contains '.' because it ends with format
                 tracks = Playlist(filename)
-                tracks.save(filename[:i] + format)
+                tracks.save(filename[:filename.rfind('.')] + format)
                 print(f'wrote {tracks.filename}')
 
 
     def cli_info(args):
         for filename in args:
-            if os.path.isfile(filename):
+            if is_playlist(filename):
                 try:
                     tracks = Playlist(filename)
                     print(f'{len(tracks): 5,d} tracks: {tracks.filename}')
