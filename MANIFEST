@@ -1,5 +1,6 @@
-ple.pyw # use pygame (SDL) ???
-update_playlist.py
+ple.pyw
 playlist.py
+
+audioplayerGUI.py
 
 st.sh
