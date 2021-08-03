@@ -43,3 +43,4 @@ dub.selections.json
 .mypy_cache
 zig-cache
 audioplayerGUI.py
+playbin-example-audio.py

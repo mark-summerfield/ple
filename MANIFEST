@@ -2,5 +2,6 @@ ple.pyw
 playlist.py
 
 audioplayerGUI.py
+playbin-example-audio.py
 
 st.sh

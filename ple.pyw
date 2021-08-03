@@ -5,7 +5,7 @@
 '''
 +----------------------------------------------------
 |[Open...] [Config...] | [Add] [Edit] [Move Up] [Move Down] \
-                         [Copy] [Cut] [Paste] [Save] [Quit]
+                         [Remove] [Save] [Quit]
                          [<<] [>#] [>!] [>>]
 +-----------------------------------------------------
 | tree view showing    | list of titles (& times?) in
@@ -22,9 +22,7 @@ Add: add one or more new tracks to the current playlist
 Edit: edit the title of the current track in the current playlist
 Move Up: move the current track up one in the current playlist
 Move Down: move the current track down one in the current playlist
-Copy: copy the current track (e.g., to be pasted into another playlist)
-Cut: remove the current track from the current playlist
-Paste: paste a copied track into the current playlist
+Remove: remove the current track from the current playlist
 Save: save the current playlist
 Quit: offer save unsaved changes/quit/cancel if dirty then quit
 << Play Prev: only show if default player is PLE

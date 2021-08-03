@@ -35,7 +35,12 @@ class Playlist:
 
 
     @property
-    def humanized_length(self):
+    def time(self):
+        return sum(track.secs for track in self._tracks if track.secs > 0)
+
+
+    @property
+    def humanized_time(self):
         missing = False
         secs = 0
         for track in self._tracks:
@@ -45,7 +50,7 @@ class Playlist:
                 secs += track.secs
         if missing:
             if not secs:
-                return 'unknown length'
+                return 'unknown time'
             return f'at least {humanized_time(secs)}'
         return humanized_time(secs)
 
@@ -99,9 +104,9 @@ class Playlist:
 
     def _save_m3u(self):
         with open(self.filename, 'wt', encoding='utf-8') as file:
-            file.write(f'{EXTM3U}\n\n')
+            file.write(f'{M3U_EXTM3U}\n\n')
             for track in self._tracks:
-                file.write(f'{EXTINF}{track.secs},{track.title}\n'
+                file.write(f'{M3U_EXTINF}{track.secs},{track.title}\n'
                            f'{track.filename}\n\n')
         self._dirty = False
 
@@ -136,20 +141,20 @@ class Playlist:
                 if not line:
                     continue # ignore blank lines
                 if state is Want.M3U:
-                    if line != EXTM3U:
+                    if line != M3U_EXTM3U:
                         raise Error(f'{lino}:invalid M3U header: {line!r}')
                     state = Want.INFO
                 elif state is Want.INFO:
-                    if not line.startswith(EXTINF):
+                    if not line.startswith(M3U_EXTINF):
                         raise Error(
-                            f'{lino}:invalid {EXTINF} line: {line!r}')
-                    secs, title = line[len(EXTINF):].split(',', 1)
+                            f'{lino}:invalid {M3U_EXTINF} line: {line!r}')
+                    secs, title = line[len(M3U_EXTINF):].split(',', 1)
                     prev = line
                     state = Want.FILENAME
                 elif state is Want.FILENAME:
-                    if line.startswith(EXTINF):
-                        raise Error(
-                            f'{lino}:unexpected {EXTINF} line: {line!r}')
+                    if line.startswith(M3U_EXTINF):
+                        raise Error(f'{lino}:unexpected {M3U_EXTINF} '
+                                    f'line: {line!r}')
                     title = title.strip()
                     secs = int(secs.strip()) or -1
                     if title and line:
@@ -384,8 +389,8 @@ def humanized_time(secs):
     return f'{secs:.3}s'
 
 
-EXTM3U = '#EXTM3U'
-EXTINF = '#EXTINF:'
+M3U_EXTM3U = '#EXTM3U'
+M3U_EXTINF = '#EXTINF:'
 PLS_PLAYLIST = '[playlist]'
 PLS_NUMENTRIES = 'NumberOfEntries'
 PLS_VERSION = 'Version'
@@ -405,18 +410,28 @@ FILE_SCHEME = 'file://'
 if __name__ == '__main__':
     import sys
 
-    USAGE = '''usage:
-{name} <b|build> [format] <folder>
-    Build a playlist based on the music files in folder and its subfolders
-    and save it as dirname.format where dirname is the last component of
-    folder's name and format is one of 'm3u', 'pls', 'xspf'.
-{name} <c|convert> <format> <playlist1> [playlist2 [... [playlistN]]]
-    Convert the or each playlist.ext to playlist.format where format is one
-    of 'm3u', 'pls', 'xspf'.
-{name} <i|info> <playlist1> [playlist2 [... [playlistN]]]
-    Output the name and number of tracks in the given playlist(s).
-{name} <h|help>
-    Show this help message and quit.'''
+    def main():
+        usage = USAGE.format(name=os.path.basename(sys.argv[0]))
+        if len(sys.argv) == 1 or sys.argv[1] in {'h', 'help', '-h',
+                                                 '--help'}:
+            raise SystemExit(usage)
+        what = sys.argv[1]
+        args = sys.argv[2:]
+        if not args:
+            raise SystemExit(usage)
+        if what in {'b', 'build'}:
+            if len(args) > 2:
+                raise SystemExit(usage)
+            cli_build(args)
+        elif what in {'c', 'convert'}:
+            if len(args) < 2:
+                raise SystemExit(usage)
+            cli_convert(args)
+        elif what in {'i', 'info'}:
+            cli_info(args)
+        else:
+            raise SystemExit(usage)
+
 
     def cli_build(args):
         if len(args) == 2:
@@ -453,29 +468,24 @@ if __name__ == '__main__':
             if is_playlist(filename):
                 try:
                     tracks = Playlist(filename)
-                    print(f'{len(tracks): 5,d} tracks: {tracks.filename}')
+                    print(f'{len(tracks): 5,d} tracks taking '
+                          f'{tracks.humanized_time}: {tracks.filename}')
                 except Error:
                     pass
                 except OSError as err:
                     print(err)
 
+    USAGE = '''usage:
+{name} <b|build> [format] <folder>
+    Build a playlist based on the music files in folder and its subfolders
+    and save it as dirname.format where dirname is the last component of
+    folder's name and format is one of 'm3u', 'pls', 'xspf'.
+{name} <c|convert> <format> <playlist1> [playlist2 [... [playlistN]]]
+    Convert the or each playlist.ext to playlist.format where format is one
+    of 'm3u', 'pls', 'xspf'.
+{name} <i|info> <playlist1> [playlist2 [... [playlistN]]]
+    Output the name and number of tracks in the given playlist(s).
+{name} <h|help>
+    Show this help message and quit.'''
 
-    usage = USAGE.format(name=os.path.basename(sys.argv[0]))
-    if len(sys.argv) == 1 or sys.argv[1] in {'h', 'help', '-h', '--help'}:
-        raise SystemExit(usage)
-    what = sys.argv[1]
-    args = sys.argv[2:]
-    if not args:
-        raise SystemExit(usage)
-    if what in {'b', 'build'}:
-        if len(args) > 2:
-            raise SystemExit(usage)
-        cli_build(args)
-    elif what in {'c', 'convert'}:
-        if len(args) < 2:
-            raise SystemExit(usage)
-        cli_convert(args)
-    elif what in {'i', 'info'}:
-        cli_info(args)
-    else:
-        raise SystemExit(usage)
+    main()
