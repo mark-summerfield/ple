@@ -9,41 +9,11 @@ import pathlib
 class _Config:
 
     def __init__(self):
-        self._music_path = None
-        self._playlists_path = None
+        self.music_path = None
+        self.playlists_path = None
+        self.geometry = None
         self._filename = None
-        self._geometry = None
         self.load()
-
-
-    @property
-    def geometry(self):
-        return self._geometry
-
-
-    @geometry.setter
-    def geometry(self, geometry_):
-        self._geometry = geometry_
-
-
-    @property
-    def music_path(self):
-        return self._music_path
-
-
-    @music_path.setter
-    def music_path(self, path):
-        self._music_path = path
-
-
-    @property
-    def playlists_path(self):
-        return self._playlists_path
-
-
-    @playlists_path.setter
-    def playlists_path(self, path):
-        self._playlists_path = path
 
 
     @property
@@ -70,22 +40,22 @@ class _Config:
         if not config.exists() and (path / '.config/').exists():
             config = path / '.config/ple.ini'
         self._filename = config
-        if self._geometry is None:
-            self._geometry = '800x600+0+0' # default size & position
-        if self._music_path is None:
+        if self.geometry is None:
+            self.geometry = '800x600+0+0' # default size & position
+        if self.music_path is None:
             music = path / 'Music'
             if not music.exists():
                 music = path / 'music'
                 if not music.exists():
                     music = path
-            self._music_path = music
-        if self._playlists_path is None:
+            self.music_path = music
+        if self.playlists_path is None:
             playlists = path / 'data/playlists'
             if not playlists.exists():
                 playlists = path / 'playlists'
                 if not playlists.exists():
                     playlists = path
-            self._playlists_path = playlists
+            self.playlists_path = playlists
 
 
     def _load(self):
@@ -98,11 +68,11 @@ class _Config:
                     key = key_value[0].strip().upper()
                     value = key_value[1].strip()
                     if key == _GEOMETRY and value:
-                        self._geometry = value
+                        self.geometry = value
                     elif key == _MUSICPATH and value:
-                        self._music_path = value
+                        self.music_path = value
                     elif key == _PLAYLISTSPATH and value:
-                        self._playlists_path = value
+                        self.playlists_path = value
 
 
 _MUSICPATH = 'MUSICPATH'
