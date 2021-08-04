@@ -36,8 +36,10 @@ import Config
 
 
 def main():
-    config = Config.Config()
-    print(config.filename, ':', config.music_path, config.playlists_path)
+    config = Config.Config
+    print(config.filename(), ':', config.music_path(),
+          config.playlists_path())
+    config.save()
 
 
 if __name__ == '__main__':
