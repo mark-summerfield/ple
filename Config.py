@@ -2,114 +2,112 @@
 # Copyright © 2021 Mark Summerfield. All rights reserved.
 # License: GPLv3
 
+import atexit
 import pathlib
-import re
-
-KEEP_EXISTING = object()
 
 
-class Config:
+class _Config:
 
-    _music_path = None
-    _playlists_path = None
-    _filename = None
-    _geometry = None
-
-
-    @staticmethod
-    def geometry(geometry_=None):
-        if geometry_ is not None:
-            Config._geometry = geometry_
-        if Config._geometry is None:
-            Config.load()
-        return Config._geometry
+    def __init__(self):
+        self._music_path = None
+        self._playlists_path = None
+        self._filename = None
+        self._geometry = None
+        self.load()
 
 
-    @staticmethod
-    def music_path(folder=None):
-        if folder is not None and pathlib.Path(folder).exists():
-            Config._music_path = folder
-        if Config._music_path is None:
-            Config.load()
-        return Config._music_path
+    @property
+    def geometry(self):
+        return self._geometry
 
 
-    @staticmethod
-    def playlists_path(folder=None):
-        if folder is not None and pathlib.Path(folder).exists():
-            Config._playlists_path = folder
-        if Config._playlists_path is None:
-            Config.load()
-        return Config._playlists_path
+    @geometry.setter
+    def geometry(self, geometry_):
+        self._geometry = geometry_
 
 
-    @staticmethod
-    def filename():
-        if Config._filename is None:
-            Config.load()
-        return Config._filename
+    @property
+    def music_path(self):
+        return self._music_path
 
 
-    @staticmethod
-    def load():
+    @music_path.setter
+    def music_path(self, path):
+        self._music_path = path
+
+
+    @property
+    def playlists_path(self):
+        return self._playlists_path
+
+
+    @playlists_path.setter
+    def playlists_path(self, path):
+        self._playlists_path = path
+
+
+    @property
+    def filename(self):
+        return self._filename
+
+
+    def save(self):
+        with open(self._filename, 'wt', encoding='utf-8') as file:
+            file.write(f'{_GEOMETRY}={self.geometry}\n'
+                       f'{_MUSICPATH}={self.music_path}\n'
+                       f'{_PLAYLISTSPATH}={self.playlists_path}\n')
+
+
+    def load(self):
+        self._set_defaults()
+        if self._filename.exists():
+            self._load()
+
+
+    def _set_defaults(self):
         path = pathlib.Path.home()
-        config = path / '.config/ple.ini'
-        if not config.exists():
-            config = path / '.ple.ini'
-        if config.exists():
-            Config._filename = config
-            key_val_re = re.compile(r'(?P<key>\w+)\s*=\s*(?P<value>).*')
-            with open(Config._filename, 'rt', encoding='utf-8') as file:
-                for line in file:
-                    match = key_val_re.fullmatch(line)
-                    if match is not None:
-                        key = key_val_re.group('key')
-                        value = key_val_re.group('value').strip()
-                        if key.upper() == GEOMETRY and value:
-                            Config._geometry = value
-                        elif key.upper() == MUSICPATH and value:
-                            Config._music_path = value
-                        elif key.upper() == PLAYLISTSPATH and value:
-                            Config._playlists_path = value
-        if Config._geometry is None:
-            Config._geometry = '800x600+0+0' # default size & position
-        if Config._music_path is None:
+        config = path / '.ple.ini'
+        if not config.exists() and (path / '.config/').exists():
+            config = path / '.config/ple.ini'
+        self._filename = config
+        if self._geometry is None:
+            self._geometry = '800x600+0+0' # default size & position
+        if self._music_path is None:
             music = path / 'Music'
             if not music.exists():
                 music = path / 'music'
                 if not music.exists():
                     music = path
-            Config._music_path = music
-        if Config._playlists_path is None:
+            self._music_path = music
+        if self._playlists_path is None:
             playlists = path / 'data/playlists'
             if not playlists.exists():
                 playlists = path / 'playlists'
                 if not playlists.exists():
                     playlists = path
-            Config._playlists_path = playlists
+            self._playlists_path = playlists
 
 
-    @staticmethod
-    def save(*, geometry_=KEEP_EXISTING, music_path_=KEEP_EXISTING,
-             playlists_path_=KEEP_EXISTING):
-        if geometry_ is not KEEP_EXISTING:
-            Config._geometry = geometry_
-        if music_path_ is not KEEP_EXISTING:
-            Config._music_path = music_path_
-        if playlists_path_ is not KEEP_EXISTING:
-            Config._playlists_path = playlists_path_
-        if Config._filename is None:
-            path = pathlib.Path.home()
-            config = path / '.ple.ini'
-            if not config.exists():
-                config = path / '.config/ple.ini' # preferred
-            Config._filename = config # may or may not exist
-        with open(Config._filename, 'wt', encoding='utf-8') as file:
-            file.write(f'{GEOMETRY}={Config.geometry()}\n'
-                       f'{MUSICPATH}={Config.music_path()}\n'
-                       f'{PLAYLISTSPATH}={Config.playlists_path()}\n')
+    def _load(self):
+        with open(self._filename, 'rt', encoding='utf-8') as file:
+            for line in file:
+                if not line or line[0] in ';#\n':
+                    continue # skip blank lines and comments
+                key_value = line.split('=', 1)
+                if len(key_value) == 2:
+                    key = key_value[0].strip().upper()
+                    value = key_value[1].strip()
+                    if key == _GEOMETRY and value:
+                        self._geometry = value
+                    elif key == _MUSICPATH and value:
+                        self._music_path = value
+                    elif key == _PLAYLISTSPATH and value:
+                        self._playlists_path = value
 
 
-MUSICPATH = 'MUSICPATH'
-PLAYLISTSPATH = 'PLAYLISTSPATH'
-GEOMETRY = 'GEOMETRY'
+_MUSICPATH = 'MUSICPATH'
+_PLAYLISTSPATH = 'PLAYLISTSPATH'
+_GEOMETRY = 'GEOMETRY'
+
+config = _Config()
+atexit.register(config.save)
