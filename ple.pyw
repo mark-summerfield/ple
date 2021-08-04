@@ -17,7 +17,6 @@
 
 Open: open folder
 Config: default music folder; default playlists folder
-        default player (PLE or external application)
 Add: add one or more new tracks to the current playlist
 Edit: edit the title of the current track in the current playlist
 Move Up: move the current track up one in the current playlist
@@ -33,24 +32,12 @@ Quit: offer save unsaved changes/quit/cancel if dirty then quit
 >> Play Next: only show if default player is PLE
 '''
 
-import pathlib
-import sys
-
-import playlist
+import Config
 
 
 def main():
-    # TODO replace with GUI
-
-    if len(sys.argv) > 1:
-        filename = sys.argv[1]
-    else:
-        filename = pathlib.Path.home() / 'data/playlists/Van Morrison.m3u'
-    tracks = playlist.Playlist(filename)
-    print(f'Playlist: {tracks.filename!r} of {len(tracks)} tracks:')
-    assert not tracks.dirty
-    for i, track in enumerate(tracks, 1):
-        print(f'{i: >4d}: {track.title}\t{track.filename}')
+    config = Config.Config()
+    print(config.filename, ':', config.music_path, config.playlists_path)
 
 
 if __name__ == '__main__':
