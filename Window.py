@@ -2,6 +2,9 @@
 # Copyright © 2021 Mark Summerfield. All rights reserved.
 # License: GPLv3
 
+# TODO for folder_view show only the playlist name + a folder|file icon
+# TODO auto-open the top-level folder at startup
+
 '''
 +----------------------------------------------------
 |[New...][Open...] [Config...] | [Add] [Edit] [Move Up] [Move Down] \
@@ -36,6 +39,7 @@ About: show about box
 '''
 
 import datetime
+import glob
 import os
 import pathlib
 import tkinter as tk
@@ -50,13 +54,13 @@ class Window(ttk.Frame):
 
     def __init__(self, master):
         super().__init__(master, padding=Const.PAD)
-        self.nodes = {}
         self.images = {}
         self.make_images()
         self.make_widgets()
         self.make_layout()
         self.make_bindings()
-        self.on_refresh_folders()
+        os.chdir(Config.config.playlists_path)
+        self.folder_populate_roots()
 
 
     def make_images(self):
@@ -94,13 +98,14 @@ class Window(ttk.Frame):
 
     def make_folder_view(self):
         self.folder_frame = ttk.Frame(self.master)
-        self.folder_view = ttk.Treeview(self.folder_frame)
+        self.folder_view = ttk.Treeview(self.folder_frame,
+                                        columns=('fullpath', 'kind'))
         yscroller = ttk.Scrollbar(self.folder_frame, orient=tk.VERTICAL,
                                   command=self.folder_view.yview)
         xscroller = ttk.Scrollbar(self.folder_frame, orient=tk.HORIZONTAL,
                                   command=self.folder_view.xview)
         self.folder_view.configure(yscroll=yscroller.set,
-                                 xscroll=xscroller.set)
+                                   xscroll=xscroller.set)
         self.folder_view.heading('#0', text='Playlists', anchor=tk.W)
         self.folder_view.grid(row=0, column=0,
                               sticky=tk.W + tk.E + tk.N + tk.S)
@@ -118,7 +123,7 @@ class Window(ttk.Frame):
         xscroller = ttk.Scrollbar(self.playlist_frame, orient=tk.HORIZONTAL,
                                   command=self.playlist_view.xview)
         self.playlist_view.configure(yscroll=yscroller.set,
-                                 xscroll=xscroller.set)
+                                     xscroll=xscroller.set)
         self.playlist_view.heading('#0', text='Playlist', anchor=tk.W)
         self.playlist_view.grid(row=0, column=0,
                                 sticky=tk.W + tk.E + tk.N + tk.S)
@@ -154,40 +159,20 @@ class Window(ttk.Frame):
 
 
     def make_bindings(self):
-        self.master.bind(f'<F5>', self.on_refresh_folders)
-        self.master.bind(f'<Alt-n>', self.on_file_new)
-        self.master.bind(f'<Control-n>', self.on_file_new)
-        self.master.bind(f'<Alt-o>', self.on_file_open)
-        self.master.bind(f'<Control-o>', self.on_file_open)
-        #self.master.bind(f'<Alt-s>', self.on_save)
-        #self.master.bind(f'<Control-s>', self.on_save)
-        self.master.bind(f'<Alt-q>', self.on_close)
-        self.master.bind(f'<Control-q>', self.on_close)
-        self.master.bind(f'<Escape>', self.on_close)
-        self.folder_view.bind('<<TreeviewOpen>>', self.open_node)
+        self.master.bind('<F5>', self.folder_update_tree)
+        self.master.bind('<Alt-n>', self.on_file_new)
+        self.master.bind('<Control-n>', self.on_file_new)
+        self.master.bind('<Alt-o>', self.on_file_open)
+        self.master.bind('<Control-o>', self.on_file_open)
+        # self.master.bind('<Alt-s>', self.on_save)
+        # self.master.bind('<Control-s>', self.on_save)
+        self.master.bind('<Alt-q>', self.on_close)
+        self.master.bind('<Control-q>', self.on_close)
+        self.master.bind('<Escape>', self.on_close)
+        self.folder_view.bind('<<TreeviewOpen>>', self.folder_update_tree)
+        self.folder_view.bind('<Double-Button-1>', self.folder_change)
 
 
-    def on_refresh_folders(self, _event=None):
-        self.nodes.clear()
-        path = os.path.abspath(Config.config.playlists_path)
-        self.insert_node('', path, path)
-
-
-    def insert_node(self, parent, text, path):
-        node = self.folder_view.insert(parent, tk.END, text=text,
-                                       open=False)
-        if os.path.isdir(path):
-            self.nodes[node] = path
-            self.folder_view.insert(node, tk.END)
-
-
-    def open_node(self, _event=None):
-        node = self.folder_view.focus()
-        path = self.nodes.pop(node, None)
-        if path:
-            self.folder_view.delete(self.folder_view.get_children(node))
-            for name in os.listdir(path):
-                self.insert_node(node, name, os.path.join(path, name))
 
 
     def on_file_new(self, _event=None):
@@ -220,3 +205,47 @@ tracks and playlists.''')
         # TODO prompt to save unsaved changes
         print('on_close(): prompt to save unsaved changes')
         self.quit()
+
+
+    def folder_populate_roots(self):
+        path = os.path.abspath('.')
+        node = self.folder_view.insert('', tk.END, text=path,
+                                       values=[path, 'folder'])
+        self.folder_populate_tree(node)
+
+
+    def folder_populate_tree(self, node):
+        if self.folder_view.set(node, 'kind') != 'folder':
+            return
+        path = self.folder_view.set(node, 'fullpath')
+        self.folder_view.delete(*self.folder_view.get_children(node))
+        parent = self.folder_view.parent(node)
+        special_dirs = [] if parent else glob.glob('.') + glob.glob('..')
+        for name in special_dirs + os.listdir(path):
+            kind = None
+            name = os.path.join(path, name).replace('\\', '/')
+            if os.path.isdir(name):
+                kind = 'folder'
+            elif os.path.isfile(name):
+                kind = 'file'
+            fname = os.path.split(name)[1]
+            nid = self.folder_view.insert(node, tk.END, text=fname,
+                                          values=[name, kind])
+            if kind == 'folder':
+                if fname not in {'.', '..'}:
+                    self.folder_view.insert(nid, 0, text='dummy')
+                    self.folder_view.item(nid, text=fname)
+
+
+    def folder_update_tree(self, _event=None):
+        self.folder_populate_tree(self.folder_view.focus())
+
+
+    def folder_change(self, _event=None):
+        node = self.folder_view.focus()
+        if self.folder_view.parent(node):
+            path = os.path.abspath(self.folder_view.set(node, 'fullpath'))
+            if os.path.isdir(path):
+                os.chdir(path)
+                self.folder_view.delete(self.folder_view.get_children(''))
+                self.folder_populate_roots()
