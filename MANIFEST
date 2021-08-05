@@ -1,5 +1,8 @@
 ple.pyw
+Window.py
+Const.py
 Config.py
+Tooltip.py
 playlist.py
 
 audioplayerGUI.py
