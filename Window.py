@@ -74,6 +74,7 @@ class Window(ttk.Frame):
         self.a_playlist_pane = PlaylistPane.PlaylistPane(self.master,
                                                          padding=PAD)
         self.make_playlist_buttons()
+        self.make_scales()
 
 
     def make_buttons(self):
@@ -105,26 +106,53 @@ class Window(ttk.Frame):
         Tooltip.Tooltip(self.add_button, 'Add Track to Playlist… Ctrl+A')
 
 
+    def make_scales(self):
+        self.volume_frame = ttk.Frame(self.master)
+        self.volume_name_label = ttk.Label(self.volume_frame, text='Volume')
+        self.volume_scale = ttk.Scale(self.volume_frame)
+        self.volume_label = ttk.Label(self.volume_frame, text='0%')
+        self.position_frame = ttk.Frame(self.master)
+        self.position_name_label = ttk.Label(self.position_frame,
+                                             text='Position')
+        self.position_scale = ttk.Scale(self.position_frame)
+        self.position_label = ttk.Label(self.position_frame, text='0s/0s')
+
+
     def make_layout(self):
-        self.file_new_button.grid(row=0, column=0, padx=PAD, sticky=tk.W)
-        self.folder_open_button.grid(row=0, column=1, padx=PAD, sticky=tk.W)
-        self.config_button.grid(row=0, column=2, padx=PAD, sticky=tk.W)
+        self.file_new_button.grid(row=0, column=0, pady=PAD, sticky=tk.N)
+        self.folder_open_button.grid(row=1, column=0, pady=PAD, sticky=tk.N)
+        self.config_button.grid(row=2, column=0, pady=PAD, sticky=tk.N)
         self.button_frame.grid(row=0, column=0, padx=PAD, pady=PAD,
-                               sticky=tk.W + tk.E, columnspan=2)
-        self.playlists_pane.grid(row=1, column=0, padx=PAD, pady=PAD,
+                               sticky=tk.N + tk.S)
+        self.playlists_pane.grid(row=0, column=1, padx=PAD, pady=PAD,
                                  sticky=tk.W + tk.E + tk.N + tk.S)
-        self.a_playlist_pane.grid(row=1, column=1, padx=PAD, pady=PAD,
+        self.a_playlist_pane.grid(row=0, column=2, padx=PAD, pady=PAD,
                                   sticky=tk.W + tk.E + tk.N + tk.S)
-        self.add_button.grid(row=0, column=0, padx=PAD, sticky=tk.W)
-        self.playlist_button_frame.grid(row=2, column=0, padx=PAD, pady=PAD,
-                                        sticky=tk.W + tk.E, columnspan=2)
+        self.add_button.grid(row=0, column=0, pady=PAD, sticky=tk.N)
+        self.playlist_button_frame.grid(row=0, column=3, padx=PAD, pady=PAD,
+                                        sticky=tk.N + tk.S)
+        self.volume_name_label.grid(row=0, column=0, padx=PAD, sticky=tk.W)
+        self.volume_scale.grid(row=0, column=1, padx=PAD,
+                               sticky=tk.W + tk.E)
+        self.volume_label.grid(row=0, column=2, padx=PAD, sticky=tk.W)
+        self.volume_frame.grid(row=1, column=0, padx=PAD, pady=PAD,
+                               columnspan=2, sticky=tk.W + tk.E)
+        self.volume_frame.columnconfigure(1, weight=1)
+        self.position_name_label.grid(row=0, column=0, padx=PAD,
+                                      sticky=tk.W)
+        self.position_scale.grid(row=0, column=1, padx=PAD,
+                                 sticky=tk.W + tk.E)
+        self.position_label.grid(row=0, column=2, padx=PAD, sticky=tk.W)
+        self.position_frame.grid(row=1, column=2, padx=PAD, pady=PAD,
+                                 columnspan=2, sticky=tk.W + tk.E)
+        self.position_frame.columnconfigure(1, weight=1)
         top = self.winfo_toplevel()
-        top.columnconfigure(0, weight=1)
         top.columnconfigure(1, weight=1)
-        top.rowconfigure(1, weight=1)
-        self.columnconfigure(0, weight=1)
+        top.columnconfigure(2, weight=1)
+        top.rowconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
-        self.rowconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1)
+        self.rowconfigure(0, weight=1)
 
 
     def make_bindings(self):
