@@ -16,13 +16,13 @@ import tkinter.ttk as ttk
 
 class Tooltip:
 
-    def __init__(self, master, text, delay=600, show_time=10_000,
-                 background='lightyellow'):
+    delay = 600
+    show_time = 5_000
+    background = 'lightyellow'
+
+    def __init__(self, master, text):
         self.master = master
         self.text = text
-        self.delay = delay
-        self.show_time = show_time
-        self.background = background
         self.timer_id = None
         self.tip = None
         self.master.bind('<Enter>', self.enter, '+')
@@ -31,7 +31,7 @@ class Tooltip:
 
     def enter(self, event=None):
         if self.timer_id is None and self.tip is None:
-            self.timer_id = self.master.after(self.delay, self.show)
+            self.timer_id = self.master.after(Tooltip.delay, self.show)
 
 
     def leave(self, event=None):
@@ -55,9 +55,9 @@ class Tooltip:
         self.tip.withdraw() # Don't show until we have the geometry
         self.tip.wm_overrideredirect(True) # No window decorations etc.
         label = ttk.Label(
-            self.tip, text=self.text, padding=1, background=self.background,
-            wraplength=480, relief=tk.GROOVE,
-            font=tkfont.nametofont('TkTooltipFont'))
+            self.tip, text=self.text, padding=1,
+            background=Tooltip.background, wraplength=480,
+            relief=tk.GROOVE, font=tkfont.nametofont('TkTooltipFont'))
         label.pack()
         x, y = self.position()
         self.tip.wm_geometry('+{}+{}'.format(x, y))
@@ -65,7 +65,7 @@ class Tooltip:
         if self.master.winfo_viewable():
             self.tip.transient(self.master)
         self.tip.update_idletasks()
-        self.timer_id = self.master.after(self.show_time, self.hide)
+        self.timer_id = self.master.after(Tooltip.show_time, self.hide)
 
 
     def position(self):

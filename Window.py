@@ -44,6 +44,7 @@ import tkinter.ttk as ttk
 
 import Config
 import Const
+import PlaylistPane
 import PlaylistsPane
 import Tooltip
 
@@ -72,7 +73,8 @@ class Window(ttk.Frame):
         self.playlists_pane = PlaylistsPane.PlaylistsPane(
             self.master, padding=Const.PAD,
             path=Config.config.playlists_path)
-        self.make_playlist_view()
+        self.a_playlist_pane = PlaylistPane.PlaylistPane(
+            self.master, padding=Const.PAD)
         # TODO self.make_playlist_buttons()
 
 
@@ -96,24 +98,6 @@ class Window(ttk.Frame):
         Tooltip.Tooltip(self.config_button, f'Configure {Const.APPNAME}…')
 
 
-    def make_playlist_view(self):
-        self.playlist_frame = ttk.Frame(self.master)
-        self.playlist_view = ttk.Treeview(self.playlist_frame)
-        yscroller = ttk.Scrollbar(self.playlist_frame, orient=tk.VERTICAL,
-                                  command=self.playlist_view.yview)
-        xscroller = ttk.Scrollbar(self.playlist_frame, orient=tk.HORIZONTAL,
-                                  command=self.playlist_view.xview)
-        self.playlist_view.configure(yscroll=yscroller.set,
-                                     xscroll=xscroller.set)
-        self.playlist_view.heading('#0', text='Playlist', anchor=tk.W)
-        self.playlist_view.grid(row=0, column=0,
-                                sticky=tk.W + tk.E + tk.N + tk.S)
-        yscroller.grid(row=0, column=1, sticky=tk.N + tk.S)
-        xscroller.grid(row=1, column=0, sticky=tk.W + tk.E)
-        self.playlist_frame.grid_columnconfigure(0, weight=1)
-        self.playlist_frame.grid_rowconfigure(0, weight=1)
-
-
     def make_layout(self):
         self.file_new_button.grid(row=0, column=0, padx=Const.PAD,
                                   sticky=tk.W)
@@ -127,9 +111,9 @@ class Window(ttk.Frame):
         self.playlists_pane.grid(row=1, column=0, padx=Const.PAD,
                                  pady=Const.PAD,
                                  sticky=tk.W + tk.E + tk.N + tk.S)
-        self.playlist_frame.grid(row=1, column=1, padx=Const.PAD,
-                                 pady=Const.PAD,
-                                 sticky=tk.W + tk.E + tk.N + tk.S)
+        self.a_playlist_pane.grid(row=1, column=1, padx=Const.PAD,
+                                  pady=Const.PAD,
+                                  sticky=tk.W + tk.E + tk.N + tk.S)
         top = self.winfo_toplevel()
         top.columnconfigure(0, weight=1)
         top.columnconfigure(1, weight=1)

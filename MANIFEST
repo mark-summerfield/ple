@@ -2,14 +2,13 @@ icons: /usr/share/icons/elementary-xfce/actions/32/
 
 # TODO add the Add button at the bottom just to establish the overall
 #      GUI design
-# TODO PlaylistPane.py (currently playlist_frame) with
-#      self.a_playlist_pane as the instance
 # TODO don't use audioplayer; instead find a std. Ubuntu-supported lib'y
 #      (using ctypes or Gtk gi if necessary) libav? lame?
 
 ple.pyw
 Window.py
 PlaylistsPane.py
+PlaylistPane.py
 Const.py
 Config.py
 Tooltip.py
