@@ -52,7 +52,7 @@ import Tooltip
 class Window(ttk.Frame):
 
     def __init__(self, master):
-        super().__init__(master, padding=Const.PAD)
+        super().__init__(master, padding=PAD)
         self.images = {}
         self.make_images()
         self.make_widgets()
@@ -63,57 +63,61 @@ class Window(ttk.Frame):
 
     def make_images(self):
         path = pathlib.Path(__file__).parent / 'images'
-        for name in (Const.FILEOPEN_ICON, Const.CONFIG_ICON,
-                     Const.FILENEW_ICON,):
+        for name in (ADD_ICON, CONFIG_ICON, FILENEW_ICON, FILEOPEN_ICON):
             self.images[name] = tk.PhotoImage(file=path / name)
 
 
     def make_widgets(self):
         self.make_buttons()
         self.playlists_pane = PlaylistsPane.PlaylistsPane(
-            self.master, padding=Const.PAD,
-            path=Config.config.playlists_path)
-        self.a_playlist_pane = PlaylistPane.PlaylistPane(
-            self.master, padding=Const.PAD)
-        # TODO self.make_playlist_buttons()
+            self.master, padding=PAD, path=Config.config.playlists_path)
+        self.a_playlist_pane = PlaylistPane.PlaylistPane(self.master,
+                                                         padding=PAD)
+        self.make_playlist_buttons()
 
 
     def make_buttons(self):
         self.button_frame = ttk.Frame(self.master)
         self.file_new_button = ttk.Button(
             self.button_frame, text='New…', underline=0, takefocus=False,
-            image=self.images[Const.FILENEW_ICON],
+            image=self.images[FILENEW_ICON],
             command=self.on_file_new, compound=tk.TOP)
         Tooltip.Tooltip(self.file_new_button, 'Create New Playlist… Ctrl+N')
         self.folder_open_button = ttk.Button(
             self.button_frame, text='Open…', underline=0, takefocus=False,
-            image=self.images[Const.FILEOPEN_ICON],
+            image=self.images[FILEOPEN_ICON],
             command=self.on_file_open, compound=tk.TOP)
         Tooltip.Tooltip(self.folder_open_button,
                         'Open Playlist Folder… Ctrl+O')
         self.config_button = ttk.Button(
             self.button_frame, text='Options…', takefocus=False,
-            image=self.images[Const.CONFIG_ICON],
+            image=self.images[CONFIG_ICON],
             command=self.on_config, compound=tk.TOP)
         Tooltip.Tooltip(self.config_button, f'Configure {Const.APPNAME}…')
 
 
+    def make_playlist_buttons(self):
+        self.playlist_button_frame = ttk.Frame(self.master)
+        self.add_button = ttk.Button(
+            self.playlist_button_frame, text='Add…', underline=0,
+            takefocus=False, image=self.images[ADD_ICON],
+            command=self.on_add_track, compound=tk.TOP)
+        Tooltip.Tooltip(self.add_button, 'Add Track to Playlist… Ctrl+A')
+
+
     def make_layout(self):
-        self.file_new_button.grid(row=0, column=0, padx=Const.PAD,
-                                  sticky=tk.W)
-        self.folder_open_button.grid(row=0, column=1, padx=Const.PAD,
-                                     sticky=tk.W)
-        self.config_button.grid(row=0, column=2, padx=Const.PAD,
-                                sticky=tk.W)
-        self.button_frame.grid(row=0, column=0, padx=Const.PAD,
-                               pady=Const.PAD, sticky=tk.W + tk.E,
-                               columnspan=2)
-        self.playlists_pane.grid(row=1, column=0, padx=Const.PAD,
-                                 pady=Const.PAD,
+        self.file_new_button.grid(row=0, column=0, padx=PAD, sticky=tk.W)
+        self.folder_open_button.grid(row=0, column=1, padx=PAD, sticky=tk.W)
+        self.config_button.grid(row=0, column=2, padx=PAD, sticky=tk.W)
+        self.button_frame.grid(row=0, column=0, padx=PAD, pady=PAD,
+                               sticky=tk.W + tk.E, columnspan=2)
+        self.playlists_pane.grid(row=1, column=0, padx=PAD, pady=PAD,
                                  sticky=tk.W + tk.E + tk.N + tk.S)
-        self.a_playlist_pane.grid(row=1, column=1, padx=Const.PAD,
-                                  pady=Const.PAD,
+        self.a_playlist_pane.grid(row=1, column=1, padx=PAD, pady=PAD,
                                   sticky=tk.W + tk.E + tk.N + tk.S)
+        self.add_button.grid(row=0, column=0, padx=PAD, sticky=tk.W)
+        self.playlist_button_frame.grid(row=2, column=0, padx=PAD, pady=PAD,
+                                        sticky=tk.W + tk.E, columnspan=2)
         top = self.winfo_toplevel()
         top.columnconfigure(0, weight=1)
         top.columnconfigure(1, weight=1)
@@ -133,6 +137,8 @@ class Window(ttk.Frame):
         self.master.bind('<Alt-q>', self.on_close)
         self.master.bind('<Control-q>', self.on_close)
         self.master.bind('<Escape>', self.on_close)
+        self.master.bind('<Alt-a>', self.on_add_track)
+        self.master.bind('<Control-a>', self.on_add_track)
 
 
     def on_file_new(self, _event=None):
@@ -165,3 +171,15 @@ tracks and playlists.''')
         # TODO prompt to save unsaved changes
         print('on_close(): prompt to save unsaved changes')
         self.quit()
+
+
+    def on_add_track(self, _event=None):
+        print('on_add_track')
+
+
+PAD = '0.75m'
+
+ADD_ICON = 'add.png'
+CONFIG_ICON = 'config.png'
+FILENEW_ICON = 'filenew.png'
+FILEOPEN_ICON = 'fileopen.png'

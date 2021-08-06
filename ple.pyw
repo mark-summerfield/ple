@@ -16,9 +16,9 @@ def main():
     app.withdraw()
     app.minsize(320, 240)
     config = Config.config
-    tkfont.nametofont('TkDefaultFont').configure(size=config.base_font_size)
-    tkfont.nametofont('TkTooltipFont').configure(
-        size=config.base_font_size - 1)
+    size = config.base_font_size
+    tkfont.nametofont('TkDefaultFont').configure(size=size)
+    tkfont.nametofont('TkTooltipFont').configure(size=size - 1)
     app.geometry(config.geometry)
     app.title(f'{Const.APPNAME} v{Const.VERSION}')
     app.option_add('*tearOff', False)
