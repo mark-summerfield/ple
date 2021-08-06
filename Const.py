@@ -7,6 +7,6 @@ VERSION = '0.1.0'
 
 PAD = '0.75m'
 
+CONFIG_ICON = 'config.png'
 FILENEW_ICON = 'filenew.png'
 FILEOPEN_ICON = 'fileopen.png'
-CONFIG_ICON = 'config.png'

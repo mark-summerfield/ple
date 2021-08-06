@@ -1,7 +1,12 @@
 icons: /usr/share/icons/elementary-xfce/actions/32/
 
+# TODO add the Add button at the bottom just to establish the overall
+#      GUI design
+# TODO PlaylistPane.py (currently playlist_frame)
+
 ple.pyw
 Window.py
+PlaylistsPane.py
 Const.py
 Config.py
 Tooltip.py
