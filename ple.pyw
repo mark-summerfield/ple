@@ -4,6 +4,7 @@
 
 import os
 import tkinter as tk
+import tkinter.font as tkfont
 
 import Config
 import Const
@@ -15,6 +16,9 @@ def main():
     app.withdraw()
     app.minsize(320, 240)
     config = Config.config
+    tkfont.nametofont('TkDefaultFont').configure(size=config.base_font_size)
+    tkfont.nametofont('TkTooltipFont').configure(
+        size=max(8, config.base_font_size - 1))
     app.geometry(config.geometry)
     app.title(f'{Const.APPNAME} v{Const.VERSION}')
     app.option_add('*tearOff', False)

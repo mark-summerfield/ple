@@ -12,6 +12,7 @@ class _Config:
         self.music_path = None
         self.playlists_path = None
         self.geometry = None
+        self.base_font_size = None
         self._filename = None
         self.load()
 
@@ -22,8 +23,10 @@ class _Config:
 
 
     def save(self):
+
         with open(self._filename, 'wt', encoding='utf-8') as file:
-            file.write(f'{_GEOMETRY}={self.geometry}\n'
+            file.write(f'{_BASEFONTSIZE}={self.base_font_size}\n'
+                       f'{_GEOMETRY}={self.geometry}\n'
                        f'{_MUSICPATH}={self.music_path}\n'
                        f'{_PLAYLISTSPATH}={self.playlists_path}\n')
 
@@ -35,6 +38,7 @@ class _Config:
 
 
     def _set_defaults(self):
+        self.base_font_size = 11
         path = pathlib.Path.home()
         config = path / '.ple.ini'
         if not config.exists() and (path / '.config/').exists():
@@ -67,7 +71,9 @@ class _Config:
                 if len(key_value) == 2:
                     key = key_value[0].strip().upper()
                     value = key_value[1].strip()
-                    if key == _GEOMETRY and value:
+                    if key == _BASEFONTSIZE and value:
+                        self.base_font_size = int(value)
+                    elif key == _GEOMETRY and value:
                         self.geometry = value
                     elif key == _MUSICPATH and value:
                         self.music_path = value
@@ -78,6 +84,7 @@ class _Config:
 _MUSICPATH = 'MUSICPATH'
 _PLAYLISTSPATH = 'PLAYLISTSPATH'
 _GEOMETRY = 'GEOMETRY'
+_BASEFONTSIZE = 'BASEFONTSIZE'
 
 config = _Config()
 atexit.register(config.save)

@@ -30,7 +30,7 @@ class PlaylistsPane(ttk.Frame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
         self.treeview.heading('#0', text='Playlists', anchor=tk.W)
-        self.refresh(path)
+        self.set_path(path)
 
 
     def set_focus(self):
@@ -51,7 +51,7 @@ class PlaylistsPane(ttk.Frame):
             self.images[name] = tk.PhotoImage(file=path / name)
 
 
-    def refresh(self, path):
+    def set_path(self, path):
         self.treeview.delete(*self.treeview.get_children())
         self.treeview.insert('', tk.END, path, text=path, open=True,
                              image=self.images[FOLDER_HOME_ICON])
