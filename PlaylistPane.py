@@ -10,7 +10,7 @@ class PlaylistPane(ttk.Frame):
 
     def __init__(self, master, *, padding):
         super().__init__(master, padding=padding)
-        self.treeview = ttk.Treeview(self)
+        self.treeview = ttk.Treeview(self, selectmode=tk.BROWSE)
         yscroller = ttk.Scrollbar(self, orient=tk.VERTICAL,
                                   command=self.treeview.yview)
         xscroller = ttk.Scrollbar(self, orient=tk.HORIZONTAL,

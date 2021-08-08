@@ -18,6 +18,8 @@ def main():
     config = Config.config
     size = config.base_font_size
     tkfont.nametofont('TkDefaultFont').configure(size=size)
+    tkfont.nametofont('TkHeadingFont').configure(size=size,
+                                                 weight=tk.NORMAL)
     tkfont.nametofont('TkTooltipFont').configure(size=size - 1)
     app.geometry(config.geometry)
     app.title(f'{Const.APPNAME} v{Const.VERSION}')

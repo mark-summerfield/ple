@@ -1,14 +1,15 @@
 icons: /usr/share/icons/elementary-xfce/actions/32/
 
-# TODO add the Add button at the bottom just to establish the overall
-#      GUI design
-# TODO don't use audioplayer; instead find a std. Ubuntu-supported lib'y
-#      (using ctypes or Gtk gi if necessary) libav? lame?
+# TODO 
+# try pymad & retry tksnack & try playbin (see below)
+# if only audioplayer works, then copy audioplayer.py into the project
+# itself
 
 ple.pyw
 Window.py
 PlaylistsPane.py
 PlaylistPane.py
+Player.py
 Const.py
 Config.py
 Tooltip.py

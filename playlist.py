@@ -35,12 +35,12 @@ class Playlist:
 
 
     @property
-    def time(self):
+    def length(self):
         return sum(track.secs for track in self._tracks if track.secs > 0)
 
 
     @property
-    def humanized_time(self):
+    def humanized_length(self):
         missing = False
         secs = 0
         for track in self._tracks:
@@ -50,9 +50,9 @@ class Playlist:
                 secs += track.secs
         if missing:
             if not secs:
-                return 'unknown time'
-            return f'at least {humanized_time(secs)}'
-        return humanized_time(secs)
+                return 'unknown length'
+            return f'at least {humanized_length(secs)}'
+        return humanized_length(secs)
 
 
     def movedown(self, index):
@@ -373,7 +373,7 @@ def normalize_name(name):
     return name.replace('_', ' ')
 
 
-def humanized_time(secs):
+def humanized_length(secs):
     if secs <= 0:
         return '0s'
     hours, secs = divmod(secs, 3600)
@@ -469,7 +469,7 @@ if __name__ == '__main__':
                 try:
                     tracks = Playlist(filename)
                     print(f'{len(tracks): 5,d} tracks taking '
-                          f'{tracks.humanized_time}: {tracks.filename}')
+                          f'{tracks.humanized_length}: {tracks.filename}')
                 except Error:
                     pass
                 except OSError as err:

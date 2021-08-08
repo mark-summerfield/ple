@@ -29,12 +29,12 @@ class Tooltip:
         self.master.bind('<Leave>', self.leave, '+')
 
 
-    def enter(self, event=None):
+    def enter(self, _event=None):
         if self.timer_id is None and self.tip is None:
             self.timer_id = self.master.after(Tooltip.delay, self.show)
 
 
-    def leave(self, event=None):
+    def leave(self, _event=None):
         if self.timer_id is not None:
             id = self.timer_id
             self.timer_id = None

@@ -44,6 +44,7 @@ import tkinter.ttk as ttk
 
 import Config
 import Const
+import Player
 import PlaylistPane
 import PlaylistsPane
 import Tooltip
@@ -74,7 +75,8 @@ class Window(ttk.Frame):
         self.a_playlist_pane = PlaylistPane.PlaylistPane(self.master,
                                                          padding=PAD)
         self.make_playlist_buttons()
-        self.make_scales()
+        if Player.player.valid:
+            self.make_scales()
 
 
     def make_buttons(self):
@@ -119,18 +121,38 @@ class Window(ttk.Frame):
 
 
     def make_layout(self):
+        self.make_button_layout()
+        self.playlists_pane.grid(row=0, column=1, padx=PAD, pady=PAD,
+                                 sticky=tk.W + tk.E + tk.N + tk.S)
+        self.a_playlist_pane.grid(row=0, column=2, padx=PAD, pady=PAD,
+                                  sticky=tk.W + tk.E + tk.N + tk.S)
+        self.make_playlist_button_layout()
+        if Player.player.valid:
+            self.make_scales_layout()
+        top = self.winfo_toplevel()
+        top.columnconfigure(1, weight=1)
+        top.columnconfigure(2, weight=1)
+        top.rowconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        self.columnconfigure(2, weight=1)
+        self.rowconfigure(0, weight=1)
+
+
+    def make_button_layout(self):
         self.file_new_button.grid(row=0, column=0, pady=PAD, sticky=tk.N)
         self.folder_open_button.grid(row=1, column=0, pady=PAD, sticky=tk.N)
         self.config_button.grid(row=2, column=0, pady=PAD, sticky=tk.N)
         self.button_frame.grid(row=0, column=0, padx=PAD, pady=PAD,
                                sticky=tk.N + tk.S)
-        self.playlists_pane.grid(row=0, column=1, padx=PAD, pady=PAD,
-                                 sticky=tk.W + tk.E + tk.N + tk.S)
-        self.a_playlist_pane.grid(row=0, column=2, padx=PAD, pady=PAD,
-                                  sticky=tk.W + tk.E + tk.N + tk.S)
+
+
+    def make_playlist_button_layout(self):
         self.add_button.grid(row=0, column=0, pady=PAD, sticky=tk.N)
         self.playlist_button_frame.grid(row=0, column=3, padx=PAD, pady=PAD,
                                         sticky=tk.N + tk.S)
+
+
+    def make_scales_layout(self):
         self.volume_name_label.grid(row=0, column=0, padx=PAD, sticky=tk.W)
         self.volume_scale.grid(row=0, column=1, padx=PAD,
                                sticky=tk.W + tk.E)
@@ -146,13 +168,6 @@ class Window(ttk.Frame):
         self.position_frame.grid(row=1, column=2, padx=PAD, pady=PAD,
                                  columnspan=2, sticky=tk.W + tk.E)
         self.position_frame.columnconfigure(1, weight=1)
-        top = self.winfo_toplevel()
-        top.columnconfigure(1, weight=1)
-        top.columnconfigure(2, weight=1)
-        top.rowconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
-        self.columnconfigure(2, weight=1)
-        self.rowconfigure(0, weight=1)
 
 
     def make_bindings(self):
