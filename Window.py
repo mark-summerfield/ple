@@ -3,17 +3,18 @@
 # License: GPLv3
 
 '''
-+----------------------------------------------------
-|[New...][Open...] [Config...] [Save] [About]    [Quit]
-+-----------------------------------------------------
-| tree view showing    | list of titles (& times?) in
-| folders +            | current (highlighted) playlist
-| *.{m3u,pls,xspf}     | from left panel (if any)
-|                      |
-|         :            |             :
-+-----------------------------------------------------
-| [Add] [Rename] [Move Up] [Move Down] [Delete] [Prev] [Play|Pause] [Next] \
-        [____position____] [___volume___]
++--------------------------------------------------------------------+
+| [New]    +------------------------------------------+ [Add]        |
+| [Open]   | tree view showing    | list of titles in | [Edit]       |
+| [Config] | folders +            | current  playlist | [Move Up]    |
+| [Save]   | *.{m3u,pls,xspf}     | from left panel   | [Move Down]  |
+| [About]  |                      |                   | [Delete]     |
+|          |         :            |             :     | [Prev]       |
+|          |                      |                   | [Play|Pause] |
+|          |                                          | [Next]       |
+| Volume   |                                          | Position     |
+| [  0%^v] +------------------------------------------+ [****......] |
++--------------------------------------------------------------------+
 
 New: create new empty playlist
 Open: open folder
@@ -21,9 +22,10 @@ Config: default music folder; default playlists folder
 Save: save the current playlist (Save As, if 'Unnamed')
 About: show about box
 Quit: offer save unsaved changes/quit/cancel if dirty then quit
+      (no explicit button: use Esc or Ctrl+Q or close button)
 
 Add: add one or more new tracks to the current playlist
-Rename: rename the title of the current track in the current playlist
+Edit: rename the title of the current track in the current playlist
 Move Up: move the current track up one in the current playlist
 Move Down: move the current track down one in the current playlist
 Delete: delete the current track from the current playlist
@@ -45,6 +47,7 @@ import tkinter.ttk as ttk
 import Config
 import Const
 import Player
+import playlist
 import PlaylistPane
 import PlaylistsPane
 import Tooltip
@@ -60,6 +63,7 @@ class Window(ttk.Frame):
         self.make_layout()
         self.make_bindings()
         self.playlists_pane.set_focus()
+        # self.set_progress(129, 352) # TODO delete (debugging)
 
 
     def make_images(self):
@@ -110,14 +114,17 @@ class Window(ttk.Frame):
 
     def make_scales(self):
         self.volume_frame = ttk.Frame(self.master)
-        self.volume_name_label = ttk.Label(self.volume_frame, text='Volume')
-        self.volume_scale = ttk.Scale(self.volume_frame)
-        self.volume_label = ttk.Label(self.volume_frame, text='0%')
+        self.volume_label = ttk.Label(self.volume_frame, text='Volume',
+                                      underline=0)
+        self.volume_spinbox = ttk.Spinbox(
+            self.volume_frame, from_=0, to=100, wrap=False,
+            format='%3.0f%%', width=5, justify=tk.RIGHT)
+        self.volume_spinbox.set('50%')
         self.position_frame = ttk.Frame(self.master)
-        self.position_name_label = ttk.Label(self.position_frame,
-                                             text='Position')
-        self.position_scale = ttk.Scale(self.position_frame)
-        self.position_label = ttk.Label(self.position_frame, text='0s/0s')
+        self.position_label = ttk.Label(self.position_frame, text='0″/0″')
+        self.position_progress = ttk.Label(
+            self.position_frame, relief=tk.SUNKEN, width=PROGRESS_WIDTH,
+            foreground='#8080FF', background='#FFFFCD')
 
 
     def make_layout(self):
@@ -153,35 +160,33 @@ class Window(ttk.Frame):
 
 
     def make_scales_layout(self):
-        self.volume_name_label.grid(row=0, column=0, padx=PAD, sticky=tk.W)
-        self.volume_scale.grid(row=0, column=1, padx=PAD,
-                               sticky=tk.W + tk.E)
-        self.volume_label.grid(row=0, column=2, padx=PAD, sticky=tk.W)
-        self.volume_frame.grid(row=1, column=0, padx=PAD, pady=PAD,
-                               columnspan=2, sticky=tk.W + tk.E)
-        self.volume_frame.columnconfigure(1, weight=1)
-        self.position_name_label.grid(row=0, column=0, padx=PAD,
-                                      sticky=tk.W)
-        self.position_scale.grid(row=0, column=1, padx=PAD,
-                                 sticky=tk.W + tk.E)
-        self.position_label.grid(row=0, column=2, padx=PAD, sticky=tk.W)
-        self.position_frame.grid(row=1, column=2, padx=PAD, pady=PAD,
-                                 columnspan=2, sticky=tk.W + tk.E)
-        self.position_frame.columnconfigure(1, weight=1)
+        self.volume_label.grid(row=0, column=0, padx=PAD, pady=PAD,
+                               sticky=tk.S)
+        self.volume_spinbox.grid(row=1, column=0, padx=PAD, pady=PAD,
+                                 sticky=tk.S)
+        self.volume_frame.grid(row=0, column=0, padx=PAD, pady=PAD,
+                               sticky=tk.S)
+        self.position_label.grid(row=0, column=0, padx=PAD, pady=PAD,
+                                 sticky=tk.S)
+        self.position_progress.grid(row=1, column=0, padx=PAD, pady=PAD,
+                                    sticky=tk.S)
+        self.position_frame.grid(row=0, column=3, padx=PAD, pady=PAD,
+                                 sticky=tk.S)
 
 
     def make_bindings(self):
+        self.master.bind('<Escape>', self.on_close)
+        self.master.bind('<Alt-a>', self.on_add_track)
+        self.master.bind('<Control-a>', self.on_add_track)
         self.master.bind('<Alt-n>', self.on_file_new)
         self.master.bind('<Control-n>', self.on_file_new)
         self.master.bind('<Alt-o>', self.on_file_open)
         self.master.bind('<Control-o>', self.on_file_open)
+        self.master.bind('<Control-q>', self.on_close)
         # self.master.bind('<Alt-s>', self.on_save)
         # self.master.bind('<Control-s>', self.on_save)
-        self.master.bind('<Alt-q>', self.on_close)
-        self.master.bind('<Control-q>', self.on_close)
-        self.master.bind('<Escape>', self.on_close)
-        self.master.bind('<Alt-a>', self.on_add_track)
-        self.master.bind('<Control-a>', self.on_add_track)
+        self.master.bind('<Alt-v>',
+                         lambda *_: self.volume_spinbox.focus_set())
 
 
     def on_file_new(self, _event=None):
@@ -220,7 +225,16 @@ tracks and playlists.''')
         print('on_add_track')
 
 
+    def set_progress(self, secs, total_secs):
+        self.position_progress.configure(
+            text='▉' * round((secs / total_secs) * PROGRESS_WIDTH))
+        secs = playlist.humanized_length(secs)
+        total_secs = playlist.humanized_length(total_secs)
+        self.position_label.configure(text=f'{secs}/{total_secs}')
+
+
 PAD = '0.75m'
+PROGRESS_WIDTH = 10
 
 ADD_ICON = 'add.png'
 CONFIG_ICON = 'config.png'

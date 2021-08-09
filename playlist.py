@@ -40,7 +40,7 @@ class Playlist:
 
 
     @property
-    def humanized_length(self):
+    def humanized_length(self, *, min_sign='′', sec_sign='″'):
         missing = False
         secs = 0
         for track in self._tracks:
@@ -51,8 +51,9 @@ class Playlist:
         if missing:
             if not secs:
                 return 'unknown length'
-            return f'at least {humanized_length(secs)}'
-        return humanized_length(secs)
+            return 'at least ' + humanized_length(secs, min_sign=min_sign,
+                                                  sec_sign=sec_sign)
+        return humanized_length(secs, min_sign=min_sign, sec_sign=sec_sign)
 
 
     def movedown(self, index):
@@ -373,20 +374,20 @@ def normalize_name(name):
     return name.replace('_', ' ')
 
 
-def humanized_length(secs):
+def humanized_length(secs, *, min_sign='′', sec_sign='″'):
     if secs <= 0:
-        return '0s'
+        return f'0{sec_sign}'
     hours, secs = divmod(secs, 3600)
     hrs = '{}h'.format(int(hours)) if hours else ''
     minutes, secs = divmod(secs, 60)
-    mins = '{}m'.format(int(minutes)) if minutes else ''
+    mins = '{}{}'.format(int(minutes), min_sign) if minutes else ''
     if hours:
         return f'{hrs}{mins}'
     if minutes > 30:
         return f'{mins}'
     if minutes:
-        return f'{mins}{int(secs)}s'
-    return f'{secs:.3}s'
+        return f'{mins}{int(secs)}{sec_sign}'
+    return f'{secs:.3}{sec_sign}'
 
 
 M3U_EXTM3U = '#EXTM3U'
