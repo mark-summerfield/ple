@@ -15,12 +15,8 @@ def main():
     app = tk.Tk()
     app.withdraw()
     app.minsize(320, 240)
+    set_default_fonts(app)
     config = Config.config
-    size = config.base_font_size
-    tkfont.nametofont('TkDefaultFont').configure(size=size)
-    tkfont.nametofont('TkHeadingFont').configure(size=size,
-                                                 weight=tk.NORMAL)
-    tkfont.nametofont('TkTooltipFont').configure(size=size - 1)
     app.geometry(config.geometry)
     app.title(f'{Const.APPNAME} v{Const.VERSION}')
     app.option_add('*tearOff', False)
@@ -31,6 +27,17 @@ def main():
     app.protocol('WM_DELETE_WINDOW', window.on_close)
     app.deiconify()
     app.mainloop()
+
+
+def set_default_fonts(app):
+    config = Config.config
+    size = config.base_font_size
+    font = tkfont.nametofont('TkDefaultFont')
+    font.configure(size=size)
+    tkfont.nametofont('TkHeadingFont').configure(size=size,
+                                                 weight=tk.NORMAL)
+    tkfont.nametofont('TkTooltipFont').configure(size=size - 1)
+    app.option_add('*Dialog.msg.font', f'{font["family"]} {size}')
 
 
 if __name__ == '__main__':

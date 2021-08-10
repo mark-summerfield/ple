@@ -7,8 +7,8 @@
 | [New]    +------------------------------------------+ [Add]        |
 | [Open]   | tree view showing    | list of titles in | [Edit]       |
 | [Config] | folders +            | current  playlist | [Move Up]    |
-| [Save]   | *.{m3u,pls,xspf}     | from left panel   | [Move Down]  |
-| [About]  |                      |                   | [Delete]     |
+| [About]  | *.{m3u,pls,xspf}     | from left panel   | [Move Down]  |
+|          |                      |                   | [Delete]     |
 |          |         :            |             :     | [Prev]       |
 |          |                      |                   | [Play|Pause] |
 |          |                                          | [Next]       |
@@ -16,10 +16,9 @@
 | [  0%^v] +------------------------------------------+ [****......] |
 +--------------------------------------------------------------------+
 
-New: create new empty playlist
+New: create new empty playlist with a *filename*
 Open: open folder
 Config: default music folder; default playlists folder
-Save: save the current playlist (Save As, if 'Unnamed')
 About: show about box
 Quit: offer save unsaved changes/quit/cancel if dirty then quit
       (no explicit button: use Esc or Ctrl+Q or close button)
@@ -39,11 +38,12 @@ position: progress slider MmSs/MmSs
 volume: volume slider 0..100%
 '''
 
-import datetime
 import pathlib
 import tkinter as tk
+import tkinter.font as tkfont
 import tkinter.ttk as ttk
 
+import AboutForm
 import Config
 import Const
 import Player
@@ -72,7 +72,8 @@ class Window(ttk.Frame):
 
     def make_images(self):
         path = pathlib.Path(__file__).parent / 'images'
-        for name in (ADD_ICON, CONFIG_ICON, FILENEW_ICON, FILEOPEN_ICON):
+        for name in (ADD_ICON, CONFIG_ICON, FILENEW_ICON, FILEOPEN_ICON,
+                     ABOUT_ICON):
             self.images[name] = tk.PhotoImage(file=path / name)
 
 
@@ -90,30 +91,36 @@ class Window(ttk.Frame):
     def make_buttons(self):
         self.button_frame = ttk.Frame(self.master)
         self.file_new_button = ttk.Button(
-            self.button_frame, text='New…', underline=0, takefocus=False,
+            self.button_frame, text='New', underline=0, takefocus=False,
             image=self.images[FILENEW_ICON],
             command=self.on_file_new, compound=tk.TOP)
-        Tooltip.Tooltip(self.file_new_button, 'Create New Playlist… Ctrl+N')
+        Tooltip.Tooltip(self.file_new_button,
+                        'Create New Playlist • Ctrl+N')
         self.folder_open_button = ttk.Button(
-            self.button_frame, text='Open…', underline=0, takefocus=False,
+            self.button_frame, text='Open', underline=0, takefocus=False,
             image=self.images[FILEOPEN_ICON],
             command=self.on_file_open, compound=tk.TOP)
         Tooltip.Tooltip(self.folder_open_button,
-                        'Open Playlist Folder… Ctrl+O')
+                        'Open Playlist Folder • Ctrl+O')
         self.config_button = ttk.Button(
-            self.button_frame, text='Options…', takefocus=False,
+            self.button_frame, text='Options', takefocus=False,
             image=self.images[CONFIG_ICON],
             command=self.on_config, compound=tk.TOP)
-        Tooltip.Tooltip(self.config_button, f'Configure {Const.APPNAME}…')
+        Tooltip.Tooltip(self.config_button, f'Configure {Const.APPNAME}')
+        self.about_button = ttk.Button(
+            self.button_frame, text='About', takefocus=False,
+            image=self.images[ABOUT_ICON],
+            command=self.on_about, compound=tk.TOP)
+        Tooltip.Tooltip(self.about_button, f'About {Const.APPNAME}')
 
 
     def make_playlist_buttons(self):
         self.playlist_button_frame = ttk.Frame(self.master)
         self.add_button = ttk.Button(
-            self.playlist_button_frame, text='Add…', underline=0,
+            self.playlist_button_frame, text='Add', underline=0,
             takefocus=False, image=self.images[ADD_ICON],
             command=self.on_add_track, compound=tk.TOP)
-        Tooltip.Tooltip(self.add_button, 'Add Track to Playlist… Ctrl+A')
+        Tooltip.Tooltip(self.add_button, 'Add Track to Playlist • Ctrl+A')
 
 
     def make_scales(self):
@@ -129,7 +136,7 @@ class Window(ttk.Frame):
         self.position_progress = ttk.Label(
             self.position_frame, relief=tk.SUNKEN, width=PROGRESS_WIDTH,
             foreground='#8080FF', background='#FFFFCD',
-            font=tk.font.nametofont('TkFixedFont'))
+            font=tkfont.nametofont('TkFixedFont'))
 
 
     def make_layout(self):
@@ -154,6 +161,7 @@ class Window(ttk.Frame):
         self.file_new_button.grid(row=0, column=0, pady=PAD, sticky=tk.N)
         self.folder_open_button.grid(row=1, column=0, pady=PAD, sticky=tk.N)
         self.config_button.grid(row=2, column=0, pady=PAD, sticky=tk.N)
+        self.about_button.grid(row=3, column=0, pady=PAD, sticky=tk.N)
         self.button_frame.grid(row=0, column=0, padx=PAD, pady=PAD,
                                sticky=tk.N + tk.S)
 
@@ -207,17 +215,7 @@ class Window(ttk.Frame):
 
 
     def on_about(self, _event=None):
-        year = datetime.date.today().year
-        if year > 2020:
-            year = f'2020-{year - 2000}'
-        tk.messagebox.showinfo(f'{Const.APPNAME} — About', f'''\
-{Const.APPNAME} v{Const.VERSION}
-
-Copyright © {year} Mark Summerfield. All rights reserved.
-License: GPLv3
-
-An application for creating and modifying playlists and for playing \
-tracks and playlists.''')
+        AboutForm.Form(self)
 
 
     def on_close(self, _event=None):
@@ -241,6 +239,7 @@ tracks and playlists.''')
 PAD = '0.75m'
 PROGRESS_WIDTH = 10
 
+ABOUT_ICON = 'help-about.png'
 ADD_ICON = 'add.png'
 CONFIG_ICON = 'config.png'
 FILENEW_ICON = 'filenew.png'

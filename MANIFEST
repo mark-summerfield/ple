@@ -1,4 +1,5 @@
 icons: /usr/share/icons/elementary-xfce/actions/32/
+custom dialogs: /usr/lib/python3.8/tkinter/simpledialog.py
 
 # TODO 
 # try pymad & retry tksnack & try playbin (see below) & retry
@@ -13,6 +14,7 @@ ple.pyw
 Window.py
 PlaylistsPane.py
 PlaylistPane.py
+AboutForm.py
 Player.py
 Const.py
 Config.py
