@@ -16,22 +16,15 @@ XSPF = '.XSPF'
 
 class Playlist:
 
-    def __init__(self, filename=None):
+    def __init__(self, filename):
         self.filename = str(filename)
-        self._dirty = False
         self._tracks = []
-        if filename is not None:
+        if filename is not None and os.path.exists(filename):
             self.load()
-
-
-    @property
-    def dirty(self):
-        return self._dirty
 
 
     def clear(self):
         self._tracks.clear()
-        self._dirty = True
 
 
     @property
@@ -73,7 +66,7 @@ class Playlist:
         y = self._tracks[b]
         self._tracks[a] = y
         self._tracks[b] = x
-        self._dirty = True
+        self.save()
         return True
 
 
@@ -109,7 +102,6 @@ class Playlist:
             for track in self._tracks:
                 file.write(f'{M3U_EXTINF}{track.secs},{track.title}\n'
                            f'{track.filename}\n\n')
-        self._dirty = False
 
 
     def _load_m3u(self):
@@ -166,7 +158,6 @@ class Playlist:
                         raise Error(f'{lino}:missing filename: {line!r}')
                     title, secs = None, None
                     state = Want.INFO
-        self._dirty = False
 
 
     def _save_pls(self):
@@ -235,7 +226,6 @@ class Playlist:
             secs = lengths.get(n, -1)
             if filename and title:
                 self._tracks.append(Track(title, filename, secs))
-        self._dirty = False
 
 
     def _load_xspf(self):
@@ -253,7 +243,6 @@ class Playlist:
             secs = int(secs.text) // 1000 if secs is not None else -1
             if filename and title:
                 self._tracks.append(Track(title, filename, secs))
-        self._dirty = False
 
 
     def _save_xspf(self):
@@ -286,7 +275,7 @@ class Playlist:
 
     def __iadd__(self, track):
         self._tracks.append(track)
-        self._dirty = True
+        self.save()
         return self
 
 
@@ -297,12 +286,13 @@ class Playlist:
     def __setitem__(self, index, track):
         if self._tracks[index] != track:
             self._tracks[index] = track
-            self._dirty = True
+            self.save()
 
 
     def __delitem__(self, index):
-        self._dirty = True
-        return self._tracks.pop(index)
+        track = self._tracks.pop(index)
+        self.save()
+        return track
 
 
     def __iter__(self):
@@ -348,8 +338,8 @@ def build(folder, format=M3U):
     The filename is set to <folder>.m3u or to <folder>.<format> if
     format is not None.
     '''
-    tracks = Playlist()
-    tracks.filename = os.path.basename(str(folder)) + format.lower()
+    playlist_filename = os.path.basename(str(folder)) + format.lower()
+    tracks = Playlist(playlist_filename)
     for filename in filter(folder):
         tracks += Track(normalize_name(filename), filename, -1)
     tracks._tracks.sort(key=lambda track: track.filename.upper())
