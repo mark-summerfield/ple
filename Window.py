@@ -63,7 +63,11 @@ class Window(ttk.Frame):
         self.make_layout()
         self.make_bindings()
         self.playlists_pane.set_focus()
-        # self.set_progress(129, 352) # TODO delete (debugging)
+        if 1: # TODO delete (debugging)
+            import random
+            t = random.randint(60, 800)
+            a = random.randint(0, t)
+            self.set_progress(a, t)
 
 
     def make_images(self):
@@ -124,7 +128,8 @@ class Window(ttk.Frame):
         self.position_label = ttk.Label(self.position_frame, text='0″/0″')
         self.position_progress = ttk.Label(
             self.position_frame, relief=tk.SUNKEN, width=PROGRESS_WIDTH,
-            foreground='#8080FF', background='#FFFFCD')
+            foreground='#8080FF', background='#FFFFCD',
+            font=tk.font.nametofont('TkFixedFont'))
 
 
     def make_layout(self):
@@ -216,8 +221,7 @@ tracks and playlists.''')
 
 
     def on_close(self, _event=None):
-        # TODO prompt to save unsaved changes
-        print('on_close(): prompt to save unsaved changes')
+        Config.config.geometry = self.winfo_toplevel().geometry()
         self.quit()
 
 
@@ -226,8 +230,9 @@ tracks and playlists.''')
 
 
     def set_progress(self, secs, total_secs):
-        self.position_progress.configure(
-            text='▉' * round((secs / total_secs) * PROGRESS_WIDTH))
+        size = round((secs / total_secs) * PROGRESS_WIDTH)
+        text = ('▉' * size) + ('▕' * (PROGRESS_WIDTH - size))
+        self.position_progress.configure(text=text)
         secs = playlist.humanized_length(secs)
         total_secs = playlist.humanized_length(total_secs)
         self.position_label.configure(text=f'{secs}/{total_secs}')

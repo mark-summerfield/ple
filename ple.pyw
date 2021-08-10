@@ -31,7 +31,6 @@ def main():
     app.protocol('WM_DELETE_WINDOW', window.on_close)
     app.deiconify()
     app.mainloop()
-    config.geometry = app.geometry()
 
 
 if __name__ == '__main__':

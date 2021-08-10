@@ -387,7 +387,7 @@ def humanized_length(secs, *, min_sign='′', sec_sign='″'):
         return f'{mins}'
     if minutes:
         return f'{mins}{int(secs)}{sec_sign}'
-    return f'{secs:.3}{sec_sign}'
+    return f'{max(1, secs)}{sec_sign}'
 
 
 M3U_EXTM3U = '#EXTM3U'
