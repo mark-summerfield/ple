@@ -269,6 +269,11 @@ class Playlist:
         tree.write(self.filename, encoding='utf-8', xml_declaration=True)
 
 
+    def insert(self, index, track):
+        self._tracks.insert(index, track)
+        self.save()
+
+
     def __len__(self):
         return len(self._tracks)
 

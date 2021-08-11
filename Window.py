@@ -9,6 +9,7 @@
 | [Config] | folders +            | current  playlist | [Move Up]    |
 | [About]  | *.{m3u,pls,xspf}     | from left panel   | [Move Down]  |
 |          |                      |                   | [Delete]     |
+|          |                      |                   | [Undelete]   |
 |          |         :            |             :     | [Prev]       |
 |          |                      |                   | [Play|Pause] |
 |          |                                          | [Next]       |
@@ -58,6 +59,9 @@ class Window(ttk.Frame):
     def __init__(self, master):
         super().__init__(master, padding=PAD)
         self.images = {}
+        self.tracks = None # playlist.Playlist
+        self.deleted_track = None # for Undelete
+        self.deleted_index = -1 # for Undelete
         self.make_images()
         self.make_widgets()
         self.make_layout()
