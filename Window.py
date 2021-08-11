@@ -4,6 +4,9 @@
 
 # TODO in order:
 '''
+Show Playlist: when the user navigates to a playlist show it in the Playlist
+view and set self.playlist to Playlist(filename) then call self.update_ui()
+
 New: create new empty playlist with a *filename*
 Add: add one or more new tracks to the current playlist
 Edit: rename the title of the current track in the current playlist
