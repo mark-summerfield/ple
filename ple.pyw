@@ -14,7 +14,7 @@ import Window
 def main():
     app = tk.Tk()
     app.withdraw()
-    app.minsize(320, 240)
+    app.minsize(640, 480)
     set_default_fonts(app)
     config = Config.config
     app.geometry(config.geometry)

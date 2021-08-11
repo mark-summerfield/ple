@@ -1,4 +1,4 @@
-icons: /usr/share/icons/elementary-xfce/actions/32/
+icons: /usr/share/icons/elementary-xfce/actions/24/
 custom dialogs: /usr/lib/python3.8/tkinter/simpledialog.py
 
 # TODO 
