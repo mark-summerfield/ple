@@ -65,7 +65,7 @@ class Window(ttk.Frame):
         for name in (ABOUT_ICON, ADD_ICON, CONFIG_ICON, EDIT_ICON,
                      FILENEW_ICON, FILEOPEN_ICON, MOVE_DOWN_ICON,
                      MOVE_UP_ICON, NEXT_ICON, PAUSE_ICON, PLAY_ICON,
-                     PREVIOUS_ICON, REMOVE_ICON, UNREMOVE_ICON):
+                     PREVIOUS_ICON, QUIT_ICON, REMOVE_ICON, UNREMOVE_ICON):
             self.images[name] = tk.PhotoImage(file=path / name)
 
 
@@ -84,26 +84,34 @@ class Window(ttk.Frame):
         self.button_frame = ttk.Frame(self.master)
         self.file_new_button = ttk.Button(
             self.button_frame, text='New', underline=0, takefocus=False,
-            image=self.images[FILENEW_ICON],
-            command=self.on_new_playlist, compound=tk.LEFT)
+            image=self.images[FILENEW_ICON], command=self.on_new_playlist,
+            compound=tk.LEFT)
         Tooltip.Tooltip(self.file_new_button,
                         'Create New Playlist • Ctrl+N')
         self.folder_open_button = ttk.Button(
             self.button_frame, text='Open', underline=0, takefocus=False,
-            image=self.images[FILEOPEN_ICON],
-            command=self.on_folder_open, compound=tk.LEFT)
+            image=self.images[FILEOPEN_ICON], command=self.on_folder_open,
+            compound=tk.LEFT)
         Tooltip.Tooltip(self.folder_open_button,
                         'Open Playlist Folder • Ctrl+O')
         self.config_button = ttk.Button(
             self.button_frame, text='Config', underline=0, takefocus=False,
-            image=self.images[CONFIG_ICON],
-            command=self.on_config, compound=tk.LEFT)
-        Tooltip.Tooltip(self.config_button, f'Configure {Const.APPNAME}')
+            image=self.images[CONFIG_ICON], command=self.on_config,
+            compound=tk.LEFT)
+        Tooltip.Tooltip(self.config_button,
+                        f'Configure {Const.APPNAME} • Ctrl+C')
         self.about_button = ttk.Button(
             self.button_frame, text='About', takefocus=False, underline=1,
-            image=self.images[ABOUT_ICON],
-            command=self.on_about, compound=tk.LEFT)
-        Tooltip.Tooltip(self.about_button, f'About {Const.APPNAME}')
+            image=self.images[ABOUT_ICON], command=self.on_about,
+            compound=tk.LEFT)
+        Tooltip.Tooltip(self.about_button,
+                        f'About {Const.APPNAME} • Ctrl+B')
+        self.quit_button = ttk.Button(
+            self.button_frame, text='Quit', takefocus=False, underline=0,
+            image=self.images[QUIT_ICON], command=self.on_close,
+            compound=tk.LEFT)
+        Tooltip.Tooltip(self.quit_button,
+                        f'Quit {Const.APPNAME} • Esc or Ctrl+Q')
 
 
     def make_playlist_buttons(self):
@@ -177,10 +185,12 @@ class Window(ttk.Frame):
 
     def make_layout(self):
         self.make_button_layout()
-        self.playlists_pane.grid(row=0, column=1, padx=PAD, pady=PAD,
-                                 sticky=tk.W + tk.E + tk.N + tk.S)
-        self.a_playlist_pane.grid(row=0, column=2, padx=PAD, pady=PAD,
-                                  sticky=tk.W + tk.E + tk.N + tk.S)
+        self.playlists_pane.grid(
+            row=0, column=1, rowspan=2, padx=PAD, pady=PAD,
+            sticky=tk.W + tk.E + tk.N + tk.S)
+        self.a_playlist_pane.grid(
+            row=0, column=2, rowspan=2, padx=PAD, pady=PAD,
+            sticky=tk.W + tk.E + tk.N + tk.S)
         self.make_playlist_button_layout()
         if Player.player.valid:
             self.make_scales_layout()
@@ -199,6 +209,8 @@ class Window(ttk.Frame):
         self.folder_open_button.grid(row=1, **common)
         self.config_button.grid(row=2, **common)
         self.about_button.grid(row=3, **common)
+        self.quit_button.grid(row=5, **common)
+        self.button_frame.rowconfigure(4, weight=1)
         self.button_frame.grid(row=0, column=0, padx=PAD, pady=PAD,
                                sticky=tk.N + tk.S)
 
@@ -214,7 +226,7 @@ class Window(ttk.Frame):
         self.previous_button.grid(row=7, **common)
         self.play_pause_button.grid(row=8, **common)
         self.next_button.grid(row=9, **common)
-        #self.playlist_button_frame.rowconfigure(6, weight=1)
+        self.playlist_button_frame.rowconfigure(6, weight=1)
         self.playlist_button_frame.grid(row=0, column=3, padx=PAD, pady=PAD,
                                         sticky=tk.N + tk.S)
 
@@ -224,13 +236,13 @@ class Window(ttk.Frame):
                                sticky=tk.S)
         self.volume_spinbox.grid(row=1, column=0, padx=PAD, pady=PAD,
                                  sticky=tk.S)
-        self.volume_frame.grid(row=0, column=0, padx=PAD, pady=PAD,
+        self.volume_frame.grid(row=1, column=0, padx=PAD, pady=PAD,
                                sticky=tk.S)
         self.position_label.grid(row=0, column=0, padx=PAD, pady=PAD,
                                  sticky=tk.S)
         self.position_progress.grid(row=1, column=0, padx=PAD, pady=PAD,
                                     sticky=tk.S)
-        self.position_frame.grid(row=0, column=3, padx=PAD, pady=PAD,
+        self.position_frame.grid(row=1, column=3, padx=PAD, pady=PAD,
                                  sticky=tk.S)
 
 
@@ -254,6 +266,7 @@ class Window(ttk.Frame):
         self.master.bind('<Control-o>', self.on_folder_open)
         self.master.bind('<Alt-p>', self.on_play_or_pause_track)
         self.master.bind('<Control-p>', self.on_play_or_pause_track)
+        self.master.bind('<Alt-q>', self.on_close)
         self.master.bind('<Control-q>', self.on_close)
         self.master.bind('<Alt-r>', self.on_remove_track)
         self.master.bind('<Control-r>', self.on_remove_track)
@@ -348,5 +361,6 @@ NEXT_ICON = 'media-seek-forward.png'
 PAUSE_ICON = 'media-playback-pause.png'
 PLAY_ICON = 'media-playback-start.png'
 PREVIOUS_ICON = 'media-seek-backward.png'
+QUIT_ICON = 'exit.png'
 REMOVE_ICON = 'list-remove.png'
 UNREMOVE_ICON = 'edit-undo.png'
