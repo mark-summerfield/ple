@@ -2,27 +2,26 @@
 # Copyright © 2021 Mark Summerfield. All rights reserved.
 # License: GPLv3
 
+# TODO in order:
 '''
 New: create new empty playlist with a *filename*
-Open: open folder
-Config: default music folder; default playlists folder
-About: show about box
-Quit: offer save unsaved changes/quit/cancel if dirty then quit
-      (no explicit button: use Esc or Ctrl+Q or close button)
-
 Add: add one or more new tracks to the current playlist
 Edit: rename the title of the current track in the current playlist
 Move Up: move the current track up one in the current playlist
 Move Down: move the current track down one in the current playlist
-Delete: delete the current track from the current playlist
+Remove: delete the current track from the current playlist
+Unremove: undelete the most recently deleted track from the current playlist
 Prev: only show if default player is PLE
 Play|Pause: if default player is external then only show [>] Play and
             when clicked send the current track to the player; if the track
             plays to the end automatically makes the next track current and
             starts playing it and so on until the end of the playlist
 Next: only show if default player is PLE
-position: progress slider MmSs/MmSs
 volume: volume slider 0..100%
+position: progress slider MmSs/MmSs
+
+Open: open folder
+Config: default music folder; default playlists folder
 '''
 
 import pathlib
@@ -53,11 +52,7 @@ class Window(ttk.Frame):
         self.make_layout()
         self.make_bindings()
         self.playlists_pane.set_focus()
-        if 1: # TODO delete (debugging)
-            import random
-            t = random.randint(60, 800)
-            a = random.randint(0, t)
-            self.set_progress(a, t)
+        self.update_ui()
 
 
     def make_images(self):
@@ -70,17 +65,18 @@ class Window(ttk.Frame):
 
 
     def make_widgets(self):
-        self.make_buttons()
+        self.make_main_buttons()
         self.playlists_pane = PlaylistsPane.PlaylistsPane(
             self.master, padding=PAD, path=Config.config.playlists_path)
         self.a_playlist_pane = PlaylistPane.PlaylistPane(self.master,
                                                          padding=PAD)
         self.make_playlist_buttons()
         if Player.player.valid:
+            self.make_player_buttons()
             self.make_scales()
 
 
-    def make_buttons(self):
+    def make_main_buttons(self):
         self.button_frame = ttk.Frame(self.master)
         self.file_new_button = ttk.Button(
             self.button_frame, text='New', underline=0, takefocus=False,
@@ -147,6 +143,9 @@ class Window(ttk.Frame):
             command=self.on_unremove_track, compound=tk.LEFT)
         Tooltip.Tooltip(self.unremove_button,
                         'Unremove Last Removed Track • Ctrl+M')
+
+
+    def make_player_buttons(self):
         self.previous_button = ttk.Button(
             self.playlist_button_frame, text='Previous', underline=7,
             takefocus=False, image=self.images[PREVIOUS_ICON],
@@ -184,7 +183,7 @@ class Window(ttk.Frame):
 
 
     def make_layout(self):
-        self.make_button_layout()
+        self.make_main_button_layout()
         self.playlists_pane.grid(
             row=0, column=1, rowspan=2, padx=PAD, pady=PAD,
             sticky=tk.W + tk.E + tk.N + tk.S)
@@ -193,7 +192,10 @@ class Window(ttk.Frame):
             sticky=tk.W + tk.E + tk.N + tk.S)
         self.make_playlist_button_layout()
         if Player.player.valid:
+            self.make_player_layout()
             self.make_scales_layout()
+        self.playlist_button_frame.grid(row=0, column=3, padx=PAD, pady=PAD,
+                                        sticky=tk.N + tk.S)
         top = self.winfo_toplevel()
         top.columnconfigure(1, weight=1)
         top.columnconfigure(2, weight=1)
@@ -203,7 +205,7 @@ class Window(ttk.Frame):
         self.rowconfigure(0, weight=1)
 
 
-    def make_button_layout(self):
+    def make_main_button_layout(self):
         common = dict(column=0, sticky=tk.W + tk.E, pady=PAD, padx=PAD)
         self.file_new_button.grid(row=0, **common)
         self.folder_open_button.grid(row=1, **common)
@@ -223,12 +225,14 @@ class Window(ttk.Frame):
         self.move_down_button.grid(row=3, **common)
         self.remove_button.grid(row=4, **common)
         self.unremove_button.grid(row=5, **common)
+
+
+    def make_player_layout(self):
+        common = dict(sticky=tk.W + tk.E, pady=PAD, padx=PAD)
         self.previous_button.grid(row=7, **common)
         self.play_pause_button.grid(row=8, **common)
         self.next_button.grid(row=9, **common)
         self.playlist_button_frame.rowconfigure(6, weight=1)
-        self.playlist_button_frame.grid(row=0, column=3, padx=PAD, pady=PAD,
-                                        sticky=tk.N + tk.S)
 
 
     def make_scales_layout(self):
@@ -264,29 +268,52 @@ class Window(ttk.Frame):
         self.master.bind('<Control-n>', self.on_new_playlist)
         self.master.bind('<Alt-o>', self.on_folder_open)
         self.master.bind('<Control-o>', self.on_folder_open)
-        self.master.bind('<Alt-p>', self.on_play_or_pause_track)
-        self.master.bind('<Control-p>', self.on_play_or_pause_track)
         self.master.bind('<Alt-q>', self.on_close)
         self.master.bind('<Control-q>', self.on_close)
         self.master.bind('<Alt-r>', self.on_remove_track)
         self.master.bind('<Control-r>', self.on_remove_track)
+        self.master.bind('<Alt-u>', self.on_move_track_up)
+        self.master.bind('<Control-u>', self.on_move_track_up)
+        if Player.player.valid:
+            self.make_player_bindings()
+
+
+    def make_player_bindings(self):
+        self.master.bind('<Alt-p>', self.on_play_or_pause_track)
+        self.master.bind('<Control-p>', self.on_play_or_pause_track)
         self.master.bind('<Alt-s>', self.on_previous_track)
         self.master.bind('<Control-s>', self.on_previous_track)
         self.master.bind('<Alt-t>', self.on_next_track)
         self.master.bind('<Control-t>', self.on_next_track)
-        self.master.bind('<Alt-u>', self.on_move_track_up)
-        self.master.bind('<Control-u>', self.on_move_track_up)
         self.master.bind('<Alt-v>',
                          lambda *_: self.volume_spinbox.focus_set())
 
 
+    def update_ui(self, _event=None):
+        widgets = [self.add_button, self.edit_button, self.move_up_button,
+                   self.move_down_button, self.remove_button,
+                   self.unremove_button]
+        if Player.player.valid:
+            widgets += [self.previous_button, self.play_pause_button,
+                        self.next_button, self.volume_label,
+                        self.volume_spinbox, self.position_label,
+                        self.position_progress]
+        state = tk.DISABLED
+        if self.tracks is not None:
+            state = '!' + state
+        for widget in widgets:
+            widget.state([state])
+        # NOTE set_progress() ?
+
+
     def set_progress(self, secs, total_secs):
-        size = round((secs / total_secs) * PROGRESS_WIDTH)
-        text = ('▉' * size) + ('▕' * (PROGRESS_WIDTH - size))
-        self.position_progress.configure(text=text)
-        secs = playlist.humanized_length(secs)
-        total_secs = playlist.humanized_length(total_secs)
-        self.position_label.configure(text=f'{secs}/{total_secs}')
+        if Player.player.valid:
+            size = round((secs / total_secs) * PROGRESS_WIDTH)
+            text = ('▉' * size) + ('▕' * (PROGRESS_WIDTH - size))
+            self.position_progress.configure(text=text)
+            secs = playlist.humanized_length(secs)
+            total_secs = playlist.humanized_length(total_secs)
+            self.position_label.configure(text=f'{secs}/{total_secs}')
 
 
     def on_new_playlist(self, _event=None):
@@ -311,43 +338,61 @@ class Window(ttk.Frame):
 
 
     def on_add_track(self, _event=None):
+        if self.tracks is None:
+            return
         print('on_add_track')
 
 
     def on_edit_track(self, _event=None):
+        if self.tracks is None:
+            return
         print('on_edit_track')
 
 
     def on_move_track_up(self, _event=None):
+        if self.tracks is None:
+            return
         print('on_move_track_up')
 
 
     def on_move_track_down(self, _event=None):
+        if self.tracks is None:
+            return
         print('on_move_track_down')
 
 
     def on_remove_track(self, _event=None):
+        if self.tracks is None:
+            return
         print('on_remove_track')
 
 
     def on_unremove_track(self, _event=None):
+        if self.tracks is None:
+            return
         print('on_unremove_track')
 
 
     def on_previous_track(self, _event=None):
+        if self.tracks is None:
+            return
         print('on_previous_track')
 
 
     def on_play_or_pause_track(self, _event=None):
+        if self.tracks is None:
+            return
         print('on_play_or_pause_track')
 
 
     def on_next_track(self, _event=None):
+        if self.tracks is None:
+            return
         print('on_next_track')
 
 
 PAD = '0.75m'
-PROGRESS_WIDTH = 10
+PROGRESS_WIDTH = 12
 
 ABOUT_ICON = 'help-about.png'
 ADD_ICON = 'list-add.png'

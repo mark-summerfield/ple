@@ -12,6 +12,7 @@ import tkinter.simpledialog as tkdialog
 import tkinter.ttk as ttk
 
 import Const
+import Player
 
 
 class Form(tkdialog.Dialog):
@@ -34,13 +35,15 @@ class Form(tkdialog.Dialog):
         captionLabel = ttk.Label(
             master, foreground='navy', anchor=tk.CENTER, justify=tk.CENTER,
             text=f'{Const.APPNAME} v{Const.VERSION}', font=font)
+        desc = 'An application for creating and editing playlists'
+        desc += ('\nand for playing tracks and entire playlists.'
+                 if Player.player.valid else '.')
         bodyLabel = ttk.Label(master, anchor=tk.CENTER, justify=tk.CENTER,
                               text=f'''
 Copyright © {year} Mark Summerfield. All Rights Reserved.
 License: GPLv3
 
-An application for creating and modifying playlists
-and for playing tracks and playlists.
+{desc}
 ________________________________________
 
 Python \
