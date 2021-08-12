@@ -4,7 +4,7 @@ custom dialogs: /usr/lib/python3.8/tkinter/simpledialog.py
 ple.pyw
 Window.py
 UiMixin.py
-DataMixin.py
+ActionMixin.py
 PlaylistsPane.py
 PlaylistPane.py
 AboutForm.py
@@ -13,6 +13,9 @@ Const.py
 Config.py
 Tooltip.py
 playlist.py
+
+# TODO
+# - try icon-only buttons
 
 # TODO 
 # try pymad & retry tksnack & try playbin (see below) & retry
@@ -27,3 +30,5 @@ audioplayerGUI.py
 playbin-example-audio.py
 
 st.sh
+
+# vim: syn=yaml

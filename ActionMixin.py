@@ -2,10 +2,36 @@
 # Copyright © 2021 Mark Summerfield. All rights reserved.
 # License: GPLv3
 
+import os
+
 import AboutForm
+import playlist
 
 
-class DataMixin:
+class ActionMixin:
+
+    def on_playlists_select(self, _event=None):
+        self.a_playlist_pane.clear()
+        name = self.playlists_pane.treeview.focus()
+        if name:
+            if os.path.isdir(name):
+                self.tracks = None
+                count = len([p for p in os.listdir(name)
+                             if playlist.is_playlist(p)])
+                if count == 0:
+                    message = name
+                elif count == 1:
+                    message = f'One playlist in {name}'
+                else:
+                    message = f'{count:,} playlists in {name}'
+                self.set_status_message(message)
+            elif playlist.is_playlist(name):
+                self.tracks = playlist.Playlist(name)
+                self.set_status_message(
+                    f'{len(self.tracks):,} tracks in {name}')
+                self.a_playlist_pane.set_tracks(self.tracks)
+            self.update_ui()
+
 
     def on_new_playlist(self, _event=None):
         print('on_new_playlist')

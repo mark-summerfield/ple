@@ -30,15 +30,15 @@ Config: default music folder; default playlists folder
 import tkinter as tk
 import tkinter.ttk as ttk
 
+import ActionMixin
 import Config
 import Const
-import DataMixin
 import Player
 import playlist
 import UiMixin
 
 
-class Window(ttk.Frame, UiMixin.UiMixin, DataMixin.DataMixin):
+class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
 
     def __init__(self, master):
         super().__init__(master, padding=UiMixin.PAD)

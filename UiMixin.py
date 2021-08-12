@@ -29,9 +29,10 @@ class UiMixin:
 
     def make_widgets(self):
         self.make_main_buttons()
+        self.splitter = ttk.PanedWindow(self.master, orient=tk.HORIZONTAL)
         self.playlists_pane = PlaylistsPane.PlaylistsPane(
-            self.master, padding=PAD, path=Config.config.playlists_path)
-        self.a_playlist_pane = PlaylistPane.PlaylistPane(self.master,
+            self.splitter, padding=PAD, path=Config.config.playlists_path)
+        self.a_playlist_pane = PlaylistPane.PlaylistPane(self.splitter,
                                                          padding=PAD)
         self.make_playlist_buttons()
         if Player.player.valid:
@@ -149,12 +150,13 @@ class UiMixin:
 
     def make_layout(self):
         self.make_main_button_layout()
-        self.playlists_pane.grid(
-            row=0, column=1, rowspan=2, padx=PAD, pady=PAD,
-            sticky=tk.W + tk.E + tk.N + tk.S)
-        self.a_playlist_pane.grid(
-            row=0, column=2, rowspan=2, padx=PAD, pady=PAD,
-            sticky=tk.W + tk.E + tk.N + tk.S)
+        common = dict(padx=PAD, pady=PAD, sticky=tk.W + tk.E + tk.N + tk.S)
+        self.playlists_pane.grid(row=0, column=0, **common)
+        self.a_playlist_pane.grid(row=0, column=1, **common)
+        self.splitter.add(self.playlists_pane, weight=3)
+        self.splitter.add(self.a_playlist_pane, weight=5)
+        self.splitter.grid(row=0, column=1, columnspan=2, rowspan=2,
+                           sticky=tk.W + tk.E + tk.N + tk.S)
         self.make_playlist_button_layout()
         if Player.player.valid:
             self.make_player_layout()
@@ -165,7 +167,6 @@ class UiMixin:
                                pady=PAD, sticky=tk.W + tk.E)
         top = self.winfo_toplevel()
         top.columnconfigure(1, weight=1)
-        top.columnconfigure(2, weight=1)
         top.rowconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
@@ -218,6 +219,8 @@ class UiMixin:
 
 
     def make_bindings(self):
+        self.playlists_pane.treeview.bind('<<TreeviewSelect>>',
+                                          self.on_playlists_select)
         self.master.bind('<Escape>', self.on_close)
         self.master.bind('<Alt-a>', self.on_add_track)
         self.master.bind('<Control-a>', self.on_add_track)
@@ -262,7 +265,7 @@ PROGRESS_WIDTH = 12
 ABOUT_ICON = 'help-about.png'
 ADD_ICON = 'list-add.png'
 CONFIG_ICON = 'document-properties.png'
-EDIT_ICON = 'edit-select-all.png'
+EDIT_ICON = 'stock_edit.png'
 FILENEW_ICON = 'filenew.png'
 FILEOPEN_ICON = 'fileopen.png'
 MOVE_DOWN_ICON = 'go-next.png'
