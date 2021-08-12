@@ -3,6 +3,8 @@ custom dialogs: /usr/lib/python3.8/tkinter/simpledialog.py
 
 ple.pyw
 Window.py
+UiMixin.py
+DataMixin.py
 PlaylistsPane.py
 PlaylistPane.py
 AboutForm.py
