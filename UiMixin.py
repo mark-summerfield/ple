@@ -152,8 +152,8 @@ class UiMixin:
         common = dict(padx=PAD, pady=PAD, sticky=tk.W + tk.E + tk.N + tk.S)
         self.playlists_pane.grid(row=0, column=0, **common)
         self.a_playlist_pane.grid(row=0, column=1, **common)
-        self.splitter.add(self.playlists_pane, weight=2)
-        self.splitter.add(self.a_playlist_pane, weight=5)
+        self.splitter.add(self.playlists_pane, weight=1)
+        self.splitter.add(self.a_playlist_pane, weight=3)
         self.splitter.grid(row=0, column=1, columnspan=2, rowspan=2,
                            sticky=tk.W + tk.E + tk.N + tk.S)
         self.make_playlist_button_layout()
@@ -244,11 +244,8 @@ class UiMixin:
 
 
     def make_player_bindings(self):
-        self.master.bind('<Alt-p>', self.on_play_or_pause_track)
         self.master.bind('<Control-p>', self.on_play_or_pause_track)
-        self.master.bind('<Alt-s>', self.on_previous_track)
         self.master.bind('<Control-s>', self.on_previous_track)
-        self.master.bind('<Alt-t>', self.on_next_track)
         self.master.bind('<Control-t>', self.on_next_track)
         self.master.bind('<Alt-v>',
                          lambda *_: self.volume_spinbox.focus_set())

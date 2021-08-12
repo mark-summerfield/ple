@@ -5,6 +5,7 @@
 import os
 
 import AboutForm
+import Const
 import playlist
 
 
@@ -29,11 +30,17 @@ class ActionMixin:
                     message = f'{count:,} playlists in {name}'
                 self.set_status_message(message)
             elif playlist.is_playlist(name):
-                self.tracks = playlist.Playlist(name)
-                self.set_status_message(
-                    f'{len(self.tracks):,} tracks in {name}')
-                self.a_playlist_pane.set_tracks(self.tracks)
-            self.update_ui()
+                try:
+                    self.tracks = playlist.Playlist(name)
+                    self.set_status_message(
+                        f'{len(self.tracks):,} tracks in {name}')
+                    self.a_playlist_pane.set_tracks(self.tracks)
+                except (OSError, playlist.Error) as err:
+                    self.tracks = None
+                    self.set_status_message(
+                        f'Failed to load playlist: {err}',
+                        fg=Const.ERROR_FG)
+        self.update_ui()
 
 
     def on_new_playlist(self, _event=None):

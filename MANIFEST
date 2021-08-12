@@ -14,6 +14,26 @@ Config.py
 Tooltip.py
 playlist.py
 
+# TODO in order:
+Edit: rename the title of the current track in the current playlist
+Move Up: move the current track up one in the current playlist
+Move Down: move the current track down one in the current playlist
+Add: add one or more new tracks to the current playlist
+Remove: delete the current track from the current playlist
+Unremove: undelete the most recently deleted track from the current playlist
+New: create new empty playlist with a *filename*
+Prev: only show if default player is PLE
+Play|Pause: if default player is external then only show [>] Play and
+            when clicked send the current track to the player; if the track
+            plays to the end automatically makes the next track current and
+            starts playing it and so on until the end of the playlist
+Next: only show if default player is PLE
+volume: volume slider 0..100%
+position: progress slider MmSs/MmSs
+
+Open: open folder
+Config: default music folder; default playlists folder
+
 # TODO 
 # try pymad & retry tksnack & try playbin (see below) & retry
 # pygame.mixerhttps://github.com/srinidhi14vaddy/MP3-Player-using-Tkinter-and-Mutagen-in-Python 
