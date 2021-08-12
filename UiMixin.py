@@ -153,7 +153,7 @@ class UiMixin:
         common = dict(padx=PAD, pady=PAD, sticky=tk.W + tk.E + tk.N + tk.S)
         self.playlists_pane.grid(row=0, column=0, **common)
         self.a_playlist_pane.grid(row=0, column=1, **common)
-        self.splitter.add(self.playlists_pane, weight=3)
+        self.splitter.add(self.playlists_pane, weight=2)
         self.splitter.add(self.a_playlist_pane, weight=5)
         self.splitter.grid(row=0, column=1, columnspan=2, rowspan=2,
                            sticky=tk.W + tk.E + tk.N + tk.S)
