@@ -33,7 +33,8 @@ class ActionMixin:
                 try:
                     self.tracks = playlist.Playlist(name)
                     self.set_status_message(
-                        f'{len(self.tracks):,} tracks in {name}')
+                        f'{len(self.tracks):,} tracks in {name}',
+                        millisec=None)
                     self.a_playlist_pane.set_tracks(self.tracks)
                 except (OSError, playlist.Error) as err:
                     self.tracks = None
