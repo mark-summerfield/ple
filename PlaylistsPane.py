@@ -8,6 +8,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 import playlist
+import Treeview
 
 
 class PlaylistsPane(ttk.Frame):
@@ -16,24 +17,16 @@ class PlaylistsPane(ttk.Frame):
         super().__init__(master, padding=padding)
         self.images = {}
         self._make_images()
-        self.treeview = ttk.Treeview(self, selectmode=tk.BROWSE)
-        yscroller = ttk.Scrollbar(self, orient=tk.VERTICAL,
-                                  command=self.treeview.yview)
-        xscroller = ttk.Scrollbar(self, orient=tk.HORIZONTAL,
-                                  command=self.treeview.xview)
-        self.treeview.configure(yscroll=yscroller.set,
-                                xscroll=xscroller.set)
+        self.treeview = Treeview.Treeview(self, selectmode=tk.BROWSE)
+        self.treeview.heading('#0', text='Playlists', anchor=tk.CENTER)
         self.treeview.grid(row=0, column=0,
                            sticky=tk.W + tk.E + tk.N + tk.S)
-        yscroller.grid(row=0, column=1, sticky=tk.N + tk.S)
-        xscroller.grid(row=1, column=0, sticky=tk.W + tk.E)
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
-        self.treeview.heading('#0', text='Playlists', anchor=tk.W)
         self.set_path(path)
 
 
-    def set_focus(self):
+    def focus_first_child(self):
         self.treeview.focus_set()
         tops = self.treeview.get_children()
         if tops:
@@ -52,7 +45,7 @@ class PlaylistsPane(ttk.Frame):
 
 
     def set_path(self, path):
-        self.treeview.delete(*self.treeview.get_children())
+        self.treeview.clear()
         self.treeview.insert('', tk.END, path, text=path, open=True,
                              image=self.images[FOLDER_HOME_ICON])
         self._populate_tree(path)
@@ -95,7 +88,7 @@ if __name__ == '__main__':
     pane = PlaylistsPane(app, padding='0.75m',
                          path='/home/mark/data/playlists')
     pane.grid(sticky=tk.W + tk.E + tk.S + tk.N)
-    pane.set_focus()
+    pane.focus_first_child()
     app.columnconfigure(0, weight=1)
     app.rowconfigure(0, weight=1)
     app.mainloop()

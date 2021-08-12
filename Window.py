@@ -26,7 +26,7 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
         self.make_widgets()
         self.make_layout()
         self.make_bindings()
-        self.playlists_pane.set_focus()
+        self.playlists_pane.focus_first_child()
         self.update_ui()
         if Player.player.valid:
             self.set_status_message('Ready')
