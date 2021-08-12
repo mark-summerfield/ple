@@ -14,9 +14,6 @@ Config.py
 Tooltip.py
 playlist.py
 
-# TODO
-# - try icon-only buttons
-
 # TODO 
 # try pymad & retry tksnack & try playbin (see below) & retry
 # pygame.mixerhttps://github.com/srinidhi14vaddy/MP3-Player-using-Tkinter-and-Mutagen-in-Python 

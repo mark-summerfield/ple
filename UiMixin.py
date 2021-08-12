@@ -112,38 +112,37 @@ class UiMixin:
 
 
     def make_player_buttons(self):
+        self.player_frame = ttk.Frame(self.playlist_button_frame)
         self.previous_button = ttk.Button(
-            self.playlist_button_frame, text='Previous', underline=7,
-            takefocus=False, image=self.images[PREVIOUS_ICON],
-            command=self.on_previous_track, compound=tk.LEFT)
+            self.player_frame, takefocus=False,
+            image=self.images[PREVIOUS_ICON],
+            command=self.on_previous_track)
         Tooltip.Tooltip(self.previous_button,
                         'Start Playing Previous Track • Ctrl+S')
         self.play_pause_button = ttk.Button(
-            self.playlist_button_frame, text='Play', underline=0,
-            takefocus=False, image=self.images[PLAY_ICON],
-            command=self.on_play_or_pause_track, compound=tk.LEFT)
+            self.player_frame, takefocus=False,
+            image=self.images[PLAY_ICON],
+            command=self.on_play_or_pause_track)
         Tooltip.Tooltip(self.play_pause_button,
                         'Play or Pause the Current Track • Ctrl+P')
         self.next_button = ttk.Button(
-            self.playlist_button_frame, text='Next', underline=3,
-            takefocus=False, image=self.images[NEXT_ICON],
-            command=self.on_next_track, compound=tk.LEFT)
+            self.player_frame, takefocus=False,
+            image=self.images[NEXT_ICON], command=self.on_next_track)
         Tooltip.Tooltip(self.next_button,
                         'Start Playing Next Track • Ctrl+T')
 
 
     def make_scales(self):
-        self.volume_frame = ttk.Frame(self.master)
-        self.volume_label = ttk.Label(self.volume_frame, text='Volume',
-                                      underline=0)
+        self.volume_label = ttk.Label(self.player_frame, text='Volume',
+                                      underline=0, anchor=tk.CENTER)
         self.volume_spinbox = ttk.Spinbox(
-            self.volume_frame, from_=0, to=100, wrap=False,
+            self.player_frame, from_=0, to=100, wrap=False,
             format='%3.0f%%', width=5, justify=tk.RIGHT)
         self.volume_spinbox.set('50%')
-        self.position_frame = ttk.Frame(self.master)
-        self.position_label = ttk.Label(self.position_frame, text='0″/0″')
+        self.position_label = ttk.Label(self.player_frame, text='0″/0″',
+                                        anchor=tk.CENTER)
         self.position_progress = ttk.Label(
-            self.position_frame, relief=tk.SUNKEN, width=PROGRESS_WIDTH,
+            self.player_frame, relief=tk.SUNKEN, width=PROGRESS_WIDTH,
             foreground='#8080FF', background='#FFFFCD',
             font=tkfont.nametofont('TkFixedFont'))
 
@@ -197,25 +196,21 @@ class UiMixin:
 
     def make_player_layout(self):
         common = dict(sticky=tk.W + tk.E, pady=PAD, padx=PAD)
-        self.previous_button.grid(row=7, **common)
-        self.play_pause_button.grid(row=8, **common)
-        self.next_button.grid(row=9, **common)
+        self.player_frame.grid(row=7, **common)
+        self.previous_button.grid(row=0, column=0, **common)
+        self.play_pause_button.grid(row=0, column=1, **common)
+        self.next_button.grid(row=0, column=2, **common)
         self.playlist_button_frame.rowconfigure(6, weight=1)
 
 
     def make_scales_layout(self):
-        self.volume_label.grid(row=0, column=0, padx=PAD, pady=PAD,
-                               sticky=tk.S)
-        self.volume_spinbox.grid(row=1, column=0, padx=PAD, pady=PAD,
-                                 sticky=tk.S)
-        self.volume_frame.grid(row=1, column=0, padx=PAD, pady=PAD,
-                               sticky=tk.S)
-        self.position_label.grid(row=0, column=0, padx=PAD, pady=PAD,
-                                 sticky=tk.S)
-        self.position_progress.grid(row=1, column=0, padx=PAD, pady=PAD,
-                                    sticky=tk.S)
-        self.position_frame.grid(row=1, column=3, padx=PAD, pady=PAD,
-                                 sticky=tk.S)
+        common = dict(sticky=tk.W + tk.E, pady=PAD, padx=PAD, column=0,
+                      columnspan=3)
+        self.volume_label.grid(row=1, **common)
+        self.volume_spinbox.grid(row=2, sticky=tk.S, pady=PAD, padx=PAD,
+                                 column=0, columnspan=3)
+        self.position_label.grid(row=3, **common)
+        self.position_progress.grid(row=4, **common)
 
 
     def make_bindings(self):

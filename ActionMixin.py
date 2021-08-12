@@ -16,8 +16,11 @@ class ActionMixin:
         if name:
             if os.path.isdir(name):
                 self.tracks = None
-                count = len([p for p in os.listdir(name)
-                             if playlist.is_playlist(p)])
+                count = 0
+                for _, _, files in os.walk(name):
+                    for file in files:
+                        if playlist.is_playlist(file):
+                            count += 1
                 if count == 0:
                     message = name
                 elif count == 1:
