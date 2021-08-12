@@ -31,6 +31,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 import Config
+import Const
 import DataMixin
 import Player
 import playlist
@@ -45,12 +46,19 @@ class Window(ttk.Frame, UiMixin.UiMixin, DataMixin.DataMixin):
         self.tracks = None # playlist.Playlist
         self.deleted_track = None # for Undelete
         self.deleted_index = -1 # for Undelete
+        self.status_timer_id = None
         self.make_images()
         self.make_widgets()
         self.make_layout()
         self.make_bindings()
         self.playlists_pane.set_focus()
         self.update_ui()
+        if Player.player.valid:
+            self.set_status_message('Ready')
+        else:
+            self.set_status_message('Playback unsupported: did not find a '
+                                    'usable player library',
+                                    fg=Const.WARN_FG)
 
 
     def update_ui(self, _event=None):
@@ -68,6 +76,17 @@ class Window(ttk.Frame, UiMixin.UiMixin, DataMixin.DataMixin):
         for widget in widgets:
             widget.state([state])
         # NOTE set_progress() ?
+
+
+    def set_status_message(self, message, *, millisec=10_000,
+                           fg=Const.INFO_FG):
+        if self.status_timer_id is not None:
+            self.after_cancel(self.status_timer_id)
+            self.status_timer_id = None
+        self.status_label.configure(text=message, foreground=fg)
+        if millisec:
+            self.status_timer_id = self.after(
+                millisec, lambda: self.status_label.config(text=''))
 
 
     def set_progress(self, secs, total_secs):

@@ -37,6 +37,8 @@ class UiMixin:
         if Player.player.valid:
             self.make_player_buttons()
             self.make_scales()
+        self.status_label = ttk.Label(self.master, foreground='navy',
+                                      relief=tk.SUNKEN)
 
 
     def make_main_buttons(self):
@@ -159,6 +161,8 @@ class UiMixin:
             self.make_scales_layout()
         self.playlist_button_frame.grid(row=0, column=3, padx=PAD, pady=PAD,
                                         sticky=tk.N + tk.S)
+        self.status_label.grid(row=2, column=0, columnspan=4, padx=PAD,
+                               pady=PAD, sticky=tk.W + tk.E)
         top = self.winfo_toplevel()
         top.columnconfigure(1, weight=1)
         top.columnconfigure(2, weight=1)

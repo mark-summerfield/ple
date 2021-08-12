@@ -4,3 +4,7 @@
 
 APPNAME = 'PLE'
 VERSION = '0.1.0'
+
+INFO_FG = 'navy'
+WARN_FG = 'darkmagenta'
+ERROR_FG = 'red'
