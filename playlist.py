@@ -312,6 +312,11 @@ class Track(collections.namedtuple('Track', 'title filename secs')):
         return bool(self.title) and bool(self.filename)
 
 
+    def __eq__(self, other):
+        return (self.title == other.title and
+                self.filename == other.filename and self.secs == other.secs)
+
+
     def __repr__(self):
         return (f'{self.__class__.__name__}({self.title!r}, '
                 f'{self.filename!r}, {self.secs!r})')

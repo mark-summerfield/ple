@@ -214,8 +214,12 @@ class UiMixin:
 
 
     def make_bindings(self):
+        self.a_playlist_pane.treeview.bind('<Double-Button-1>',
+                                           self.on_edit_track)
+        self.a_playlist_pane.treeview.bind('<Return>', self.on_edit_track)
         self.playlists_pane.treeview.bind('<<TreeviewSelect>>',
                                           self.on_playlists_select)
+        self.master.bind('<F1>', self.on_help)
         self.master.bind('<Escape>', self.on_close)
         self.master.bind('<Alt-a>', self.on_add_track)
         self.master.bind('<Control-a>', self.on_add_track)
@@ -227,6 +231,8 @@ class UiMixin:
         self.master.bind('<Control-d>', self.on_move_track_down)
         self.master.bind('<Alt-e>', self.on_edit_track)
         self.master.bind('<Control-e>', self.on_edit_track)
+        self.master.bind('<Control-h>', self.on_help)
+        self.master.bind('<Alt-h>', self.on_help)
         self.master.bind('<Alt-m>', self.on_unremove_track)
         self.master.bind('<Control-m>', self.on_unremove_track)
         self.master.bind('<Alt-n>', self.on_new_playlist)
@@ -244,6 +250,8 @@ class UiMixin:
 
 
     def make_player_bindings(self):
+        self.a_playlist_pane.treeview.bind('<space>',
+                                           self.on_play_or_pause_track)
         self.master.bind('<Control-p>', self.on_play_or_pause_track)
         self.master.bind('<Control-s>', self.on_previous_track)
         self.master.bind('<Control-t>', self.on_next_track)
@@ -260,6 +268,7 @@ CONFIG_ICON = 'document-properties.png'
 EDIT_ICON = 'stock_edit.png'
 FILENEW_ICON = 'filenew.png'
 FILEOPEN_ICON = 'fileopen.png'
+HELP_ICON = 'help-contents.png'
 MOVE_DOWN_ICON = 'go-next.png'
 MOVE_UP_ICON = 'go-previous.png'
 NEXT_ICON = 'media-seek-forward.png'
