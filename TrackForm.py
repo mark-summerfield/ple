@@ -68,7 +68,8 @@ class Form(tkdialog.Dialog):
 
 
     def validate(self):
-        title = self.title_var.get()
+        self.edited_track = None
+        title = self.title_var.get().strip()
         is_valid = bool(title)
         if is_valid:
             track = playlist.Track(title, self.track.filename,

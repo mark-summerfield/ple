@@ -17,31 +17,38 @@ class ActionMixin:
         name = self.playlists_pane.treeview.focus()
         if name:
             if os.path.isdir(name):
-                self.tracks = None
-                count = 0
-                for _, _, files in os.walk(name):
-                    for file in files:
-                        if playlist.is_playlist(file):
-                            count += 1
-                if count == 0:
-                    message = name
-                elif count == 1:
-                    message = f'One playlist in {name}'
-                else:
-                    message = f'{count:,} playlists in {name}'
-                self.set_status_message(message)
+                self.folder_selected(name)
             elif playlist.is_playlist(name):
-                try:
-                    self.tracks = playlist.Playlist(name)
-                    self.set_status_message(
-                        f'{len(self.tracks):,} tracks in {name}',
-                        millisec=None)
-                    self.a_playlist_pane.set_tracks(self.tracks)
-                except (OSError, playlist.Error) as err:
-                    self.tracks = None
-                    self.set_status_message(
-                        f'Failed to load playlist: {err}', fg=ERROR_FG)
-        self.update_ui()
+                self.playlist_selected(name)
+            self.update_ui()
+
+
+    def folder_selected(self, name):
+        self.tracks = None
+        count = 0
+        for _, _, files in os.walk(name):
+            for file in files:
+                if playlist.is_playlist(file):
+                    count += 1
+        if count == 0:
+            message = name
+        elif count == 1:
+            message = f'One playlist in {name}'
+        else:
+            message = f'{count:,} playlists in {name}'
+        self.set_status_message(message)
+
+
+    def playlist_selected(self, name):
+        try:
+            self.tracks = playlist.Playlist(name)
+            self.set_status_message(
+                f'{len(self.tracks):,} tracks in {name}', millisec=None)
+            self.a_playlist_pane.set_tracks(self.tracks)
+        except (OSError, playlist.Error) as err:
+            self.tracks = None
+            self.set_status_message(f'Failed to load playlist: {err}',
+                                    fg=ERROR_FG)
 
 
     def on_new_playlist(self, _event=None):
