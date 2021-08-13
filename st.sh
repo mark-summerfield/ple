@@ -7,6 +7,7 @@ python3 -m flake8 --ignore=W504,E261,E303 . \
 python3 -m vulture . \
     | grep -v audioplayerGUI.py \
     | grep -v playbin-example-audio.py \
-    | grep -v AboutForm.*unused.method..body \
-    | grep -v AboutForm.*unused.method..buttonbox
+    | grep -v .*Form.py.*unused.method..body \
+    | grep -v .*Form.py.*unused.method..buttonbox \
+    | grep -v .*Form.py.*unused.method..validate
 git st
