@@ -58,7 +58,7 @@ class Form(tkdialog.Dialog):
             box, text='Cancel', underline=0, command=self.cancel,
             image=self.close_icon, compound=tk.LEFT)
         self.ok_button.pack(side=tk.LEFT, pady=PAD, padx=PAD)
-        ttk.Label(box, text=' ').pack(side=tk.LEFT) # Padding
+        ttk.Frame(box, width=PAD).pack(side=tk.LEFT) # Padding
         close_button.pack(side=tk.RIGHT, pady=PAD, padx=PAD)
         box.pack()
         self.bind('<Return>', self.ok)
