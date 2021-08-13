@@ -8,7 +8,7 @@ import tkinter.simpledialog as tkdialog
 import tkinter.ttk as ttk
 
 import playlist
-from Const import APPNAME, PAD
+from Const import APPNAME, INFO_FG, PAD
 
 
 class Form(tkdialog.Dialog):
@@ -17,23 +17,33 @@ class Form(tkdialog.Dialog):
         self.track = track
         self.edited_track = None
         self.title_var = tk.StringVar(value=self.track.title)
+        self.title_var.trace_add('write', self.update_ui)
         super().__init__(master, f'Edit Track — {APPNAME}')
 
 
     def body(self, master):
-        titleLabel = ttk.Label(master, text='Title:', underline=0)
-        self.titleEntry = tk.Entry(
+        title_label = ttk.Label(master, text='Title:', underline=0)
+        self.title_entry = tk.Entry(
             master, textvariable=self.title_var, width=60)
-        filenameLabel = ttk.Label(master, text='Filename:')
-        filenameLabel2 = tk.Label(
-            master, text=pathlib.Path(self.track.filename).name)
+        if self.track.secs > 0:
+            duration_name_label = ttk.Label(master, text='Duration:')
+            duration_label = ttk.Label(
+                master, text=playlist.humanized_length(self.track.secs),
+                foreground=INFO_FG)
+        filename_name_label = ttk.Label(master, text='Filename:')
+        filename_label = tk.Label(
+            master, text=pathlib.Path(self.track.filename).name,
+            foreground=INFO_FG)
         common = dict(padx=PAD, pady=PAD)
-        titleLabel.grid(row=0, column=0, sticky=tk.W)
-        self.titleEntry.grid(row=0, column=1, sticky=tk.W + tk.E, **common)
-        filenameLabel.grid(row=1, column=0, sticky=tk.W)
-        filenameLabel2.grid(row=1, column=1, sticky=tk.W, **common)
-        self.bind('<Alt-t>', lambda *_: self.titleEntry.focus_set())
-        return self.titleEntry
+        title_label.grid(row=0, column=0, sticky=tk.W)
+        self.title_entry.grid(row=0, column=1, sticky=tk.W + tk.E, **common)
+        if self.track.secs > 0:
+            duration_name_label.grid(row=1, column=0, sticky=tk.W)
+            duration_label.grid(row=1, column=1, sticky=tk.W, **common)
+        filename_name_label.grid(row=2, column=0, sticky=tk.W)
+        filename_label.grid(row=2, column=1, sticky=tk.W, **common)
+        self.bind('<Alt-t>', lambda *_: self.title_entry.focus_set())
+        return self.title_entry
 
 
     def buttonbox(self):
@@ -42,13 +52,15 @@ class Form(tkdialog.Dialog):
         self.close_icon = tk.PhotoImage(
             file=path / 'images/dialog-close.png')
         box = ttk.Frame(self)
-        okButton = ttk.Button(box, text='OK', underline=0, command=self.ok,
-                              image=self.ok_icon, compound=tk.LEFT)
-        closeButton = ttk.Button(
+        self.ok_button = ttk.Button(
+            box, text='OK', underline=0, command=self.ok,
+            image=self.ok_icon, compound=tk.LEFT)
+        close_button = ttk.Button(
             box, text='Cancel', underline=0, command=self.cancel,
             image=self.close_icon, compound=tk.LEFT)
-        okButton.pack(side=tk.LEFT, pady=PAD, padx=PAD * 3)
-        closeButton.pack(side=tk.RIGHT, pady=PAD, padx=PAD * 3)
+        self.ok_button.pack(side=tk.LEFT, pady=PAD, padx=PAD)
+        ttk.Label(box, text=' ').pack(side=tk.LEFT) # Padding
+        close_button.pack(side=tk.RIGHT, pady=PAD, padx=PAD)
         box.pack()
         self.bind('<Return>', self.ok)
         self.bind('<Alt-o>', self.ok)
@@ -65,3 +77,10 @@ class Form(tkdialog.Dialog):
             if track != self.track:
                 self.edited_track = track
         return is_valid
+
+
+    def update_ui(self, *_):
+        state = tk.DISABLED
+        if self.title_var.get().strip():
+            state = '!' + state
+        self.ok_button.state([state])
