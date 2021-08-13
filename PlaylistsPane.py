@@ -9,12 +9,13 @@ import tkinter.ttk as ttk
 
 import playlist
 import Treeview
+from Const import PAD
 
 
 class PlaylistsPane(ttk.Frame):
 
-    def __init__(self, master, *, padding, path):
-        super().__init__(master, padding=padding)
+    def __init__(self, master, *, path):
+        super().__init__(master, padding=PAD)
         self.images = {}
         self._make_images()
         self.treeview = Treeview.Treeview(self, selectmode=tk.BROWSE)

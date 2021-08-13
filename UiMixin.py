@@ -9,11 +9,11 @@ import tkinter.font as tkfont
 import tkinter.ttk as ttk
 
 import Config
-import Const
 import Player
 import PlaylistPane
 import PlaylistsPane
 import Tooltip
+from Const import APPNAME, PAD
 
 
 class UiMixin:
@@ -31,9 +31,8 @@ class UiMixin:
         self.make_main_buttons()
         self.splitter = ttk.PanedWindow(self.master, orient=tk.HORIZONTAL)
         self.playlists_pane = PlaylistsPane.PlaylistsPane(
-            self.splitter, padding=PAD, path=Config.config.playlists_path)
-        self.a_playlist_pane = PlaylistPane.PlaylistPane(self.splitter,
-                                                         padding=PAD)
+            self.splitter, path=Config.config.playlists_path)
+        self.a_playlist_pane = PlaylistPane.PlaylistPane(self.splitter)
         self.make_playlist_buttons()
         if Player.player.valid:
             self.make_player_buttons()
@@ -61,19 +60,19 @@ class UiMixin:
             image=self.images[CONFIG_ICON], command=self.on_config,
             compound=tk.LEFT)
         Tooltip.Tooltip(self.config_button,
-                        f'Configure {Const.APPNAME} • Ctrl+C')
+                        f'Configure {APPNAME} • Ctrl+C')
         self.about_button = ttk.Button(
             self.button_frame, text='About', takefocus=False, underline=1,
             image=self.images[ABOUT_ICON], command=self.on_about,
             compound=tk.LEFT)
         Tooltip.Tooltip(self.about_button,
-                        f'About {Const.APPNAME} • Ctrl+B')
+                        f'About {APPNAME} • Ctrl+B')
         self.quit_button = ttk.Button(
             self.button_frame, text='Quit', takefocus=False, underline=0,
             image=self.images[QUIT_ICON], command=self.on_close,
             compound=tk.LEFT)
         Tooltip.Tooltip(self.quit_button,
-                        f'Quit {Const.APPNAME} • Esc or Ctrl+Q')
+                        f'Quit {APPNAME} • Esc or Ctrl+Q')
 
 
     def make_playlist_buttons(self):
@@ -259,7 +258,6 @@ class UiMixin:
                          lambda *_: self.volume_spinbox.focus_set())
 
 
-PAD = '0.75m'
 PROGRESS_WIDTH = 12
 
 ABOUT_ICON = 'help-about.png'

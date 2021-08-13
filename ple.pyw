@@ -7,8 +7,8 @@ import tkinter as tk
 import tkinter.font as tkfont
 
 import Config
-import Const
 import Window
+from Const import APPNAME, VERSION
 
 
 def main():
@@ -18,7 +18,7 @@ def main():
     set_default_fonts(app)
     config = Config.config
     app.geometry(config.geometry)
-    app.title(f'{Const.APPNAME} v{Const.VERSION}')
+    app.title(f'{APPNAME} v{VERSION}')
     app.option_add('*tearOff', False)
     app.option_add('*insertOffTime', 0) # Should be user customizable
     icon = os.path.join(os.path.dirname(__file__), 'images/ple.png')

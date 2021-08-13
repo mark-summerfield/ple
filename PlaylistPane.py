@@ -7,12 +7,13 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 import Treeview
+from Const import PAD
 
 
 class PlaylistPane(ttk.Frame):
 
-    def __init__(self, master, *, padding):
-        super().__init__(master, padding=padding)
+    def __init__(self, master):
+        super().__init__(master, padding=PAD)
         self.treeview = Treeview.Treeview(self, selectmode=tk.BROWSE)
         self.treeview.heading('#0', text='Playlist', anchor=tk.CENTER)
         self.treeview.grid(row=0, column=0,

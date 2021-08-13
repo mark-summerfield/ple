@@ -7,10 +7,10 @@ import tkinter.ttk as ttk
 
 import ActionMixin
 import Config
-import Const
 import Player
 import playlist
 import UiMixin
+from Const import INFO_FG, WARN_FG
 
 
 class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
@@ -32,8 +32,7 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
             self.set_status_message('Ready')
         else:
             self.set_status_message('Playback unsupported: did not find a '
-                                    'usable player library',
-                                    fg=Const.WARN_FG)
+                                    'usable player library', fg=WARN_FG)
 
 
     def update_ui(self, _event=None):
@@ -53,8 +52,7 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
         # NOTE set_progress() ?
 
 
-    def set_status_message(self, message, *, millisec=10_000,
-                           fg=Const.INFO_FG):
+    def set_status_message(self, message, *, millisec=10_000, fg=INFO_FG):
         if self.status_timer_id is not None:
             self.after_cancel(self.status_timer_id)
             self.status_timer_id = None

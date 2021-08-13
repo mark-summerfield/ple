@@ -11,14 +11,14 @@ import tkinter.font as tkfont
 import tkinter.simpledialog as tkdialog
 import tkinter.ttk as ttk
 
-import Const
 import Player
+from Const import APPNAME, PAD, VERSION
 
 
 class Form(tkdialog.Dialog):
 
     def __init__(self, master):
-        super().__init__(master, f'About — {Const.APPNAME}')
+        super().__init__(master, f'About — {APPNAME}')
 
 
     def body(self, master):
@@ -34,7 +34,7 @@ class Form(tkdialog.Dialog):
                            weight=tkfont.BOLD)
         captionLabel = ttk.Label(
             master, foreground='navy', anchor=tk.CENTER, justify=tk.CENTER,
-            text=f'{Const.APPNAME} v{Const.VERSION}', font=font)
+            text=f'{APPNAME} v{VERSION}', font=font)
         desc = 'An application for creating and editing playlists'
         desc += ('\nand for playing tracks and entire playlists.'
                  if Player.player.valid else '.')
@@ -51,7 +51,6 @@ Python \
 Tk {tk.TkVersion}
 {platform.platform()}
 ''')
-        PAD = 3
         imageLabel.grid(row=0, column=0, sticky=tk.W + tk.E + tk.N + tk.S,
                         pady=PAD * 2)
         captionLabel.grid(row=1, column=0, columnspan=2, sticky=tk.W + tk.E,

@@ -7,8 +7,8 @@ import tkinter as tk
 import tkinter.simpledialog as tkdialog
 import tkinter.ttk as ttk
 
-import Const
 import playlist
+from Const import APPNAME, PAD
 
 
 class Form(tkdialog.Dialog):
@@ -17,7 +17,7 @@ class Form(tkdialog.Dialog):
         self.track = track
         self.edited_track = None
         self.title_var = tk.StringVar(value=self.track.title)
-        super().__init__(master, f'Edit Track — {Const.APPNAME}')
+        super().__init__(master, f'Edit Track — {APPNAME}')
 
 
     def body(self, master):
@@ -47,8 +47,8 @@ class Form(tkdialog.Dialog):
         closeButton = ttk.Button(
             box, text='Cancel', underline=0, command=self.cancel,
             image=self.close_icon, compound=tk.LEFT)
-        okButton.pack(side=tk.LEFT, pady=PAD, padx=PAD)
-        closeButton.pack(side=tk.RIGHT, pady=PAD, padx=PAD)
+        okButton.pack(side=tk.LEFT, pady=PAD, padx=PAD * 3)
+        closeButton.pack(side=tk.RIGHT, pady=PAD, padx=PAD * 3)
         box.pack()
         self.bind('<Return>', self.ok)
         self.bind('<Alt-o>', self.ok)
@@ -65,5 +65,3 @@ class Form(tkdialog.Dialog):
             if track != self.track:
                 self.edited_track = track
         return is_valid
-
-PAD = 3

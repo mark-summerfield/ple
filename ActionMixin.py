@@ -5,9 +5,9 @@
 import os
 
 import AboutForm
-import Const
 import playlist
 import TrackForm
+from Const import ERROR_FG
 
 
 class ActionMixin:
@@ -40,8 +40,7 @@ class ActionMixin:
                 except (OSError, playlist.Error) as err:
                     self.tracks = None
                     self.set_status_message(
-                        f'Failed to load playlist: {err}',
-                        fg=Const.ERROR_FG)
+                        f'Failed to load playlist: {err}', fg=ERROR_FG)
         self.update_ui()
 
 
