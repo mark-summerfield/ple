@@ -21,7 +21,7 @@ class UiMixin:
     def make_images(self):
         path = pathlib.Path(__file__).parent / 'images'
         for name in (ABOUT_ICON, ADD_ICON, CONFIG_ICON, EDIT_ICON,
-                     FILENEW_ICON, FILEOPEN_ICON, MOVE_DOWN_ICON,
+                     FILENEW_ICON, FILEOPEN_ICON, HELP_ICON, MOVE_DOWN_ICON,
                      MOVE_UP_ICON, NEXT_ICON, PAUSE_ICON, PLAY_ICON,
                      PREVIOUS_ICON, QUIT_ICON, REMOVE_ICON, UNREMOVE_ICON):
             self.images[name] = tk.PhotoImage(file=path / name)
@@ -67,6 +67,11 @@ class UiMixin:
             compound=tk.LEFT)
         Tooltip.Tooltip(self.about_button,
                         f'About {APPNAME} • Ctrl+B')
+        self.help_button = ttk.Button(
+            self.button_frame, text='Help', takefocus=False, underline=0,
+            image=self.images[HELP_ICON], command=self.on_help,
+            compound=tk.LEFT)
+        Tooltip.Tooltip(self.help_button, 'Show Help • F1')
         self.quit_button = ttk.Button(
             self.button_frame, text='Quit', takefocus=False, underline=0,
             image=self.images[QUIT_ICON], command=self.on_close,
@@ -177,8 +182,9 @@ class UiMixin:
         self.folder_open_button.grid(row=1, **common)
         self.config_button.grid(row=2, **common)
         self.about_button.grid(row=3, **common)
-        self.quit_button.grid(row=5, **common)
-        self.button_frame.rowconfigure(4, weight=1)
+        self.help_button.grid(row=4, **common)
+        self.quit_button.grid(row=6, **common)
+        self.button_frame.rowconfigure(5, weight=1)
         self.button_frame.grid(row=0, column=0, padx=PAD, pady=PAD,
                                sticky=tk.N + tk.S)
 

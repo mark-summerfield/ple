@@ -17,8 +17,8 @@ Tooltip.py
 playlist.py
 
 # TODO in order:
-Help: Add Help button on left and pop up a modeless Help dialog with a
-      table of keyboard shortcuts
+Help: implement on_help() using a modeless Help dialog with a table of
+      keyboard shortcuts
 Move Up: move the current track up one in the current playlist
 Move Down: move the current track down one in the current playlist
 Add: add one or more new tracks to the current playlist
