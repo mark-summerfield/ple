@@ -31,9 +31,8 @@ class Form(tkdialog.Dialog):
                 master, text=playlist.humanized_length(self.track.secs),
                 foreground=INFO_FG)
         filename_name_label = ttk.Label(master, text='Filename:')
-        filename_label = tk.Label(
-            master, text=pathlib.Path(self.track.filename).name,
-            foreground=INFO_FG)
+        filename_label = tk.Label(master, text=self.track.filename,
+                                  foreground=INFO_FG)
         common = dict(padx=PAD, pady=PAD)
         title_label.grid(row=0, column=0, sticky=tk.W)
         self.title_entry.grid(row=0, column=1, sticky=tk.W + tk.E, **common)
