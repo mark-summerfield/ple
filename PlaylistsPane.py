@@ -28,14 +28,13 @@ class PlaylistsPane(ttk.Frame):
 
     def focus_first_child(self):
         self.treeview.focus_set()
-        tops = self.treeview.get_children()
-        if tops:
-            focus = tops[0]
-            children = self.treeview.get_children(focus)
+        iids = self.treeview.get_children()
+        if iids:
+            iid = iids[0]
+            children = self.treeview.get_children(iid)
             if children:
-                focus = children[0]
-            self.treeview.focus(focus)
-            self.treeview.selection_set(focus)
+                iid = children[0]
+            self.treeview.select(iid)
 
 
     def _make_images(self):

@@ -97,8 +97,7 @@ class ActionMixin:
                         image=self.a_playlist_pane.image)
                     self.tracks[index] = form.edited_track
             treeview.focus_set()
-            treeview.focus(iid)
-            treeview.selection_set(iid)
+            treeview.select(iid)
 
 
     def on_move_track_up(self, _event=None):

@@ -21,3 +21,9 @@ class Treeview(ttk.Treeview):
 
     def clear(self):
         self.delete(*self.get_children())
+
+
+    def select(self, iid):
+        self.focus(iid)
+        self.selection_set(iid)
+        self.see(iid)
