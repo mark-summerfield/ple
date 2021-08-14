@@ -13,7 +13,7 @@ import Player
 import PlaylistPane
 import PlaylistsPane
 import Tooltip
-from Const import APPNAME, PAD
+from Const import APPNAME, NS, NSWE, PAD, WE
 
 
 class UiMixin:
@@ -153,21 +153,21 @@ class UiMixin:
 
     def make_layout(self):
         self.make_main_button_layout()
-        common = dict(padx=PAD, pady=PAD, sticky=tk.W + tk.E + tk.N + tk.S)
+        common = dict(padx=PAD, pady=PAD, sticky=NSWE)
         self.playlists_pane.grid(row=0, column=0, **common)
         self.a_playlist_pane.grid(row=0, column=1, **common)
         self.splitter.add(self.playlists_pane, weight=1)
         self.splitter.add(self.a_playlist_pane, weight=3)
         self.splitter.grid(row=0, column=1, columnspan=2, rowspan=2,
-                           sticky=tk.W + tk.E + tk.N + tk.S)
+                           sticky=NSWE)
         self.make_playlist_button_layout()
         if Player.player.valid:
             self.make_player_layout()
             self.make_scales_layout()
         self.playlist_button_frame.grid(row=0, column=3, padx=PAD, pady=PAD,
-                                        sticky=tk.N + tk.S)
+                                        sticky=NS)
         self.status_label.grid(row=2, column=0, columnspan=4, padx=PAD,
-                               pady=PAD, sticky=tk.W + tk.E)
+                               pady=PAD, sticky=WE)
         top = self.winfo_toplevel()
         top.columnconfigure(1, weight=1)
         top.rowconfigure(0, weight=1)
@@ -177,7 +177,7 @@ class UiMixin:
 
 
     def make_main_button_layout(self):
-        common = dict(column=0, sticky=tk.W + tk.E, pady=PAD, padx=PAD)
+        common = dict(column=0, sticky=WE, pady=PAD, padx=PAD)
         self.file_new_button.grid(row=0, **common)
         self.folder_open_button.grid(row=1, **common)
         self.config_button.grid(row=2, **common)
@@ -186,11 +186,11 @@ class UiMixin:
         self.quit_button.grid(row=6, **common)
         self.button_frame.rowconfigure(5, weight=1)
         self.button_frame.grid(row=0, column=0, padx=PAD, pady=PAD,
-                               sticky=tk.N + tk.S)
+                               sticky=NS)
 
 
     def make_playlist_button_layout(self):
-        common = dict(sticky=tk.W + tk.E, pady=PAD, padx=PAD)
+        common = dict(sticky=WE, pady=PAD, padx=PAD)
         self.add_button.grid(row=0, **common)
         self.edit_button.grid(row=1, **common)
         self.move_up_button.grid(row=2, **common)
@@ -200,7 +200,7 @@ class UiMixin:
 
 
     def make_player_layout(self):
-        common = dict(sticky=tk.W + tk.E, pady=PAD, padx=PAD)
+        common = dict(sticky=WE, pady=PAD, padx=PAD)
         self.player_frame.grid(row=7, **common)
         self.previous_button.grid(row=0, column=0, **common)
         self.play_pause_button.grid(row=0, column=1, **common)
@@ -209,8 +209,7 @@ class UiMixin:
 
 
     def make_scales_layout(self):
-        common = dict(sticky=tk.W + tk.E, pady=PAD, padx=PAD, column=0,
-                      columnspan=3)
+        common = dict(sticky=WE, pady=PAD, padx=PAD, column=0, columnspan=3)
         self.volume_label.grid(row=1, **common)
         self.volume_spinbox.grid(row=2, sticky=tk.S, pady=PAD, padx=PAD,
                                  column=0, columnspan=3)

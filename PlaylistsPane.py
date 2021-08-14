@@ -9,7 +9,7 @@ import tkinter.ttk as ttk
 
 import playlist
 import Treeview
-from Const import PAD
+from Const import NSWE, PAD
 
 
 class PlaylistsPane(ttk.Frame):
@@ -20,8 +20,7 @@ class PlaylistsPane(ttk.Frame):
         self._make_images()
         self.treeview = Treeview.Treeview(self, selectmode=tk.BROWSE)
         self.treeview.heading('#0', text='Playlists', anchor=tk.CENTER)
-        self.treeview.grid(row=0, column=0,
-                           sticky=tk.W + tk.E + tk.N + tk.S)
+        self.treeview.grid(row=0, column=0, sticky=NSWE)
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
         self.set_path(path)
@@ -88,7 +87,7 @@ if __name__ == '__main__':
     app.minsize(400, 600)
     pane = PlaylistsPane(app, padding='0.75m',
                          path='/home/mark/data/playlists')
-    pane.grid(sticky=tk.W + tk.E + tk.S + tk.N)
+    pane.grid(sticky=NSWE)
     pane.focus_first_child()
     app.columnconfigure(0, weight=1)
     app.rowconfigure(0, weight=1)

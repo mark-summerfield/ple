@@ -8,7 +8,7 @@ import tkinter.simpledialog as tkdialog
 import tkinter.ttk as ttk
 
 import playlist
-from Const import APPNAME, INFO_FG, PAD
+from Const import APPNAME, INFO_FG, PAD, PAD3, WE
 
 
 class Form(tkdialog.Dialog):
@@ -22,45 +22,69 @@ class Form(tkdialog.Dialog):
 
 
     def body(self, master):
-        title_label = ttk.Label(master, text='Title:', underline=0)
-        self.title_entry = tk.Entry(
-            master, textvariable=self.title_var, width=60)
-        if self.track.secs > 0:
-            duration_name_label = ttk.Label(master, text='Duration:')
-            duration_label = ttk.Label(
-                master, text=playlist.humanized_length(self.track.secs),
-                foreground=INFO_FG)
-        filename_name_label = ttk.Label(master, text='Filename:')
-        filename_label = tk.Label(master, text=self.track.filename,
-                                  foreground=INFO_FG)
-        common = dict(padx=PAD, pady=PAD)
-        title_label.grid(row=0, column=0, sticky=tk.W)
-        self.title_entry.grid(row=0, column=1, sticky=tk.W + tk.E, **common)
-        if self.track.secs > 0:
-            duration_name_label.grid(row=1, column=0, sticky=tk.W)
-            duration_label.grid(row=1, column=1, sticky=tk.W, **common)
-        filename_name_label.grid(row=2, column=0, sticky=tk.W)
-        filename_label.grid(row=2, column=1, sticky=tk.W, **common)
-        self.bind('<Alt-t>', lambda *_: self.title_entry.focus_set())
+        self.make_body_widgets(master)
+        self.make_body_layout(master)
+        self.make_body_bindings(master)
         return self.title_entry
 
 
+    def make_body_widgets(self, master):
+        self.title_label = ttk.Label(master, text='Title:', underline=0)
+        self.title_entry = tk.Entry(master, textvariable=self.title_var,
+                                    width=60)
+        if self.track.secs > 0:
+            self.duration_name_label = ttk.Label(master, text='Duration:')
+            self.duration_label = ttk.Label(
+                master, text=playlist.humanized_length(self.track.secs),
+                foreground=INFO_FG)
+        self.filename_name_label = ttk.Label(master, text='Filename:')
+        self.filename_label = tk.Label(master, text=self.track.filename,
+                                       foreground=INFO_FG)
+
+
+    def make_body_layout(self, master):
+        common = dict(padx=PAD, pady=PAD)
+        self.title_label.grid(row=0, column=0, sticky=tk.W)
+        self.title_entry.grid(row=0, column=1, sticky=WE, **common)
+        if self.track.secs > 0:
+            self.duration_name_label.grid(row=1, column=0, sticky=tk.W)
+            self.duration_label.grid(row=1, column=1, sticky=tk.W, **common)
+        self.filename_name_label.grid(row=2, column=0, sticky=tk.W)
+        self.filename_label.grid(row=2, column=1, sticky=tk.W, **common)
+
+
+    def make_body_bindings(self, master):
+        self.bind('<Alt-t>', lambda *_: self.title_entry.focus_set())
+
+
     def buttonbox(self):
+        self.make_buttons()
+        self.make_button_layout()
+        self.make_button_bindings()
+
+
+    def make_buttons(self):
         path = pathlib.Path(__file__).parent
         self.ok_icon = tk.PhotoImage(file=path / 'images/dialog-ok.png')
         self.close_icon = tk.PhotoImage(
             file=path / 'images/dialog-close.png')
-        box = ttk.Frame(self)
+        self.box = ttk.Frame(self)
         self.ok_button = ttk.Button(
-            box, text='OK', underline=0, command=self.ok,
+            self.box, text='OK', underline=0, command=self.ok,
             image=self.ok_icon, compound=tk.LEFT)
-        close_button = ttk.Button(
-            box, text='Cancel', underline=0, command=self.cancel,
+        self.close_button = ttk.Button(
+            self.box, text='Cancel', underline=0, command=self.cancel,
             image=self.close_icon, compound=tk.LEFT)
-        self.ok_button.pack(side=tk.LEFT, pady=PAD, padx=PAD)
-        ttk.Frame(box, width=PAD).pack(side=tk.LEFT) # Padding
-        close_button.pack(side=tk.RIGHT, pady=PAD, padx=PAD)
-        box.pack()
+
+
+    def make_button_layout(self):
+        self.ok_button.pack(side=tk.LEFT, padx=PAD)
+        ttk.Frame(self.box, width=PAD).pack(side=tk.LEFT) # Padding
+        self.close_button.pack(side=tk.RIGHT, padx=PAD)
+        self.box.pack(pady=PAD3)
+
+
+    def make_button_bindings(self):
         self.bind('<Return>', self.ok)
         self.bind('<Alt-o>', self.ok)
         self.bind('<Escape>', self.cancel)

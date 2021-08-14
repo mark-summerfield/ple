@@ -10,13 +10,13 @@ import Config
 import Player
 import playlist
 import UiMixin
-from Const import INFO_FG, WARN_FG
+from Const import INFO_FG, PAD, WARN_FG
 
 
 class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
 
     def __init__(self, master):
-        super().__init__(master, padding=UiMixin.PAD)
+        super().__init__(master, padding=PAD)
         self.images = {}
         self.tracks = None # playlist.Playlist
         self.deleted_track = None # for Undelete

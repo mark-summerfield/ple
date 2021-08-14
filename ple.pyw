@@ -32,12 +32,14 @@ def main():
 def set_default_fonts(app):
     config = Config.config
     size = config.base_font_size
-    font = tkfont.nametofont('TkDefaultFont')
-    font.configure(size=size)
+    for name in ('TkCaptionFont', 'TkDefaultFont', 'TkFixedFont',
+                 'TkMenuFont', 'TkIconFont', 'TkTextFont'):
+        tkfont.nametofont(name).configure(size=size)
     tkfont.nametofont('TkHeadingFont').configure(size=size,
                                                  weight=tk.NORMAL)
-    tkfont.nametofont('TkTooltipFont').configure(size=size - 1)
-    app.option_add('*Dialog.msg.font', f'{font["family"]} {size}')
+    size -= 1
+    for name in ('TkSmallCaptionFont', 'TkTooltipFont',):
+        tkfont.nametofont(name).configure(size=size)
 
 
 if __name__ == '__main__':
