@@ -8,6 +8,7 @@ ActionMixin.py
 PlaylistsPane.py
 PlaylistPane.py
 AboutForm.py
+HelpForm.py # TODO
 TrackForm.py
 Player.py
 Const.py

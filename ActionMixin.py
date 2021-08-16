@@ -5,6 +5,7 @@
 import os
 
 import AboutForm
+import HelpForm
 import playlist
 import TrackForm
 from Const import ERROR_FG
@@ -68,7 +69,7 @@ class ActionMixin:
 
 
     def on_help(self, _event=None):
-        print('on_help') # TODO
+        HelpForm.Form(self)
 
 
     def on_add_track(self, _event=None):
