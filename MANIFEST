@@ -8,7 +8,7 @@ ActionMixin.py
 PlaylistsPane.py
 PlaylistPane.py
 AboutForm.py
-HelpForm.py # TODO
+HelpForm.py
 TrackForm.py
 Player.py
 Const.py
@@ -18,8 +18,6 @@ Tooltip.py
 playlist.py
 
 # TODO in order:
-Move Up: move the current track up one in the current playlist
-Move Down: move the current track down one in the current playlist
 Add: add one or more new tracks to the current playlist
 Remove: delete the current track from the current playlist
 Unremove: undelete the most recently deleted track from the current playlist

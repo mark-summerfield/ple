@@ -104,13 +104,23 @@ class ActionMixin:
     def on_move_track_up(self, _event=None):
         if self.tracks is None:
             return
-        print('on_move_track_up') # TODO
+        treeview = self.a_playlist_pane.treeview
+        iid = treeview.focus()
+        if iid:
+            index = treeview.index(iid)
+            if self.tracks.moveup(index):
+                treeview.move(iid, '', index - 1)
 
 
     def on_move_track_down(self, _event=None):
         if self.tracks is None:
             return
-        print('on_move_track_down') # TODO
+        treeview = self.a_playlist_pane.treeview
+        iid = treeview.focus()
+        if iid:
+            index = treeview.index(iid)
+            if self.tracks.movedown(index):
+                treeview.move(iid, '', index + 1)
 
 
     def on_remove_track(self, _event=None):
