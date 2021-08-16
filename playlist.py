@@ -342,13 +342,14 @@ def filter(folder):
                 yield os.path.join(root, filename)
 
 
-def build(folder, format=M3U):
+def build(folder, *, format=M3U, filename=None):
     '''build a playlist for the given folder (and subfolders)
 
     The filename is set to <folder>.m3u or to <folder>.<format> if
-    format is not None.
+    format is not None or to filename if given.
     '''
-    playlist_filename = os.path.basename(str(folder)) + format.lower()
+    playlist_filename = (filename if filename is not None else
+                         os.path.basename(str(folder)) + format.lower())
     tracks = Playlist(playlist_filename)
     for filename in filter(folder):
         tracks += Track(normalize_name(filename), filename, -1)
@@ -443,7 +444,7 @@ if __name__ == '__main__':
         else:
             format = M3U.lower()
             folder = args[0].rstrip('/\\')
-        tracks = build(folder, format)
+        tracks = build(folder, format=format)
         tracks.save()
         print(f'wrote {tracks.filename}')
 
