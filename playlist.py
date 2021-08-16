@@ -470,8 +470,15 @@ if __name__ == '__main__':
             if is_playlist(filename):
                 try:
                     tracks = Playlist(filename)
-                    print(f'{len(tracks): 5,d} tracks taking '
-                          f'{tracks.humanized_length}: {tracks.filename}')
+                    for track in tracks:
+                        if not os.path.isfile(track.filename):
+                            print(f'playlist {tracks.filename} has missing '
+                                  f'track: {track.filename}')
+                            break
+                    else:
+                        print(f'{len(tracks): 5,d} tracks taking '
+                              f'{tracks.humanized_length}: '
+                              f'{tracks.filename}')
                 except Error:
                     pass
                 except OSError as err:
@@ -486,7 +493,8 @@ if __name__ == '__main__':
     Convert the or each playlist.ext to playlist.format where format is one
     of 'm3u', 'pls', 'xspf'.
 {name} <i|info> <playlist1> [playlist2 [... [playlistN]]]
-    Output the name and number of tracks in the given playlist(s).
+    Output the name and number of tracks in the given playlist(s) or report
+    an error if one or more tracks doesn't actually exist.
 {name} <h|help>
     Show this help message and quit.'''
 
