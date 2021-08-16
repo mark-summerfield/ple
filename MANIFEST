@@ -18,8 +18,6 @@ Tooltip.py
 playlist.py
 
 # TODO in order:
-Help: import Help form with OK button & r/o Text with a table of
-      keyboard shortcuts
 Move Up: move the current track up one in the current playlist
 Move Down: move the current track down one in the current playlist
 Add: add one or more new tracks to the current playlist
