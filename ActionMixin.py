@@ -83,6 +83,7 @@ class ActionMixin:
             filetypes=(('Ogg', '*.ogg'), ('Ogg audio', '*.oga'),
                        ('MP3', '*.mp3')))
         if filename:
+            self.music_path = os.path.dirname(filename)
             track = playlist.Track(playlist.normalize_name(filename),
                                    filename, -1)
             self.tracks += track
