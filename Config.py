@@ -11,10 +11,10 @@ import re
 class _Config:
 
     def __init__(self):
+        self.base_font_size = None
+        self.geometry = None
         self.music_path = None
         self.playlists_path = None
-        self.geometry = None
-        self.base_font_size = None
         self._filename = None
         self.load()
 

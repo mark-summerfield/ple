@@ -9,7 +9,7 @@ import tkinter.ttk as ttk
 
 import Config
 import Player
-from Const import APPNAME, NSWE
+from Const import APPNAME, NSWE, PAD
 
 
 class Form(tk.Toplevel):
@@ -17,7 +17,7 @@ class Form(tk.Toplevel):
     def __init__(self, master):
         super().__init__(master)
         self.title(f'Help — {APPNAME}')
-        self.geometry('640x480')
+        self.geometry('640x512')
         self.make_widgets()
         self.make_layout()
         self.make_bindings()
@@ -35,7 +35,7 @@ class Form(tk.Toplevel):
 
     def make_layout(self):
         self.text.grid(row=0, column=0, sticky=NSWE)
-        self.button.grid(row=1, column=0)
+        self.button.grid(row=1, column=0, padx=PAD, pady=PAD)
         self.box.grid(row=0, column=0, sticky=NSWE)
         self.box.grid_columnconfigure(0, weight=1)
         self.box.grid_rowconfigure(0, weight=1)
@@ -145,6 +145,17 @@ class Form(tk.Toplevel):
         if Player.player.valid:
             add('Alt+V', 'row', 'key')
             add('\tMove the focus to the volume control\n', 'row')
+        config = Config.config
+        add('\n')
+        add('Configuration\n', 'rowtitle')
+        add('Filename', 'row', 'italic')
+        add(f'\t{config.filename}\n', 'row')
+        add('Base Font Size', 'row', 'key')
+        add(f'\t{config.base_font_size}\n', 'row')
+        add('Music Path', 'row', 'key')
+        add(f'\t{config.music_path}\n', 'row')
+        add('Playlists Path', 'row', 'key')
+        add(f'\t{config.playlists_path}', 'row')
 
 
     def quit(self, _event=None):
