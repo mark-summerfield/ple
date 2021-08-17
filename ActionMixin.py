@@ -6,7 +6,6 @@ import os
 import tkinter.filedialog
 
 import AboutForm
-import Config
 import HelpForm
 import playlist
 import TrackForm
@@ -75,11 +74,9 @@ class ActionMixin:
     def on_add_track(self, _event=None):
         if self.tracks is None:
             return
-        config = Config.config
-        path = (config.music_path if self.music_path is None else
-                self.music_path)
         filename = tkinter.filedialog.askopenfilename(
-            parent=self, title=f'Add Track — {APPNAME}', initialdir=path,
+            parent=self, title=f'Add Track — {APPNAME}',
+            initialdir=self.music_path,
             filetypes=(('Ogg', '*.ogg'), ('Ogg audio', '*.oga'),
                        ('MP3', '*.mp3')))
         if filename:

@@ -19,7 +19,7 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
         super().__init__(master, padding=PAD)
         self.images = {}
         self.tracks = None # playlist.Playlist
-        self.music_path = None
+        self.music_path = Config.config.music_path
         self.deleted_track = None # for Undelete
         self.deleted_index = -1 # for Undelete
         self.status_timer_id = None
