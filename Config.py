@@ -12,6 +12,8 @@ class _Config:
 
     def __init__(self):
         self.base_font_size = None
+        self.current_playlist = ''
+        self.current_track = ''
         self.geometry = None
         self.music_path = None
         self.playlists_path = None
@@ -28,6 +30,8 @@ class _Config:
         with open(self._filename, 'wt', encoding='utf-8') as file:
             file.write(f'''\
 {_Key.BASEFONTSIZE.value} = {self.base_font_size}
+{_Key.CURRENTPLAYLIST.value} = {self.current_playlist}
+{_Key.CURRENTTRACK.value} = {self.current_track}
 {_Key.GEOMETRY.value} = {self.geometry}
 {_Key.MUSICPATH.value} = {self.music_path}
 {_Key.PLAYLISTSPATH.value} = {self.playlists_path}
@@ -86,6 +90,10 @@ class _Config:
                             self.base_font_size = int(value)
                         else:
                             err = 'invalid int for'
+                    elif key is _Key.CURRENTPLAYLIST:
+                        self.current_playlist = value
+                    elif key is _Key.CURRENTTRACK:
+                        self.current_track = value
                     elif key is _Key.GEOMETRY:
                         if re.fullmatch(r'\d+x\d+(?:[-+]\d+[-+]\d+)?',
                                         value):
@@ -110,6 +118,8 @@ class _Config:
 @enum.unique
 class _Key(enum.Enum):
     BASEFONTSIZE = 'Base Font Size'
+    CURRENTPLAYLIST = 'Current Playlist'
+    CURRENTTRACK = 'Current Track'
     GEOMETRY = 'Geometry'
     MUSICPATH = 'Music Path'
     PLAYLISTSPATH = 'Playlists Path'

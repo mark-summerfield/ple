@@ -6,6 +6,7 @@ import os
 import tkinter.filedialog
 
 import AboutForm
+import Config
 import HelpForm
 import playlist
 import TrackForm
@@ -47,6 +48,10 @@ class ActionMixin:
             self.set_status_message(
                 f'{len(self.tracks):,} tracks in {name}', millisec=None)
             self.a_playlist_pane.set_tracks(self.tracks)
+            if self.startup:
+                self.a_playlist_pane.treeview.select(
+                    Config.config.current_track)
+                self.startup = False
         except (OSError, playlist.Error) as err:
             self.tracks = None
             self.set_status_message(f'Failed to load playlist: {err}',

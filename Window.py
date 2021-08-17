@@ -17,6 +17,7 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
 
     def __init__(self, master):
         super().__init__(master, padding=PAD)
+        self.startup = True
         self.images = {}
         self.tracks = None # playlist.Playlist
         self.music_path = Config.config.music_path
@@ -27,7 +28,15 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
         self.make_widgets()
         self.make_layout()
         self.make_bindings()
-        self.playlists_pane.focus_first_child()
+        self.initialize()
+
+
+    def initialize(self):
+        current_playlist = Config.config.current_playlist
+        if current_playlist:
+            self.playlists_pane.treeview.select(current_playlist)
+        else:
+            self.playlists_pane.focus_first_child()
         self.update_ui()
         if Player.player.valid:
             self.set_status_message('Ready')
@@ -73,5 +82,8 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
 
 
     def on_close(self, _event=None):
-        Config.config.geometry = self.winfo_toplevel().geometry()
+        config = Config.config
+        config.current_playlist = self.playlists_pane.treeview.focus()
+        config.current_track = self.a_playlist_pane.treeview.focus()
+        config.geometry = self.winfo_toplevel().geometry()
         self.quit()
