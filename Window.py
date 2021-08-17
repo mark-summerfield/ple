@@ -42,8 +42,7 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
                    self.unremove_button]
         if Player.player.valid:
             widgets += [self.previous_button, self.play_pause_button,
-                        self.next_button, self.volume_label,
-                        self.volume_spinbox, self.position_label,
+                        self.next_button, self.position_label,
                         self.position_progress]
         state = tk.DISABLED
         if self.tracks is not None:

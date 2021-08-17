@@ -142,9 +142,6 @@ class Form(tk.Toplevel):
         add(' or ', 'row', 'italic')
         add('Ctrl+U', 'row', 'key')
         add('\tMove the current track up\n', 'row')
-        if Player.player.valid:
-            add('Alt+V', 'row', 'key')
-            add('\tMove the focus to the volume control\n', 'row')
         config = Config.config
         add('\n')
         add('Configuration\n', 'rowtitle')

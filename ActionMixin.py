@@ -56,6 +56,12 @@ class ActionMixin:
 
     def on_new_playlist(self, _event=None):
         print('on_new_playlist') # TODO
+        # TODO user chooses music folder
+        # TODO create unique playlist name based on the music folder's name
+        # in the playlist folder dir (adding -1 or -2 ... if needed to avoid
+        # clobbering an existing playlist)
+        # TODO iterate music folder using playlist.filter(music_folder) and
+        # add tracks using playlist.Track(playlist.normalize_name(...
 
 
     def on_about(self, _event=None):

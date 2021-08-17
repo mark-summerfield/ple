@@ -124,12 +124,6 @@ class UiMixin:
 
 
     def make_scales(self):
-        self.volume_label = ttk.Label(self.player_frame, text='Volume',
-                                      underline=0, anchor=tk.CENTER)
-        self.volume_spinbox = ttk.Spinbox(
-            self.player_frame, from_=0, to=100, wrap=False,
-            format='%3.0f%%', width=5, justify=tk.RIGHT)
-        self.volume_spinbox.set('50%')
         self.position_label = ttk.Label(self.player_frame, text='0″/0″',
                                         anchor=tk.CENTER)
         self.position_progress = ttk.Label(
@@ -195,11 +189,8 @@ class UiMixin:
 
     def make_scales_layout(self):
         common = dict(sticky=WE, pady=PAD, padx=PAD, column=0, columnspan=3)
-        self.volume_label.grid(row=1, **common)
-        self.volume_spinbox.grid(row=2, sticky=tk.S, pady=PAD, padx=PAD,
-                                 column=0, columnspan=3)
-        self.position_label.grid(row=3, **common)
-        self.position_progress.grid(row=4, **common)
+        self.position_label.grid(row=1, **common)
+        self.position_progress.grid(row=2, **common)
 
 
     def make_bindings(self):
@@ -240,8 +231,6 @@ class UiMixin:
         self.master.bind('<Control-p>', self.on_play_or_pause_track)
         self.master.bind('<Control-s>', self.on_previous_track)
         self.master.bind('<Control-t>', self.on_next_track)
-        self.master.bind('<Alt-v>',
-                         lambda *_: self.volume_spinbox.focus_set())
 
 
 PROGRESS_WIDTH = 12
