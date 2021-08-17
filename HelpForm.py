@@ -45,9 +45,9 @@ class Form(tk.Toplevel):
 
 
     def make_bindings(self):
-        self.bind('<Return>', self.quit)
-        self.bind('<Alt-o>', self.quit)
-        self.bind('<Escape>', self.quit)
+        self.bind('<Return>', lambda *_: self.button.invoke())
+        self.bind('<Alt-o>', lambda *_: self.button.invoke())
+        self.bind('<Escape>', lambda *_: self.button.invoke())
 
 
     def make_tags(self):

@@ -86,6 +86,6 @@ Tk {tk.TkVersion}
 
 
     def make_button_bindings(self):
-        self.bind('<Return>', self.ok)
-        self.bind('<Alt-o>', self.ok)
+        self.bind('<Return>', lambda *_: self.ok_button.invoke())
+        self.bind('<Alt-o>', lambda *_: self.ok_button.invoke())
         self.bind('<Escape>', self.cancel)

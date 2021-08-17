@@ -85,10 +85,10 @@ class Form(tkdialog.Dialog):
 
 
     def make_button_bindings(self):
-        self.bind('<Return>', self.ok)
-        self.bind('<Alt-o>', self.ok)
-        self.bind('<Escape>', self.cancel)
-        self.bind('<Alt-c>', self.cancel)
+        self.bind('<Return>', lambda *_: self.ok_button.invoke())
+        self.bind('<Alt-o>', lambda *_: self.ok_button.invoke())
+        self.bind('<Escape>', lambda *_: self.close_button.invoke())
+        self.bind('<Alt-c>', lambda *_: self.close_button.invoke())
 
 
     def validate(self):

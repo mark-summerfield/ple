@@ -199,38 +199,54 @@ class UiMixin:
         self.a_playlist_pane.treeview.bind('<Return>', self.on_edit_track)
         self.playlists_pane.treeview.bind('<<TreeviewSelect>>',
                                           self.on_playlists_select)
-        self.master.bind('<F1>', self.on_help)
-        self.master.bind('<Escape>', self.on_close)
-        self.master.bind('<Alt-a>', self.on_add_track)
-        self.master.bind('<Control-a>', self.on_add_track)
-        self.master.bind('<Alt-b>', self.on_about)
-        self.master.bind('<Control-b>', self.on_about)
-        self.master.bind('<Alt-d>', self.on_move_track_down)
-        self.master.bind('<Control-d>', self.on_move_track_down)
-        self.master.bind('<Alt-e>', self.on_edit_track)
-        self.master.bind('<Control-e>', self.on_edit_track)
-        self.master.bind('<Alt-h>', self.on_help)
-        self.master.bind('<Control-h>', self.on_help)
-        self.master.bind('<Alt-m>', self.on_unremove_track)
-        self.master.bind('<Control-m>', self.on_unremove_track)
-        self.master.bind('<Alt-n>', self.on_new_playlist)
-        self.master.bind('<Control-n>', self.on_new_playlist)
-        self.master.bind('<Alt-q>', self.on_close)
-        self.master.bind('<Control-q>', self.on_close)
-        self.master.bind('<Alt-r>', self.on_remove_track)
-        self.master.bind('<Control-r>', self.on_remove_track)
-        self.master.bind('<Alt-u>', self.on_move_track_up)
-        self.master.bind('<Control-u>', self.on_move_track_up)
+        self.master.bind('<F1>', lambda *_: self.help_button.invoke())
+        self.master.bind('<Escape>', lambda *_: self.quit_button.invoke())
+        self.master.bind('<Alt-a>', lambda *_: self.add_button.invoke())
+        self.master.bind('<Control-a>', lambda *_: self.add_button.invoke())
+        self.master.bind('<Alt-b>', lambda *_: self.about_button.invoke())
+        self.master.bind('<Control-b>',
+                         lambda *_: self.about_button.invoke())
+        self.master.bind('<Alt-d>',
+                         lambda *_: self.move_down_button.invoke())
+        self.master.bind('<Control-d>',
+                         lambda *_: self.move_down_button.invoke())
+        self.master.bind('<Alt-e>',
+                         lambda *_: self.edit_button.invoke())
+        self.master.bind('<Control-e>',
+                         lambda *_: self.edit_button.invoke())
+        self.master.bind('<Alt-h>', lambda *_: self.help_button.invoke())
+        self.master.bind('<Control-h>',
+                         lambda *_: self.help_button.invoke())
+        self.master.bind('<Alt-m>',
+                         lambda *_: self.unremove_button.invoke())
+        self.master.bind('<Control-m>',
+                         lambda *_: self.unremove_button.invoke())
+        self.master.bind('<Alt-n>',
+                         lambda *_: self.file_new_button.invoke())
+        self.master.bind('<Control-n>',
+                         lambda *_: self.file_new_button.invoke())
+        self.master.bind('<Alt-q>', lambda *_: self.quit_button.invoke())
+        self.master.bind('<Control-q>',
+                         lambda *_: self.quit_button.invoke())
+        self.master.bind('<Alt-r>', lambda *_: self.remove_button.invoke())
+        self.master.bind('<Control-r>',
+                         lambda *_: self.remove_button.invoke())
+        self.master.bind('<Alt-u>', lambda *_: self.move_up_button.invoke())
+        self.master.bind('<Control-u>',
+                         lambda *_: self.move_up_button.invoke())
         if Player.player.valid:
             self.make_player_bindings()
 
 
     def make_player_bindings(self):
-        self.a_playlist_pane.treeview.bind('<space>',
-                                           self.on_play_or_pause_track)
-        self.master.bind('<Control-p>', self.on_play_or_pause_track)
-        self.master.bind('<Control-s>', self.on_previous_track)
-        self.master.bind('<Control-t>', self.on_next_track)
+        self.a_playlist_pane.treeview.bind(
+            '<space>', lambda *_: self.play_pause_button.invoke())
+        self.master.bind('<Control-p>',
+                         lambda *_: self.play_pause_button.invoke())
+        self.master.bind('<Control-s>',
+                         lambda *_: self.previous_button.invoke())
+        self.master.bind('<Control-t>',
+                         lambda *_: self.next_button.invoke())
 
 
 PROGRESS_WIDTH = 12
