@@ -109,10 +109,10 @@ class _Config:
 
 @enum.unique
 class _Key(enum.Enum):
+    BASEFONTSIZE = 'Base Font Size'
+    GEOMETRY = 'Geometry'
     MUSICPATH = 'Music Path'
     PLAYLISTSPATH = 'Playlists Path'
-    GEOMETRY = 'Geometry'
-    BASEFONTSIZE = 'Base Font Size'
 
 
     @classmethod

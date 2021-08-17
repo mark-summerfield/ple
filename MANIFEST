@@ -40,18 +40,12 @@ Open: open folder
 Config: default music folder; default playlists folder
 
 # TODO 
-# try pyglet (pyglet.media player) depends on avbin
-# try playsound
-# try playbin (see below) & retry
-# pygame.mixerhttps://github.com/srinidhi14vaddy/MP3-Player-using-Tkinter-and-Mutagen-in-Python 
-# if only audioplayer works, then copy audioplayer.py into the project
-# itself
+# use playbin:
+# see https://brettviren.github.io/pygst-tutorial-org/pygst-tutorial.html
+playbin-example-audio.py
 
 # TODO
 # to show progress call self.position_progress(secs, total_secs)
-
-audioplayerGUI.py
-playbin-example-audio.py
 
 st.sh
 
