@@ -31,9 +31,13 @@ class PlaylistPane(ttk.Frame):
         self.clear()
         if tracks:
             for track in tracks:
-                self.treeview.insert('', tk.END, track.filename,
-                                     text=track.title, image=self.image)
+                self.append(track)
             self.treeview.select(tracks[0].filename)
+
+
+    def append(self, track):
+        self.treeview.insert('', tk.END, track.filename, text=track.title,
+                             image=self.image)
 
 
 TRACK_ICON = 'gmusicbrowser.png'

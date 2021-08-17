@@ -3,12 +3,14 @@
 # License: GPLv3
 
 import os
+import tkinter.filedialog
 
 import AboutForm
+import Config
 import HelpForm
 import playlist
 import TrackForm
-from Const import ERROR_FG
+from Const import APPNAME, ERROR_FG
 
 
 class ActionMixin:
@@ -67,7 +69,19 @@ class ActionMixin:
     def on_add_track(self, _event=None):
         if self.tracks is None:
             return
-        print('on_add_track') # TODO
+        config = Config.config
+        path = (config.music_path if self.music_path is None else
+                self.music_path)
+        filename = tkinter.filedialog.askopenfilename(
+            parent=self, title=f'Add Track — {APPNAME}', initialdir=path,
+            filetypes=(('Ogg', '*.ogg'), ('Ogg audio', '*.oga'),
+                       ('MP3', '*.mp3')))
+        if filename:
+            track = playlist.Track(playlist.normalize_name(filename),
+                                   filename, -1)
+            self.tracks += track
+            self.a_playlist_pane.append(track)
+            self.a_playlist_pane.treeview.select(filename)
 
 
     def on_edit_track(self, _event=None):
