@@ -20,10 +20,10 @@ class UiMixin:
 
     def make_images(self):
         path = pathlib.Path(__file__).parent / 'images'
-        for name in (ABOUT_ICON, ADD_ICON, CONFIG_ICON, EDIT_ICON,
-                     FILENEW_ICON, FILEOPEN_ICON, HELP_ICON, MOVE_DOWN_ICON,
-                     MOVE_UP_ICON, NEXT_ICON, PAUSE_ICON, PLAY_ICON,
-                     PREVIOUS_ICON, QUIT_ICON, REMOVE_ICON, UNREMOVE_ICON):
+        for name in (ABOUT_ICON, ADD_ICON, EDIT_ICON, FILENEW_ICON,
+                     HELP_ICON, MOVE_DOWN_ICON, MOVE_UP_ICON, NEXT_ICON,
+                     PAUSE_ICON, PLAY_ICON, PREVIOUS_ICON, QUIT_ICON,
+                     REMOVE_ICON, UNREMOVE_ICON):
             self.images[name] = tk.PhotoImage(file=path / name)
 
 
@@ -49,24 +49,11 @@ class UiMixin:
             compound=tk.LEFT)
         Tooltip.Tooltip(self.file_new_button,
                         'Create New Playlist • Ctrl+N')
-        self.folder_open_button = ttk.Button(
-            self.button_frame, text='Open', underline=0, takefocus=False,
-            image=self.images[FILEOPEN_ICON], command=self.on_folder_open,
-            compound=tk.LEFT)
-        Tooltip.Tooltip(self.folder_open_button,
-                        'Open Playlist Folder • Ctrl+O')
-        self.config_button = ttk.Button(
-            self.button_frame, text='Config', underline=0, takefocus=False,
-            image=self.images[CONFIG_ICON], command=self.on_config,
-            compound=tk.LEFT)
-        Tooltip.Tooltip(self.config_button,
-                        f'Configure {APPNAME} • Ctrl+C')
         self.about_button = ttk.Button(
             self.button_frame, text='About', takefocus=False, underline=1,
             image=self.images[ABOUT_ICON], command=self.on_about,
             compound=tk.LEFT)
-        Tooltip.Tooltip(self.about_button,
-                        f'About {APPNAME} • Ctrl+B')
+        Tooltip.Tooltip(self.about_button, f'About {APPNAME} • Ctrl+B')
         self.help_button = ttk.Button(
             self.button_frame, text='Help', takefocus=False, underline=0,
             image=self.images[HELP_ICON], command=self.on_help,
@@ -179,12 +166,10 @@ class UiMixin:
     def make_main_button_layout(self):
         common = dict(column=0, sticky=WE, pady=PAD, padx=PAD)
         self.file_new_button.grid(row=0, **common)
-        self.folder_open_button.grid(row=1, **common)
-        self.config_button.grid(row=2, **common)
-        self.about_button.grid(row=3, **common)
-        self.help_button.grid(row=4, **common)
-        self.quit_button.grid(row=6, **common)
-        self.button_frame.rowconfigure(5, weight=1)
+        self.about_button.grid(row=1, **common)
+        self.help_button.grid(row=2, **common)
+        self.quit_button.grid(row=4, **common)
+        self.button_frame.rowconfigure(3, weight=1)
         self.button_frame.grid(row=0, column=0, padx=PAD, pady=PAD,
                                sticky=NS)
 
@@ -229,8 +214,6 @@ class UiMixin:
         self.master.bind('<Control-a>', self.on_add_track)
         self.master.bind('<Alt-b>', self.on_about)
         self.master.bind('<Control-b>', self.on_about)
-        self.master.bind('<Alt-c>', self.on_config)
-        self.master.bind('<Control-c>', self.on_config)
         self.master.bind('<Alt-d>', self.on_move_track_down)
         self.master.bind('<Control-d>', self.on_move_track_down)
         self.master.bind('<Alt-e>', self.on_edit_track)
@@ -241,8 +224,6 @@ class UiMixin:
         self.master.bind('<Control-m>', self.on_unremove_track)
         self.master.bind('<Alt-n>', self.on_new_playlist)
         self.master.bind('<Control-n>', self.on_new_playlist)
-        self.master.bind('<Alt-o>', self.on_folder_open)
-        self.master.bind('<Control-o>', self.on_folder_open)
         self.master.bind('<Alt-q>', self.on_close)
         self.master.bind('<Control-q>', self.on_close)
         self.master.bind('<Alt-r>', self.on_remove_track)
@@ -267,10 +248,8 @@ PROGRESS_WIDTH = 12
 
 ABOUT_ICON = 'help-about.png'
 ADD_ICON = 'list-add.png'
-CONFIG_ICON = 'document-properties.png'
 EDIT_ICON = 'stock_edit.png'
 FILENEW_ICON = 'filenew.png'
-FILEOPEN_ICON = 'fileopen.png'
 HELP_ICON = 'help-contents.png'
 MOVE_DOWN_ICON = 'go-next.png'
 MOVE_UP_ICON = 'go-previous.png'

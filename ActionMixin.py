@@ -56,14 +56,6 @@ class ActionMixin:
         print('on_new_playlist') # TODO
 
 
-    def on_folder_open(self, _event=None):
-        print('on_folder_open') # TODO
-
-
-    def on_config(self, _event=None):
-        print('on_config') # TODO
-
-
     def on_about(self, _event=None):
         AboutForm.Form(self)
 
