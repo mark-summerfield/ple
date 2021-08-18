@@ -17,8 +17,9 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
 
     def __init__(self, master):
         super().__init__(master, padding=PAD)
-        self.startup = True
         self.images = {}
+        self.startup = True
+        self.playing = False
         self.tracks = None # playlist.Playlist
         self.music_path = Config.config.music_path
         self.deleted_track = None # for Undelete
@@ -58,6 +59,8 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
             state = '!' + state
         for widget in widgets:
             widget.state([state])
+        if self.deleted_track is None:
+            self.unremove_button.state([tk.DISABLED])
         # NOTE set_progress() ?
 
 

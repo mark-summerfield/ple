@@ -7,6 +7,9 @@ import tkinter as tk
 APPNAME = 'PLE'
 VERSION = '0.1.0'
 
+PAUSE_ICON = 'media-playback-pause.png'
+PLAY_ICON = 'media-playback-start.png'
+
 INFO_FG = 'navy'
 WARN_FG = 'darkmagenta'
 ERROR_FG = 'red'

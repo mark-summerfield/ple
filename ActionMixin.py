@@ -10,7 +10,7 @@ import Config
 import HelpForm
 import playlist
 import TrackForm
-from Const import APPNAME, ERROR_FG
+from Const import APPNAME, ERROR_FG, PAUSE_ICON, PLAY_ICON
 
 
 class ActionMixin:
@@ -141,28 +141,75 @@ class ActionMixin:
     def on_remove_track(self, _event=None):
         if self.tracks is None:
             return
-        print('on_remove_track') # TODO
+        treeview = self.a_playlist_pane.treeview
+        iid = treeview.focus()
+        if iid:
+            self.deleted_index = treeview.index(iid)
+            focus_iid = treeview.next(iid)
+            if not focus_iid:
+                focus_iid = treeview.prev(iid)
+            treeview.delete(iid)
+            if focus_iid:
+                treeview.select(focus_iid)
+            self.deleted_track = self.tracks.pop(self.deleted_index)
+            self.update_ui()
 
 
     def on_unremove_track(self, _event=None):
-        if self.tracks is None:
+        if self.tracks is None or self.deleted_track is None:
             return
-        print('on_unremove_track') # TODO
+        self.tracks.insert(self.deleted_index, self.deleted_track)
+        treeview = self.a_playlist_pane.treeview
+        treeview.insert(
+            '', self.deleted_index, iid=self.deleted_track.filename,
+            text=self.deleted_track.title, image=self.a_playlist_pane.image)
+        treeview.select(self.deleted_track.filename)
+        self.deleted_track = None
+        self.deleted_index = -1
+        self.update_ui()
 
 
     def on_previous_track(self, _event=None):
         if self.tracks is None:
             return
-        print('on_previous_track') # TODO
+        treeview = self.a_playlist_pane.treeview
+        iid = treeview.focus()
+        if iid:
+            prev_iid = treeview.prev(iid)
+            if not prev_iid:
+                return # Can't go before first one
+            if self.playing:
+                self.on_play_or_pause_track() # Pause/Stop
+            treeview.select(prev_iid)
+            self.on_play_or_pause_track() # Play
 
 
     def on_play_or_pause_track(self, _event=None):
         if self.tracks is None:
             return
-        print('on_play_or_pause_track') # TODO
+        treeview = self.a_playlist_pane.treeview
+        iid = treeview.focus()
+        if iid:
+            if self.playing:
+                icon = PLAY_ICON
+                print('on_play_or_pause_track PAUSE', iid) # TODO
+            else:
+                icon = PAUSE_ICON
+                print('on_play_or_pause_track PLAY', iid) # TODO
+            self.play_pause_button.config(image=self.images[icon])
+            self.playing = not self.playing
 
 
     def on_next_track(self, _event=None):
         if self.tracks is None:
             return
-        print('on_next_track') # TODO
+        treeview = self.a_playlist_pane.treeview
+        iid = treeview.focus()
+        if iid:
+            next_iid = treeview.next(iid)
+            if not next_iid:
+                return # Can't go after last one
+            if self.playing:
+                self.on_play_or_pause_track() # Pause/Stop
+            treeview.select(next_iid)
+            self.on_play_or_pause_track() # Play

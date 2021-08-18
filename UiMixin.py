@@ -13,7 +13,7 @@ import Player
 import PlaylistPane
 import PlaylistsPane
 import Tooltip
-from Const import APPNAME, NS, NSWE, PAD, WE
+from Const import APPNAME, NS, NSWE, PAD, PAUSE_ICON, PLAY_ICON, WE
 
 
 class UiMixin:
@@ -259,8 +259,6 @@ HELP_ICON = 'help-contents.png'
 MOVE_DOWN_ICON = 'go-next.png'
 MOVE_UP_ICON = 'go-previous.png'
 NEXT_ICON = 'media-seek-forward.png'
-PAUSE_ICON = 'media-playback-pause.png'
-PLAY_ICON = 'media-playback-start.png'
 PREVIOUS_ICON = 'media-seek-backward.png'
 QUIT_ICON = 'exit.png'
 REMOVE_ICON = 'list-remove.png'

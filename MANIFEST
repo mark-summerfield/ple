@@ -18,20 +18,16 @@ Tooltip.py
 playlist.py
 
 # TODO in order:
-Remove: delete the current track from the current playlist
-Unremove: undelete the most recently deleted track from the current playlist
 New: create new empty playlist
     - user chooses music _folder_
     - automatically set playlist name based on config playlists path &
       folder name & config default playlist format & ensure unique by
       if necessary, inserting -1 or -2 or ... before .ext so as not to
       delete an existing one
-Prev: only show if default player is PLE
 Play|Pause: if default player is external then only show [>] Play and
             when clicked send the current track to the player; if the track
             plays to the end automatically makes the next track current and
             starts playing it and so on until the end of the playlist
-Next: only show if default player is PLE
 position: progress slider MmSs/MmSs
 
 # TODO 

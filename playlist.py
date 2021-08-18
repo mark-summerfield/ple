@@ -294,7 +294,7 @@ class Playlist:
             self.save()
 
 
-    def __delitem__(self, index):
+    def pop(self, index):
         track = self._tracks.pop(index)
         self.save()
         return track
