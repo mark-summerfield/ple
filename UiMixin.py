@@ -109,13 +109,13 @@ class UiMixin:
             image=self.images[PREVIOUS_ICON],
             command=self.on_previous_track)
         Tooltip.Tooltip(self.previous_button,
-                        'Start Playing Previous Track • Ctrl+S')
+                        'Start Playing Previous Track • Ctrl+P')
         self.play_pause_button = ttk.Button(
             self.player_frame, takefocus=False,
             image=self.images[PLAY_ICON],
             command=self.on_play_or_pause_track)
         Tooltip.Tooltip(self.play_pause_button,
-                        'Play or Pause the Current Track • Ctrl+P')
+                        'Play or Pause the Current Track • Spacebar')
         self.next_button = ttk.Button(
             self.player_frame, takefocus=False,
             image=self.images[NEXT_ICON], command=self.on_next_track)
@@ -239,11 +239,9 @@ class UiMixin:
 
 
     def make_player_bindings(self):
-        self.a_playlist_pane.treeview.bind(
-            '<space>', lambda *_: self.play_pause_button.invoke())
-        self.master.bind('<Control-p>',
+        self.master.bind('<space>',
                          lambda *_: self.play_pause_button.invoke())
-        self.master.bind('<Control-s>',
+        self.master.bind('<Control-p>',
                          lambda *_: self.previous_button.invoke())
         self.master.bind('<Control-t>',
                          lambda *_: self.next_button.invoke())

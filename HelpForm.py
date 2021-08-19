@@ -90,8 +90,7 @@ class Form(tk.Toplevel):
         add('\tShow this help window (also see below)\n', 'row')
         if Player.player.valid:
             add('Spacebar', 'row', 'key')
-            add('\tPlay or pause the current track (also see below)\n',
-                'row')
+            add('\tPlay or pause the current track\n', 'row')
         add('Alt+A', 'row', 'key')
         add(' or ', 'row', 'italic')
         add('Ctrl+A', 'row', 'key')
@@ -122,8 +121,7 @@ class Form(tk.Toplevel):
         add('\tCreate a new playlist\n', 'row')
         if Player.player.valid:
             add('Ctrl+P', 'row', 'key')
-            add('\tPlay or pause the current track (also see above)\n',
-                'row')
+            add('\tPlay the previous track\n', 'row')
         add('Alt+Q', 'row', 'key')
         add(' or ', 'row', 'italic')
         add('Ctrl+Q', 'row', 'key')
@@ -133,8 +131,6 @@ class Form(tk.Toplevel):
         add('Ctrl+R', 'row', 'key')
         add('\tRemove the current track\n', 'row')
         if Player.player.valid:
-            add('Ctrl+S', 'row', 'key')
-            add('\tPlay the previous track\n', 'row')
             add('Ctrl+T', 'row', 'key')
             add('\tPlay the next track\n', 'row')
         add('Alt+U', 'row', 'key')
