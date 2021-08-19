@@ -145,7 +145,7 @@ class Form(tk.Toplevel):
         add('Base Font Size', 'row', 'key')
         add(f'\t{config.base_font_size}\n', 'row')
         add('Default Playlist Suffix', 'row', 'key')
-        add(f'\t{config.default_playlist_suffix}\n', 'row')
+        add(f'\t{config.default_playlist_suffix.lower()}\n', 'row')
         add('Music Path', 'row', 'key')
         add(f'\t{config.music_path}\n', 'row')
         add('Playlists Path', 'row', 'key')
