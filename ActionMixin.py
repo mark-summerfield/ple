@@ -59,13 +59,38 @@ class ActionMixin:
 
 
     def on_new_playlist(self, _event=None):
-        print('on_new_playlist') # TODO
-        # TODO user chooses music folder
-        # TODO create unique playlist name based on the music folder's name
-        # in the playlist folder dir (adding -1 or -2 ... if needed to avoid
-        # clobbering an existing playlist)
-        # TODO iterate music folder using playlist.filter(music_folder) and
-        # add tracks using playlist.Track(playlist.normalize_name(...
+        path = tkinter.filedialog.askdirectory(
+            parent=self, title=f'New Playlist — {APPNAME}',
+            initialdir=self.music_path, mustexist=True)
+        if path:
+            playlist_name = self.populate_new_playlist(path)
+            self.playlists_pane.set_path(Config.config.playlists_path)
+            self.playlists_pane.treeview.select(playlist_name)
+
+
+    def populate_new_playlist(self, path):
+        playlist_name = self.unique_new_playlist_name(path)
+        self.tracks = playlist.Playlist(playlist_name)
+        for filename in playlist.filter(path):
+            self.tracks += playlist.Track(
+                playlist.normalize_name(filename), filename, -1)
+        self.tracks.sort()
+        return playlist_name
+
+
+    def unique_new_playlist_name(self, path):
+        config = Config.config
+        playlists_path = config.playlists_path
+        basename = os.path.basename(path)
+        suffix = config.default_playlist_suffix.lower()
+        count = 0
+        while True:
+            n = f'-{count}' if count else ''
+            playlist_name = os.path.join(playlists_path,
+                                         basename + n + suffix)
+            if not os.path.exists(playlist_name):
+                return playlist_name
+            count += 1
 
 
     def on_about(self, _event=None):

@@ -7,6 +7,8 @@ import enum
 import pathlib
 import re
 
+from playlist import M3U, PLS, XSPF
+
 
 class _Config:
 
@@ -14,6 +16,7 @@ class _Config:
         self.base_font_size = None
         self.current_playlist = ''
         self.current_track = ''
+        self.default_playlist_suffix = M3U
         self.geometry = None
         self.music_path = None
         self.playlists_path = None
@@ -32,6 +35,7 @@ class _Config:
 {_Key.BASEFONTSIZE.value} = {self.base_font_size}
 {_Key.CURRENTPLAYLIST.value} = {self.current_playlist}
 {_Key.CURRENTTRACK.value} = {self.current_track}
+{_Key.DEFAULTPLAYLISTSUFFIX.value} = {self.default_playlist_suffix}
 {_Key.GEOMETRY.value} = {self.geometry}
 {_Key.MUSICPATH.value} = {self.music_path}
 {_Key.PLAYLISTSPATH.value} = {self.playlists_path}
@@ -94,6 +98,14 @@ class _Config:
                         self.current_playlist = value
                     elif key is _Key.CURRENTTRACK:
                         self.current_track = value
+                    elif key is _Key.DEFAULTPLAYLISTSUFFIX:
+                        value = value.upper()
+                        if not value.startswith('.'):
+                            value = '.' + value
+                        if value in {M3U, PLS, XSPF}:
+                            self.default_playlist_suffix = value
+                        else:
+                            err = 'unrecognized playlist suffix'
                     elif key is _Key.GEOMETRY:
                         if re.fullmatch(r'\d+x\d+(?:[-+]\d+[-+]\d+)?',
                                         value):
@@ -120,6 +132,7 @@ class _Key(enum.Enum):
     BASEFONTSIZE = 'Base Font Size'
     CURRENTPLAYLIST = 'Current Playlist'
     CURRENTTRACK = 'Current Track'
+    DEFAULTPLAYLISTSUFFIX = 'Default Playlist Suffix'
     GEOMETRY = 'Geometry'
     MUSICPATH = 'Music Path'
     PLAYLISTSPATH = 'Playlists Path'

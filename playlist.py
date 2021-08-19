@@ -269,6 +269,11 @@ class Playlist:
         tree.write(self.filename, encoding='utf-8', xml_declaration=True)
 
 
+    def sort(self):
+        self._tracks.sort(key=lambda track: track.filename.upper())
+        self.save()
+
+
     def insert(self, index, track):
         self._tracks.insert(index, track)
         self.save()
@@ -352,7 +357,7 @@ def build(folder, *, format=M3U):
     tracks = Playlist(playlist_filename)
     for filename in filter(folder):
         tracks += Track(normalize_name(filename), filename, -1)
-    tracks._tracks.sort(key=lambda track: track.filename.upper())
+    tracks.sort()
     return tracks
 
 
@@ -444,7 +449,6 @@ if __name__ == '__main__':
             format = M3U.lower()
             folder = args[0].rstrip('/\\')
         tracks = build(folder, format=format)
-        tracks.save()
         print(f'wrote {tracks.filename}')
 
 
