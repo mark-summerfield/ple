@@ -3,6 +3,7 @@
 # License: GPLv3
 
 import atexit
+import pathlib
 import threading
 
 try: # 1..4 order must be preserved
@@ -81,7 +82,10 @@ else:
             self._playbin.set_property('uri', self._uri)
             self._playbin.set_state(Gst.State.PLAYING)
             status = self._playbin.get_state(Gst.CLOCK_TIME_NONE)
-            return status[0] != Gst.StateChangeReturn.FAILURE
+            if status[0] == Gst.StateChangeReturn.FAILURE:
+                word = 'play' if pathlib.Path(filename).exists() else 'find'
+                return False, f'Failed to {word} {filename}'
+            return True, None
 
 
         def pause(self):

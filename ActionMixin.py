@@ -222,7 +222,8 @@ class ActionMixin:
                 if iid == Player.player.filename:
                     Player.player.resume()
                 else:
-                    self.play_track(treeview, iid)
+                    if not self.play_track(treeview, iid):
+                        return
                 icon = PAUSE_ICON
                 self.playing = True
                 self.while_playing()
@@ -234,17 +235,21 @@ class ActionMixin:
 
 
     def play_track(self, treeview, iid):
-        Player.player.play(iid)
-        length = Player.player.length
-        self.position_progressbar.configure(maximum=length)
         self.position_var.set(0)
-        track = self.tracks[treeview.index(iid)]
-        length = round(length)
-        if track.secs != length:
-            track.secs = length
-            self.tracks.save()
-            self.a_playlist_pane.update(iid, track)
-        self.update_volume()
+        ok, err = Player.player.play(iid)
+        if ok:
+            length = Player.player.length
+            self.position_progressbar.configure(maximum=length)
+            track = self.tracks[treeview.index(iid)]
+            length = round(length)
+            if track.secs != length:
+                track.secs = length
+                self.tracks.save()
+                self.a_playlist_pane.update(iid, track)
+            self.update_volume()
+        else:
+            self.set_status_message(err, fg=ERROR_FG)
+        return ok
 
 
     def on_next_track(self, _event=None):
