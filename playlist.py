@@ -401,7 +401,7 @@ def humanized_length(secs, *, min_sign='′', sec_sign='″', sec_dp=0):
     mins = '{}{}'.format(int(minutes), min_sign) if minutes else ''
     if hours:
         return f'{hrs}{mins}'
-    if minutes > 30:
+    if minutes > 30 or (minutes and (int(secs) == 0)):
         return f'{mins}'
     if minutes:
         return f'{mins}{int(secs)}{sec_sign}'
