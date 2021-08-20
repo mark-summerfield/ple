@@ -93,7 +93,9 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
 
     def update_volume(self, *_):
         if Player.player.valid:
-            Player.player.volume = self.volume_var.get()
+            volume = self.volume_var.get()
+            Player.player.volume = volume
+            self.volume_label.configure(text=f'Volume {volume * 100:.0f}%')
 
 
     def on_close(self, _event=None):
