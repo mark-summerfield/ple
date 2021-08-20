@@ -31,7 +31,7 @@ else:
         _gloop_thread = None
 
         def __init__(self):
-            self._volume = 50
+            self._volume = 0.5
             self._uri = None
             self._playbin = Gst.ElementFactory.make('playbin', None)
             if _Player._gloop_thread is None:
@@ -58,12 +58,8 @@ else:
 
         @volume.setter
         def volume(self, value):
-            self._volume = max(0, min(100, value))
-            self._set_volume()
-
-
-        def _set_volume(self): # range 0.0..1.0
-            self._playbin.set_property('volume', self._volume / 100.0)
+            self._volume = max(0.0, min(1.0, value))
+            self._playbin.set_property('volume', self._volume)
 
 
         @property

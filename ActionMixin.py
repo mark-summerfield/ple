@@ -221,6 +221,7 @@ class ActionMixin:
                     Player.player.resume()
                 else:
                     Player.player.play(iid)
+                    self.update_volume()
                 icon = PAUSE_ICON
                 self.playing = True
                 self.while_playing()

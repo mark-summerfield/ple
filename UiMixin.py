@@ -124,12 +124,25 @@ class UiMixin:
 
 
     def make_scales(self):
+        font = tkfont.nametofont('TkFixedFont')
+        yellow = '#FFFFCD'
+        self.volume_label = ttk.Label(self.player_frame, text='Volume',
+                                      anchor=tk.CENTER)
+        self.volume_frame = ttk.Frame(self.player_frame)
+        self.volume_label_mute = ttk.Label(
+            self.volume_frame, width=1, font=font, foreground='navy',
+            background=yellow, relief=tk.SUNKEN)
+        self.volume_label_mid = ttk.Label(
+            self.volume_frame, width=PROGRESS_WIDTH - 2, font=font,
+            foreground='#8080FF', background=yellow, relief=tk.SUNKEN)
+        self.volume_label_max = ttk.Label(
+            self.volume_frame, width=1, font=font, foreground='#FF8080',
+            background=yellow, relief=tk.SUNKEN)
         self.position_label = ttk.Label(self.player_frame, text='0″/0″',
                                         anchor=tk.CENTER)
         self.position_progress = ttk.Label(
             self.player_frame, relief=tk.SUNKEN, width=PROGRESS_WIDTH,
-            foreground='#8080FF', background='#FFFFCD',
-            font=tkfont.nametofont('TkFixedFont'))
+            foreground='#80FF80', background=yellow, font=font)
 
 
     def make_layout(self):
@@ -181,16 +194,22 @@ class UiMixin:
     def make_player_layout(self):
         common = dict(sticky=WE, pady=PAD, padx=PAD)
         self.player_frame.grid(row=7, **common)
-        self.previous_button.grid(row=0, column=0, **common)
-        self.play_pause_button.grid(row=0, column=1, **common)
-        self.next_button.grid(row=0, column=2, **common)
+        self.previous_button.grid(row=2, column=0, **common)
+        self.play_pause_button.grid(row=2, column=1, **common)
+        self.next_button.grid(row=2, column=2, **common)
         self.playlist_button_frame.rowconfigure(6, weight=1)
 
 
     def make_scales_layout(self):
         common = dict(sticky=WE, pady=PAD, padx=PAD, column=0, columnspan=3)
-        self.position_label.grid(row=1, **common)
-        self.position_progress.grid(row=2, **common)
+        self.volume_label.grid(row=0, **common)
+        self.volume_frame.grid(row=1, **common)
+        self.volume_label_mute.grid(row=0, column=0, ipadx=PAD, pady=PAD)
+        self.volume_label_mid.grid(row=0, column=1, ipadx=PAD, pady=PAD,
+                                   sticky=WE)
+        self.volume_label_max.grid(row=0, column=2, ipadx=PAD, pady=PAD)
+        self.position_label.grid(row=3, **common)
+        self.position_progress.grid(row=4, **common)
 
 
     def make_bindings(self):

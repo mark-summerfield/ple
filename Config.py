@@ -7,6 +7,7 @@ import enum
 import pathlib
 import re
 
+import Player
 from playlist import M3U, PLS, XSPF
 
 
@@ -16,6 +17,8 @@ class _Config:
         self.base_font_size = None
         self.current_playlist = ''
         self.current_track = ''
+        self.current_volume = (Player.player.volume if Player.player.valid
+                               else 0.5)
         self.default_playlist_suffix = M3U
         self.geometry = None
         self.music_path = None
@@ -35,6 +38,7 @@ class _Config:
 {_Key.BASEFONTSIZE.value} = {self.base_font_size}
 {_Key.CURRENTPLAYLIST.value} = {self.current_playlist}
 {_Key.CURRENTTRACK.value} = {self.current_track}
+{_Key.CURRENTVOLUME.value} = {self.current_volume}
 {_Key.DEFAULTPLAYLISTSUFFIX.value} = {self.default_playlist_suffix}
 {_Key.GEOMETRY.value} = {self.geometry}
 {_Key.MUSICPATH.value} = {self.music_path}
@@ -98,6 +102,11 @@ class _Config:
                         self.current_playlist = value
                     elif key is _Key.CURRENTTRACK:
                         self.current_track = value
+                    elif key is _Key.CURRENTVOLUME:
+                        if value.replace('.', '').isdecimal():
+                            self.current_volume = float(value)
+                        else:
+                            err = 'invalid float for'
                     elif key is _Key.DEFAULTPLAYLISTSUFFIX:
                         value = value.upper()
                         if not value.startswith('.'):
@@ -132,6 +141,7 @@ class _Key(enum.Enum):
     BASEFONTSIZE = 'Base Font Size'
     CURRENTPLAYLIST = 'Current Playlist'
     CURRENTTRACK = 'Current Track'
+    CURRENTVOLUME = 'Current Volume'
     DEFAULTPLAYLISTSUFFIX = 'Default Playlist Suffix'
     GEOMETRY = 'Geometry'
     MUSICPATH = 'Music Path'

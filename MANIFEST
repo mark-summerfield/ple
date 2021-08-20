@@ -1,7 +1,7 @@
 icons: /usr/share/icons/elementary-xfce/actions/24/
 
 ple.pyw
-Window.py
+Window.py # TODO update_volume()
 UiMixin.py
 ActionMixin.py
 PlaylistsPane.py
@@ -17,7 +17,7 @@ Tooltip.py
 playlist.py
 
 # TODO
-volume: add back volume control
+volume: update_volume(), then support clicking mute, mid, & max
 
 st.sh
 

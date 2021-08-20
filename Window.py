@@ -2,6 +2,7 @@
 # Copyright © 2021 Mark Summerfield. All rights reserved.
 # License: GPLv3
 
+import math
 import tkinter as tk
 import tkinter.ttk as ttk
 
@@ -34,13 +35,14 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
 
 
     def initialize(self):
-        current_playlist = Config.config.current_playlist
-        if current_playlist:
-            self.playlists_pane.treeview.select(current_playlist)
+        config = Config.config
+        if config.current_playlist:
+            self.playlists_pane.treeview.select(config.current_playlist)
         else:
             self.playlists_pane.focus_first_child()
         self.update_ui()
         if Player.player.valid:
+            Player.player.volume = config.current_volume
             self.set_status_message('Ready')
         else:
             self.set_status_message('Playback unsupported: did not find a '
@@ -82,6 +84,19 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
             secs = playlist.humanized_length(secs)
             total_secs = playlist.humanized_length(total_secs)
             self.position_label.configure(text=f'{secs}/{total_secs}')
+
+
+    def update_volume(self):
+        if Player.player.valid:
+            volume = Player.player.volume
+            if math.isclose(0.0, volume): # mute
+                print('mute') # TODO
+            elif math.isclose(1.0, volume): # max
+                print('max') # TODO
+            else:
+                print('mid') # TODO
+        else:
+            pass # TODO
 
 
     def on_close(self, _event=None):
