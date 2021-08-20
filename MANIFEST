@@ -1,5 +1,4 @@
 icons: /usr/share/icons/elementary-xfce/actions/24/
-custom dialogs: /usr/lib/python3.8/tkinter/simpledialog.py
 
 ple.pyw
 Window.py
@@ -17,20 +16,8 @@ Treeview.py
 Tooltip.py
 playlist.py
 
-# TODO in order:
-Play|Pause: if default player is external then only show [>] Play and
-            when clicked send the current track to the player; if the track
-            plays to the end automatically makes the next track current and
-            starts playing it and so on until the end of the playlist
-position: progress slider MmSs/MmSs
-
-# TODO 
-# use playbin:
-# see https://brettviren.github.io/pygst-tutorial-org/pygst-tutorial.html
-playbin-example-audio.py
-
 # TODO
-# to show progress call self.position_progress(secs, total_secs)
+volume: add back volume control
 
 st.sh
 

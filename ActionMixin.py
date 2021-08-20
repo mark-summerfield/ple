@@ -8,6 +8,7 @@ import tkinter.filedialog
 import AboutForm
 import Config
 import HelpForm
+import Player
 import playlist
 import TrackForm
 from Const import APPNAME, ERROR_FG, PAUSE_ICON, PLAY_ICON
@@ -215,14 +216,19 @@ class ActionMixin:
         treeview = self.a_playlist_pane.treeview
         iid = treeview.focus()
         if iid:
-            if self.playing:
-                icon = PLAY_ICON
-                print('on_play_or_pause_track PAUSE', iid) # TODO
-            else:
+            if not self.playing:
+                if iid == Player.player.filename:
+                    Player.player.resume()
+                else:
+                    Player.player.play(iid)
                 icon = PAUSE_ICON
-                print('on_play_or_pause_track PLAY', iid) # TODO
+                self.playing = True
+                self.while_playing()
+            else:
+                Player.player.pause()
+                icon = PLAY_ICON
+                self.playing = False
             self.play_pause_button.config(image=self.images[icon])
-            self.playing = not self.playing
 
 
     def on_next_track(self, _event=None):
@@ -238,3 +244,12 @@ class ActionMixin:
                 self.on_play_or_pause_track() # Pause/Stop
             treeview.select(next_iid)
             self.on_play_or_pause_track() # Play
+
+
+    def while_playing(self, _event=None):
+        if self.playing:
+            self.set_progress(Player.player.pos, Player.player.length)
+            self.playing_timer_id = self.after(1000, self.while_playing)
+        elif self.playing_timer_id is not None:
+            self.after_cancel(self.playing_timer_id)
+            self.playing_timer_id = None

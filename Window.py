@@ -25,6 +25,7 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
         self.deleted_track = None # for Undelete
         self.deleted_index = -1 # for Undelete
         self.status_timer_id = None
+        self.playing_timer_id = None
         self.make_images()
         self.make_widgets()
         self.make_layout()
@@ -61,7 +62,6 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
             widget.state([state])
         if self.deleted_track is None:
             self.unremove_button.state([tk.DISABLED])
-        # NOTE set_progress() ?
 
 
     def set_status_message(self, message, *, millisec=10_000, fg=INFO_FG):

@@ -379,7 +379,7 @@ def normalize_name(name):
     return name.replace('_', ' ')
 
 
-def humanized_length(secs, *, min_sign='′', sec_sign='″'):
+def humanized_length(secs, *, min_sign='′', sec_sign='″', sec_dp=0):
     if secs <= 0:
         return f'0{sec_sign}'
     hours, secs = divmod(secs, 3600)
@@ -392,7 +392,7 @@ def humanized_length(secs, *, min_sign='′', sec_sign='″'):
         return f'{mins}'
     if minutes:
         return f'{mins}{int(secs)}{sec_sign}'
-    return f'{max(1, secs)}{sec_sign}'
+    return f'{max(1, secs):.{sec_dp}f}{sec_sign}'
 
 
 M3U_EXTM3U = '#EXTM3U'
