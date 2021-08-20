@@ -44,3 +44,4 @@ dub.selections.json
 zig-cache
 audioplayerGUI.py
 playbin-example-audio.py
+badsong.ogg
