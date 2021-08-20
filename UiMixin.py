@@ -3,7 +3,6 @@
 # License: GPLv3
 
 
-import pathlib
 import tkinter as tk
 import tkinter.ttk as ttk
 
@@ -17,13 +16,12 @@ from Const import APPNAME, NS, NSWE, PAD, PAUSE_ICON, PLAY_ICON, WE
 
 class UiMixin:
 
-    def make_images(self):
-        path = pathlib.Path(__file__).parent / 'images'
+    def make_images(self, imagepath):
         for name in (ABOUT_ICON, ADD_ICON, EDIT_ICON, FILENEW_ICON,
                      HELP_ICON, MOVE_DOWN_ICON, MOVE_UP_ICON, NEXT_ICON,
                      PAUSE_ICON, PLAY_ICON, PREVIOUS_ICON, QUIT_ICON,
                      REMOVE_ICON, UNREMOVE_ICON):
-            self.images[name] = tk.PhotoImage(file=path / name)
+            self.images[name] = tk.PhotoImage(file=imagepath / name)
 
 
     def make_widgets(self):

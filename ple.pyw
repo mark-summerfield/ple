@@ -2,7 +2,7 @@
 # Copyright © 2021 Mark Summerfield. All rights reserved.
 # License: GPLv3
 
-import os
+import pathlib
 import tkinter as tk
 import tkinter.font as tkfont
 
@@ -21,9 +21,9 @@ def main():
     app.title(f'{APPNAME} v{VERSION}')
     app.option_add('*tearOff', False)
     app.option_add('*insertOffTime', 0) # Should be user customizable
-    icon = os.path.join(os.path.dirname(__file__), 'images/ple.png')
-    app.iconphoto(True, tk.PhotoImage(file=icon))
-    window = Window.Window(app)
+    imagepath = pathlib.Path(__file__).resolve().parent / 'images/'
+    app.iconphoto(True, tk.PhotoImage(file=imagepath / 'ple.png'))
+    window = Window.Window(app, imagepath)
     app.protocol('WM_DELETE_WINDOW', window.on_close)
     app.deiconify()
     app.mainloop()

@@ -15,7 +15,7 @@ from Const import INFO_FG, PAD, WARN_FG
 
 class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
 
-    def __init__(self, master):
+    def __init__(self, master, imagepath):
         super().__init__(master, padding=PAD)
         self.images = {}
         self.startup = True
@@ -30,7 +30,7 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
         self.volume_var = tk.DoubleVar(value=config.current_volume)
         self.volume_var.trace_add('write', self.update_volume)
         self.position_var = tk.DoubleVar()
-        self.make_images()
+        self.make_images(imagepath)
         self.make_widgets()
         self.make_layout()
         self.make_bindings()
