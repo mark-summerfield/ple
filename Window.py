@@ -2,7 +2,6 @@
 # Copyright © 2021 Mark Summerfield. All rights reserved.
 # License: GPLv3
 
-import math
 import tkinter as tk
 import tkinter.ttk as ttk
 
@@ -22,11 +21,14 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
         self.startup = True
         self.playing = False
         self.tracks = None # playlist.Playlist
-        self.music_path = Config.config.music_path
+        config = Config.config
+        self.music_path = config.music_path
         self.deleted_track = None # for Undelete
         self.deleted_index = -1 # for Undelete
         self.status_timer_id = None
         self.playing_timer_id = None
+        self.volume_var = tk.DoubleVar(value=config.current_volume)
+        self.volume_var.trace_add('write', self.update_volume)
         self.make_images()
         self.make_widgets()
         self.make_layout()
@@ -78,7 +80,10 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
 
     def set_progress(self, secs, total_secs):
         if Player.player.valid:
-            size = round((secs / total_secs) * UiMixin.PROGRESS_WIDTH)
+            if not total_secs:
+                size = UiMixin.PROGRESS_WIDTH
+            else:
+                size = round((secs / total_secs) * UiMixin.PROGRESS_WIDTH)
             text = ('▉' * size) + ('▕' * (UiMixin.PROGRESS_WIDTH - size))
             self.position_progress.configure(text=text)
             secs = playlist.humanized_length(secs)
@@ -86,22 +91,16 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
             self.position_label.configure(text=f'{secs}/{total_secs}')
 
 
-    def update_volume(self):
+    def update_volume(self, *_):
         if Player.player.valid:
-            volume = Player.player.volume
-            if math.isclose(0.0, volume): # mute
-                print('mute') # TODO
-            elif math.isclose(1.0, volume): # max
-                print('max') # TODO
-            else:
-                print('mid') # TODO
-        else:
-            pass # TODO
+            Player.player.volume = self.volume_var.get()
 
 
     def on_close(self, _event=None):
         config = Config.config
         config.current_playlist = self.playlists_pane.treeview.focus()
         config.current_track = self.a_playlist_pane.treeview.focus()
+        if Player.player.valid:
+            config.current_volume = Player.player.volume
         config.geometry = self.winfo_toplevel().geometry()
         self.quit()

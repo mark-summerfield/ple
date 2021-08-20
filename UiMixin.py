@@ -5,7 +5,6 @@
 
 import pathlib
 import tkinter as tk
-import tkinter.font as tkfont
 import tkinter.ttk as ttk
 
 import Config
@@ -124,25 +123,16 @@ class UiMixin:
 
 
     def make_scales(self):
-        font = tkfont.nametofont('TkFixedFont')
-        yellow = '#FFFFCD'
         self.volume_label = ttk.Label(self.player_frame, text='Volume',
                                       anchor=tk.CENTER)
-        self.volume_frame = ttk.Frame(self.player_frame)
-        self.volume_label_mute = ttk.Label(
-            self.volume_frame, width=1, font=font, foreground='navy',
-            background=yellow, relief=tk.SUNKEN)
-        self.volume_label_mid = ttk.Label(
-            self.volume_frame, width=PROGRESS_WIDTH - 2, font=font,
-            foreground='#8080FF', background=yellow, relief=tk.SUNKEN)
-        self.volume_label_max = ttk.Label(
-            self.volume_frame, width=1, font=font, foreground='#FF8080',
-            background=yellow, relief=tk.SUNKEN)
+        self.volume_scale = ttk.Scale(
+            self.player_frame, orient=tk.HORIZONTAL, from_=0.0, to=1.0,
+            variable=self.volume_var)
         self.position_label = ttk.Label(self.player_frame, text='0″/0″',
                                         anchor=tk.CENTER)
         self.position_progress = ttk.Label(
             self.player_frame, relief=tk.SUNKEN, width=PROGRESS_WIDTH,
-            foreground='#80FF80', background=yellow, font=font)
+            foreground='#80FF80', background='#FFFFCD')
 
 
     def make_layout(self):
@@ -203,11 +193,7 @@ class UiMixin:
     def make_scales_layout(self):
         common = dict(sticky=WE, pady=PAD, padx=PAD, column=0, columnspan=3)
         self.volume_label.grid(row=0, **common)
-        self.volume_frame.grid(row=1, **common)
-        self.volume_label_mute.grid(row=0, column=0, ipadx=PAD, pady=PAD)
-        self.volume_label_mid.grid(row=0, column=1, ipadx=PAD, pady=PAD,
-                                   sticky=WE)
-        self.volume_label_max.grid(row=0, column=2, ipadx=PAD, pady=PAD)
+        self.volume_scale.grid(row=1, **common)
         self.position_label.grid(row=3, **common)
         self.position_progress.grid(row=4, **common)
 
