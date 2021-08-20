@@ -25,11 +25,12 @@ class UiMixin:
 
 
     def make_widgets(self):
-        self.make_main_buttons()
         self.splitter = ttk.PanedWindow(self.master, orient=tk.HORIZONTAL)
         self.playlists_pane = PlaylistsPane.PlaylistsPane(
             self.splitter, path=Config.config.playlists_path)
         self.a_playlist_pane = PlaylistPane.PlaylistPane(self.splitter)
+        self.button_frame = ttk.Frame(self.master)
+        self.make_main_buttons()
         self.make_playlist_buttons()
         if Player.player.valid:
             self.make_player_buttons()
@@ -39,7 +40,6 @@ class UiMixin:
 
 
     def make_main_buttons(self):
-        self.button_frame = ttk.Frame(self.master)
         self.file_new_button = ttk.Button(
             self.button_frame, text='New', underline=0, takefocus=False,
             image=self.images[FILENEW_ICON], command=self.on_new_playlist,
@@ -65,34 +65,33 @@ class UiMixin:
 
 
     def make_playlist_buttons(self):
-        self.playlist_button_frame = ttk.Frame(self.master)
         self.add_button = ttk.Button(
-            self.playlist_button_frame, text='Add', underline=0,
-            takefocus=False, image=self.images[ADD_ICON],
-            command=self.on_add_track, compound=tk.LEFT)
+            self.button_frame, text='Add', underline=0, takefocus=False,
+            image=self.images[ADD_ICON], command=self.on_add_track,
+            compound=tk.LEFT)
         Tooltip.Tooltip(self.add_button, 'Add Track to Playlist • Ctrl+A')
         self.edit_button = ttk.Button(
-            self.playlist_button_frame, text='Edit', underline=0,
-            takefocus=False, image=self.images[EDIT_ICON],
-            command=self.on_edit_track, compound=tk.LEFT)
+            self.button_frame, text='Edit', underline=0, takefocus=False,
+            image=self.images[EDIT_ICON], command=self.on_edit_track,
+            compound=tk.LEFT)
         Tooltip.Tooltip(self.edit_button, 'Edit Track\'s Name • Ctrl+E')
         self.move_up_button = ttk.Button(
-            self.playlist_button_frame, text='Move Up', underline=5,
-            takefocus=False, image=self.images[MOVE_UP_ICON],
-            command=self.on_move_track_up, compound=tk.LEFT)
+            self.button_frame, text='Move Up', underline=5, takefocus=False,
+            image=self.images[MOVE_UP_ICON], command=self.on_move_track_up,
+            compound=tk.LEFT)
         Tooltip.Tooltip(self.move_up_button, 'Move Track Up • Ctrl+U')
         self.move_down_button = ttk.Button(
-            self.playlist_button_frame, text='Move Down', underline=5,
+            self.button_frame, text='Move Down', underline=5,
             takefocus=False, image=self.images[MOVE_DOWN_ICON],
             command=self.on_move_track_down, compound=tk.LEFT)
         Tooltip.Tooltip(self.move_down_button, 'Move Track Down • Ctrl+D')
         self.remove_button = ttk.Button(
-            self.playlist_button_frame, text='Remove', underline=0,
-            takefocus=False, image=self.images[REMOVE_ICON],
-            command=self.on_remove_track, compound=tk.LEFT)
+            self.button_frame, text='Remove', underline=0, takefocus=False,
+            image=self.images[REMOVE_ICON], command=self.on_remove_track,
+            compound=tk.LEFT)
         Tooltip.Tooltip(self.remove_button, 'Remove Track • Ctrl+R')
         self.unremove_button = ttk.Button(
-            self.playlist_button_frame, text='Unremove', underline=4,
+            self.button_frame, text='Unremove', underline=4,
             takefocus=False, image=self.images[UNREMOVE_ICON],
             command=self.on_unremove_track, compound=tk.LEFT)
         Tooltip.Tooltip(self.unremove_button,
@@ -100,7 +99,7 @@ class UiMixin:
 
 
     def make_player_buttons(self):
-        self.player_frame = ttk.Frame(self.playlist_button_frame)
+        self.player_frame = ttk.Frame(self.button_frame)
         self.previous_button = ttk.Button(
             self.player_frame, takefocus=False,
             image=self.images[PREVIOUS_ICON],
@@ -134,20 +133,19 @@ class UiMixin:
 
 
     def make_layout(self):
-        self.make_main_button_layout()
         common = dict(padx=PAD, pady=PAD, sticky=NSWE)
-        self.playlists_pane.grid(row=0, column=0, **common)
-        self.a_playlist_pane.grid(row=0, column=1, **common)
+        self.button_frame.grid(row=0, column=0, padx=PAD, pady=PAD,
+                               sticky=NS)
+        self.playlists_pane.grid(row=0, column=1, **common)
+        self.a_playlist_pane.grid(row=0, column=2, **common)
         self.splitter.add(self.playlists_pane, weight=1)
         self.splitter.add(self.a_playlist_pane, weight=3)
         self.splitter.grid(row=0, column=1, columnspan=2, rowspan=2,
                            sticky=NSWE)
-        self.make_playlist_button_layout()
+        self.make_button_layout()
         if Player.player.valid:
             self.make_player_layout()
             self.make_scales_layout()
-        self.playlist_button_frame.grid(row=0, column=3, padx=PAD, pady=PAD,
-                                        sticky=NS)
         self.status_label.grid(row=2, column=0, columnspan=4, padx=PAD,
                                pady=PAD, sticky=WE)
         top = self.winfo_toplevel()
@@ -158,25 +156,19 @@ class UiMixin:
         self.rowconfigure(0, weight=1)
 
 
-    def make_main_button_layout(self):
+    def make_button_layout(self):
         common = dict(column=0, sticky=WE, pady=PAD, padx=PAD)
         self.file_new_button.grid(row=0, **common)
-        self.about_button.grid(row=1, **common)
-        self.help_button.grid(row=2, **common)
-        self.quit_button.grid(row=4, **common)
-        self.button_frame.rowconfigure(3, weight=1)
-        self.button_frame.grid(row=0, column=0, padx=PAD, pady=PAD,
-                               sticky=NS)
-
-
-    def make_playlist_button_layout(self):
-        common = dict(sticky=WE, pady=PAD, padx=PAD)
-        self.add_button.grid(row=0, **common)
-        self.edit_button.grid(row=1, **common)
-        self.move_up_button.grid(row=2, **common)
-        self.move_down_button.grid(row=3, **common)
-        self.remove_button.grid(row=4, **common)
-        self.unremove_button.grid(row=5, **common)
+        self.add_button.grid(row=1, **common)
+        self.edit_button.grid(row=2, **common)
+        self.move_up_button.grid(row=3, **common)
+        self.move_down_button.grid(row=4, **common)
+        self.remove_button.grid(row=5, **common)
+        self.unremove_button.grid(row=6, column=0, sticky=WE + tk.N,
+                                  pady=PAD, padx=PAD)
+        self.about_button.grid(row=8, **common)
+        self.help_button.grid(row=9, **common)
+        self.quit_button.grid(row=10, **common)
 
 
     def make_player_layout(self):
@@ -185,7 +177,7 @@ class UiMixin:
         self.previous_button.grid(row=2, column=0, **common)
         self.play_pause_button.grid(row=2, column=1, **common)
         self.next_button.grid(row=2, column=2, **common)
-        self.playlist_button_frame.rowconfigure(6, weight=1)
+        self.button_frame.rowconfigure(6, weight=1)
 
 
     def make_scales_layout(self):
