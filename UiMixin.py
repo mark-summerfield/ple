@@ -130,9 +130,9 @@ class UiMixin:
             variable=self.volume_var)
         self.position_label = ttk.Label(self.player_frame, text='0″/0″',
                                         anchor=tk.CENTER)
-        self.position_progress = ttk.Label(
-            self.player_frame, relief=tk.SUNKEN, width=PROGRESS_WIDTH,
-            foreground='#80FF80', background='#FFFFCD')
+        self.position_progressbar = ttk.Progressbar(
+            self.player_frame, orient=tk.HORIZONTAL,
+            variable=self.position_var)
 
 
     def make_layout(self):
@@ -195,7 +195,7 @@ class UiMixin:
         self.volume_label.grid(row=0, **common)
         self.volume_scale.grid(row=1, **common)
         self.position_label.grid(row=3, **common)
-        self.position_progress.grid(row=4, **common)
+        self.position_progressbar.grid(row=4, **common)
 
 
     def make_bindings(self):
@@ -251,8 +251,6 @@ class UiMixin:
         self.master.bind('<Control-t>',
                          lambda *_: self.next_button.invoke())
 
-
-PROGRESS_WIDTH = 12
 
 ABOUT_ICON = 'help-about.png'
 ADD_ICON = 'list-add.png'

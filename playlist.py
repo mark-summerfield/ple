@@ -2,7 +2,6 @@
 # Copyright © 2021 Mark Summerfield. All rights reserved.
 # License: GPLv3
 
-import collections
 import enum
 import os
 import re
@@ -309,9 +308,23 @@ class Playlist:
         return iter(self._tracks)
 
 
-class Track(collections.namedtuple('Track', 'title filename secs')):
+class Track:
 
-    __slots__ = ()
+    __slots__ = ('title', 'filename', 'secs')
+
+    def __init__(self, title, filename, secs=-1):
+        self.title = title
+        self.filename = filename
+        self.secs = secs
+
+
+    @property
+    def humanized_length(self, *, min_sign='′', sec_sign='″'):
+        if self.secs <= 0:
+            return ''
+        return humanized_length(self.secs, min_sign=min_sign,
+                                sec_sign=sec_sign)
+
 
     def __bool__(self):
         return bool(self.title) and bool(self.filename)
@@ -356,7 +369,7 @@ def build(folder, *, format=M3U):
     playlist_filename = os.path.basename(str(folder)) + format.lower()
     tracks = Playlist(playlist_filename)
     for filename in filter(folder):
-        tracks += Track(normalize_name(filename), filename, -1)
+        tracks += Track(normalize_name(filename), filename)
     tracks.sort()
     return tracks
 

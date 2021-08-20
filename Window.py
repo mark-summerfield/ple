@@ -29,6 +29,7 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
         self.playing_timer_id = None
         self.volume_var = tk.DoubleVar(value=config.current_volume)
         self.volume_var.trace_add('write', self.update_volume)
+        self.position_var = tk.DoubleVar()
         self.make_images()
         self.make_widgets()
         self.make_layout()
@@ -58,7 +59,8 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
         if Player.player.valid:
             widgets += [self.previous_button, self.play_pause_button,
                         self.next_button, self.position_label,
-                        self.position_progress]
+                        self.position_progressbar, self.volume_label,
+                        self.volume_scale]
         state = tk.DISABLED
         if self.tracks is not None:
             state = '!' + state
@@ -80,12 +82,6 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
 
     def set_progress(self, secs, total_secs):
         if Player.player.valid:
-            if not total_secs:
-                size = UiMixin.PROGRESS_WIDTH
-            else:
-                size = round((secs / total_secs) * UiMixin.PROGRESS_WIDTH)
-            text = ('▉' * size) + ('▕' * (UiMixin.PROGRESS_WIDTH - size))
-            self.position_progress.configure(text=text)
             secs = playlist.humanized_length(secs)
             total_secs = playlist.humanized_length(total_secs)
             self.position_label.configure(text=f'{secs}/{total_secs}')

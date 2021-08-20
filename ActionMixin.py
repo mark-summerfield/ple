@@ -2,6 +2,7 @@
 # Copyright © 2021 Mark Summerfield. All rights reserved.
 # License: GPLv3
 
+import math
 import os
 import tkinter.filedialog
 
@@ -47,7 +48,8 @@ class ActionMixin:
         try:
             self.tracks = playlist.Playlist(name)
             self.set_status_message(
-                f'{len(self.tracks):,} tracks in {name}', millisec=None)
+                f'{len(self.tracks):,} tracks in {name} of '
+                f'{self.tracks.humanized_length}', millisec=None)
             self.a_playlist_pane.set_tracks(self.tracks)
             if self.startup:
                 self.a_playlist_pane.treeview.select(
@@ -73,8 +75,8 @@ class ActionMixin:
         playlist_name = self.unique_new_playlist_name(path)
         self.tracks = playlist.Playlist(playlist_name)
         for filename in playlist.filter(path):
-            self.tracks += playlist.Track(
-                playlist.normalize_name(filename), filename, -1)
+            self.tracks += playlist.Track(playlist.normalize_name(filename),
+                                          filename)
         self.tracks.sort()
         return playlist_name
 
@@ -113,7 +115,7 @@ class ActionMixin:
         if filename:
             self.music_path = os.path.dirname(filename)
             track = playlist.Track(playlist.normalize_name(filename),
-                                   filename, -1)
+                                   filename)
             self.tracks += track
             self.a_playlist_pane.append(track)
             self.a_playlist_pane.treeview.select(filename)
@@ -220,8 +222,7 @@ class ActionMixin:
                 if iid == Player.player.filename:
                     Player.player.resume()
                 else:
-                    Player.player.play(iid)
-                    self.update_volume()
+                    self.play_track(treeview, iid)
                 icon = PAUSE_ICON
                 self.playing = True
                 self.while_playing()
@@ -230,6 +231,20 @@ class ActionMixin:
                 icon = PLAY_ICON
                 self.playing = False
             self.play_pause_button.config(image=self.images[icon])
+
+
+    def play_track(self, treeview, iid):
+        Player.player.play(iid)
+        length = Player.player.length
+        self.position_progressbar.configure(maximum=length)
+        self.position_var.set(0)
+        track = self.tracks[treeview.index(iid)]
+        length = round(length)
+        if track.secs != length:
+            track.secs = length
+            self.tracks.save()
+            self.a_playlist_pane.update(iid, track)
+        self.update_volume()
 
 
     def on_next_track(self, _event=None):
@@ -248,9 +263,15 @@ class ActionMixin:
 
 
     def while_playing(self, _event=None):
-        if self.playing:
-            self.set_progress(Player.player.pos, Player.player.length)
-            self.playing_timer_id = self.after(1000, self.while_playing)
-        elif self.playing_timer_id is not None:
+        if self.playing_timer_id is not None:
             self.after_cancel(self.playing_timer_id)
             self.playing_timer_id = None
+        if self.playing:
+            pos = Player.player.pos
+            length = Player.player.length
+            if math.isclose(pos, length):
+                self.on_next_track()
+            else:
+                self.set_progress(pos, length)
+                self.position_var.set(pos)
+                self.playing_timer_id = self.after(1000, self.while_playing)

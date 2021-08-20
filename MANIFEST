@@ -1,7 +1,7 @@
 icons: /usr/share/icons/elementary-xfce/actions/24/
 
 ple.pyw
-Window.py # TODO update_volume()
+Window.py
 UiMixin.py
 ActionMixin.py
 PlaylistsPane.py
@@ -10,14 +10,11 @@ AboutForm.py
 HelpForm.py
 TrackForm.py
 Player.py
-Const.py
+Const.py # VERSION
 Config.py
 Treeview.py
 Tooltip.py
 playlist.py
-
-# TODO
-volume: update_volume(), then support clicking mute, mid, & max
 
 st.sh
 
