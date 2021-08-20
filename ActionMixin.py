@@ -275,6 +275,7 @@ class ActionMixin:
             pos = Player.player.pos
             length = Player.player.length
             if math.isclose(pos, length):
+                self.on_play_or_pause_track() # Pause/Stop
                 self.on_next_track()
             else:
                 self.set_progress(pos, length)
