@@ -154,3 +154,4 @@ class Form(tk.Toplevel):
 
     def quit(self, _event=None):
         self.destroy()
+        self.master.focus_set()

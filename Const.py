@@ -16,6 +16,5 @@ ERROR_FG = 'red'
 
 PAD = '1m'
 PAD3 = '3m'
-NS = tk.N + tk.S
 NSWE = tk.N + tk.S + tk.W + tk.E
 WE = tk.W + tk.E

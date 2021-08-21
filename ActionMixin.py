@@ -69,6 +69,7 @@ class ActionMixin:
             playlist_name = self.populate_new_playlist(path)
             self.playlists_pane.set_path(Config.config.playlists_path)
             self.playlists_pane.treeview.select(playlist_name)
+        self.focus_set()
 
 
     def populate_new_playlist(self, path):
@@ -98,6 +99,7 @@ class ActionMixin:
 
     def on_about(self, _event=None):
         AboutForm.Form(self)
+        self.focus_set()
 
 
     def on_help(self, _event=None):
@@ -119,6 +121,7 @@ class ActionMixin:
             self.tracks += track
             self.a_playlist_pane.append(track)
             self.a_playlist_pane.treeview.select(filename)
+        self.focus_set()
 
 
     def on_edit_track(self, _event=None):
@@ -132,6 +135,7 @@ class ActionMixin:
             if index > -1:
                 track = self.tracks[index]
                 form = TrackForm.Form(self, track)
+                self.focus_set()
                 if form.edited_track is not None:
                     parent = treeview.parent(iid)
                     treeview.delete(iid)
@@ -248,7 +252,12 @@ class ActionMixin:
                 self.a_playlist_pane.update(iid, track)
             self.update_volume()
         else:
+            message = self.status_label.cget('text')
             self.set_status_message(err, fg=ERROR_FG)
+            if message: # restore original message
+                self.status_timer_id = self.after(
+                    10_000, lambda: self.set_status_message(message,
+                                                            millisec=None))
         return ok
 
 

@@ -11,7 +11,7 @@ import Player
 import PlaylistPane
 import PlaylistsPane
 import Tooltip
-from Const import APPNAME, NS, NSWE, PAD, PAUSE_ICON, PLAY_ICON, WE
+from Const import APPNAME, NSWE, PAD, PAUSE_ICON, PLAY_ICON, WE
 
 
 class UiMixin:
@@ -134,14 +134,12 @@ class UiMixin:
 
     def make_layout(self):
         common = dict(padx=PAD, pady=PAD, sticky=NSWE)
-        self.button_frame.grid(row=0, column=0, padx=PAD, pady=PAD,
-                               sticky=NS)
-        self.playlists_pane.grid(row=0, column=1, **common)
-        self.a_playlist_pane.grid(row=0, column=2, **common)
+        self.playlists_pane.grid(row=0, column=0, **common)
+        self.a_playlist_pane.grid(row=0, column=1, **common)
         self.splitter.add(self.playlists_pane, weight=1)
         self.splitter.add(self.a_playlist_pane, weight=3)
-        self.splitter.grid(row=0, column=1, columnspan=2, rowspan=2,
-                           sticky=NSWE)
+        self.splitter.grid(row=0, column=0, sticky=NSWE)
+        self.button_frame.grid(row=0, column=2, **common)
         self.make_button_layout()
         if Player.player.valid:
             self.make_player_layout()
@@ -149,10 +147,9 @@ class UiMixin:
         self.status_label.grid(row=2, column=0, columnspan=4, padx=PAD,
                                pady=PAD, sticky=WE)
         top = self.winfo_toplevel()
-        top.columnconfigure(1, weight=1)
+        top.columnconfigure(0, weight=1)
         top.rowconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
-        self.columnconfigure(2, weight=1)
+        self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
 
@@ -164,20 +161,21 @@ class UiMixin:
         self.move_up_button.grid(row=3, **common)
         self.move_down_button.grid(row=4, **common)
         self.remove_button.grid(row=5, **common)
-        self.unremove_button.grid(row=6, column=0, sticky=WE + tk.N,
-                                  pady=PAD, padx=PAD)
+        self.unremove_button.grid(row=6, **common)
+        common['sticky'] = WE + tk.S
         self.about_button.grid(row=8, **common)
         self.help_button.grid(row=9, **common)
         self.quit_button.grid(row=10, **common)
+        self.button_frame.rowconfigure(8, weight=1)
 
 
     def make_player_layout(self):
         common = dict(sticky=WE, pady=PAD, padx=PAD)
-        self.player_frame.grid(row=7, **common)
+        self.player_frame.grid(row=7, sticky=WE)
         self.previous_button.grid(row=2, column=0, **common)
         self.play_pause_button.grid(row=2, column=1, **common)
         self.next_button.grid(row=2, column=2, **common)
-        self.button_frame.rowconfigure(6, weight=1)
+        self.player_frame.grid_columnconfigure(1, weight=1)
 
 
     def make_scales_layout(self):
