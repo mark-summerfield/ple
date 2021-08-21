@@ -105,7 +105,7 @@ class UiMixin:
             image=self.images[PREVIOUS_ICON],
             command=self.on_previous_track)
         Tooltip.Tooltip(self.previous_button,
-                        'Start Playing Previous Track • Ctrl+P')
+                        'Play Previous Track • Ctrl+P')
         self.play_pause_button = ttk.Button(
             self.player_frame, takefocus=False,
             image=self.images[PLAY_ICON],
@@ -115,8 +115,7 @@ class UiMixin:
         self.next_button = ttk.Button(
             self.player_frame, takefocus=False,
             image=self.images[NEXT_ICON], command=self.on_next_track)
-        Tooltip.Tooltip(self.next_button,
-                        'Start Playing Next Track • Ctrl+T')
+        Tooltip.Tooltip(self.next_button, 'Play Next Track • Ctrl+T')
 
 
     def make_scales(self):
