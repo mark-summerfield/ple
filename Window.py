@@ -19,7 +19,7 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
         super().__init__(master, padding=PAD)
         self.images = {}
         self.startup = True
-        self.playing = False
+        self.playing = None
         self.tracks = None # playlist.Playlist
         config = Config.config
         self.music_path = config.music_path

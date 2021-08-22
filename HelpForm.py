@@ -17,7 +17,7 @@ class Form(tk.Toplevel):
     def __init__(self, master):
         super().__init__(master)
         self.title(f'Help — {APPNAME}')
-        self.geometry('640x512')
+        self.geometry('640x640')
         self.make_widgets()
         self.make_layout()
         self.make_bindings()
@@ -34,7 +34,7 @@ class Form(tk.Toplevel):
 
 
     def make_layout(self):
-        self.text.grid(row=0, column=0, sticky=NSWE)
+        self.text.grid(row=0, column=0, sticky=NSWE, pady=PAD)
         self.button.grid(row=1, column=0, padx=PAD, pady=PAD)
         self.box.grid(row=0, column=0, sticky=NSWE)
         self.box.grid_columnconfigure(0, weight=1)
@@ -60,7 +60,7 @@ class Form(tk.Toplevel):
                              justify=tk.CENTER)
         table_title_font = default_font.copy()
         table_title_font.configure(underline=True)
-        tab = '4.5c'
+        tab = '5.75c'
         margin = '1m'
         self.text.tag_config(
             'rowtitle', tabs=(tab,), font=table_title_font,
@@ -79,16 +79,11 @@ class Form(tk.Toplevel):
 
         add(f'Help — {APPNAME}\n', 'title')
         add('Input\tAction\n', 'rowtitle')
-        add('Double-Click', 'row', 'key')
-        add('\tEdit the double-clicked track (also see below)\n', 'row')
-        add('Enter', 'row', 'key')
-        add('\tEdit the track that has the focus (also see above and '
-            'below)\n', 'row')
-        add('Escape', 'row', 'key')
-        add('\tQuit (also see below)\n', 'row')
-        add('F1', 'row', 'key')
-        add('\tShow this help window (also see below)\n', 'row')
         if Player.player.valid:
+            add('Double-Click', 'row', 'key')
+            add(' or\n', 'row', 'italic')
+            add('    Enter', 'row', 'key')
+            add(' or ', 'row', 'italic')
             add('Spacebar', 'row', 'key')
             add('\tPlay or pause the current track\n', 'row')
         add('Alt+A', 'row', 'key')
@@ -106,11 +101,13 @@ class Form(tk.Toplevel):
         add('Alt+E', 'row', 'key')
         add(' or ', 'row', 'italic')
         add('Ctrl+E', 'row', 'key')
-        add('\tEdit the current track (also see above)\n', 'row')
-        add('Alt+H', 'row', 'key')
+        add('\tEdit the current track\n', 'row')
+        add('F1', 'row', 'key')
+        add(' or\n', 'row', 'italic')
+        add('    Alt+H', 'row', 'key')
         add(' or ', 'row', 'italic')
         add('Ctrl+H', 'row', 'key')
-        add('\tShow this help window (also see above)\n', 'row',)
+        add('\tShow this help window\n', 'row')
         add('Alt+M', 'row', 'key')
         add(' or ', 'row', 'italic')
         add('Ctrl+M', 'row', 'key')
@@ -122,10 +119,12 @@ class Form(tk.Toplevel):
         if Player.player.valid:
             add('Ctrl+P', 'row', 'key')
             add('\tPlay the previous track\n', 'row')
-        add('Alt+Q', 'row', 'key')
+        add('Esccape', 'row', 'key')
+        add(' or\n', 'row', 'italic')
+        add('    Alt+Q', 'row', 'key')
         add(' or ', 'row', 'italic')
         add('Ctrl+Q', 'row', 'key')
-        add('\tQuit (also see above)\n', 'row')
+        add('\tQuit\n', 'row')
         add('Alt+R', 'row', 'key')
         add(' or ', 'row', 'italic')
         add('Ctrl+R', 'row', 'key')

@@ -40,6 +40,11 @@ class PlaylistPane(ttk.Frame):
                              text=self._title(track), image=self.image)
 
 
+    def insert(self, parent, index, track):
+        self.treeview.insert(parent, index, iid=track.filename,
+                             text=self._title(track), image=self.image)
+
+
     def update(self, iid, track):
         self.treeview.item(iid, text=self._title(track))
 

@@ -5,6 +5,7 @@
 import datetime
 import pathlib
 import platform
+import subprocess
 import sys
 import tkinter as tk
 import tkinter.font as tkfont
@@ -44,6 +45,8 @@ class Form(tkdialog.Dialog):
         desc = 'An application for creating and editing playlists'
         desc += ('\nand for playing tracks and entire playlists.'
                  if Player.player.valid else '.')
+        distro = subprocess.check_output(['lsb_release', '-ds']).decode(
+            'utf-8')
         self.body_label = ttk.Label(master, anchor=tk.CENTER,
                                     justify=tk.CENTER, text=f'''
 Copyright © {year} Mark Summerfield. All Rights Reserved.
@@ -55,7 +58,7 @@ ________________________________________
 Python \
 {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}
 Tk {tk.TkVersion}
-{platform.platform()}''')
+{distro}{platform.platform()}''')
 
 
     def make_body_layout(self, master):

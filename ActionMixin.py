@@ -47,14 +47,22 @@ class ActionMixin:
     def playlist_selected(self, name):
         try:
             self.tracks = playlist.Playlist(name)
-            self.set_status_message(
-                f'{len(self.tracks):,} tracks in {name} of '
-                f'{self.tracks.humanized_length}', millisec=None)
             self.a_playlist_pane.set_tracks(self.tracks)
             if self.startup:
                 self.a_playlist_pane.treeview.select(
                     Config.config.current_track)
                 self.startup = False
+            self.set_status_message(
+                f'{len(self.tracks):,} tracks in {name} of '
+                f'{self.tracks.humanized_length}', millisec=None)
+            if self.playing is not None:
+                treeview = self.a_playlist_pane.treeview
+                if treeview.exists(self.playing):
+                    text = treeview.item(self.playing, 'text')
+                    i = text.find('•')
+                    if i > -1:
+                        text = text[:i].rstrip()
+                    self.set_status_message(text, millisec=None)
         except (OSError, playlist.Error) as err:
             self.tracks = None
             self.set_status_message(f'Failed to load playlist: {err}',
@@ -121,7 +129,7 @@ class ActionMixin:
             self.tracks += track
             self.a_playlist_pane.append(track)
             self.a_playlist_pane.treeview.select(filename)
-        self.focus_set()
+        self.a_playlist_pane.treeview.focus_set()
 
 
     def on_edit_track(self, _event=None):
@@ -135,15 +143,11 @@ class ActionMixin:
             if index > -1:
                 track = self.tracks[index]
                 form = TrackForm.Form(self, track)
-                self.focus_set()
-                if form.edited_track is not None:
-                    parent = treeview.parent(iid)
-                    treeview.delete(iid)
-                    treeview.insert(
-                        parent, index, iid=form.edited_track.filename,
-                        text=form.edited_track.title,
-                        image=self.a_playlist_pane.image)
-                    self.tracks[index] = form.edited_track
+                if (form.edited_track is not None and
+                        form.edited_track.title != track.title):
+                    track.title = form.edited_track.title
+                    self.tracks.save()
+                    self.a_playlist_pane.update(iid, track)
             treeview.focus_set()
             treeview.select(iid)
 
@@ -210,7 +214,7 @@ class ActionMixin:
             prev_iid = treeview.prev(iid)
             if not prev_iid:
                 return # Can't go before first one
-            if self.playing:
+            if self.playing is not None:
                 self.on_play_or_pause_track() # Pause/Stop
             treeview.select(prev_iid)
             self.on_play_or_pause_track() # Play
@@ -222,19 +226,19 @@ class ActionMixin:
         treeview = self.a_playlist_pane.treeview
         iid = treeview.focus()
         if iid:
-            if not self.playing:
+            if self.playing is None:
                 if iid == Player.player.filename:
                     Player.player.resume()
                 else:
                     if not self.play_track(treeview, iid):
                         return
                 icon = PAUSE_ICON
-                self.playing = True
+                self.playing = iid
                 self.while_playing()
             else:
                 Player.player.pause()
                 icon = PLAY_ICON
-                self.playing = False
+                self.playing = None
             self.play_pause_button.config(image=self.images[icon])
 
 
@@ -251,6 +255,7 @@ class ActionMixin:
                 self.tracks.save()
                 self.a_playlist_pane.update(iid, track)
             self.update_volume()
+            self.set_status_message(track.title, millisec=None)
         else:
             message = self.status_label.cget('text')
             self.set_status_message(err, fg=ERROR_FG)
@@ -270,7 +275,7 @@ class ActionMixin:
             next_iid = treeview.next(iid)
             if not next_iid:
                 return # Can't go after last one
-            if self.playing:
+            if self.playing is not None:
                 self.on_play_or_pause_track() # Pause/Stop
             treeview.select(next_iid)
             self.on_play_or_pause_track() # Play
@@ -280,7 +285,7 @@ class ActionMixin:
         if self.playing_timer_id is not None:
             self.after_cancel(self.playing_timer_id)
             self.playing_timer_id = None
-        if self.playing:
+        if self.playing is not None:
             pos = Player.player.pos
             length = Player.player.length
             if math.isclose(pos, length):

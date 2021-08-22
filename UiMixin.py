@@ -110,8 +110,9 @@ class UiMixin:
             self.player_frame, takefocus=False,
             image=self.images[PLAY_ICON],
             command=self.on_play_or_pause_track)
-        Tooltip.Tooltip(self.play_pause_button,
-                        'Play or Pause the Current Track • Spacebar')
+        Tooltip.Tooltip(
+            self.play_pause_button,
+            'Play or Pause the Current Track • Spacebar or Double-Click')
         self.next_button = ttk.Button(
             self.player_frame, takefocus=False,
             image=self.images[NEXT_ICON], command=self.on_next_track)
@@ -186,9 +187,6 @@ class UiMixin:
 
 
     def make_bindings(self):
-        self.a_playlist_pane.treeview.bind('<Double-Button-1>',
-                                           self.on_edit_track)
-        self.a_playlist_pane.treeview.bind('<Return>', self.on_edit_track)
         self.playlists_pane.treeview.bind('<<TreeviewSelect>>',
                                           self.on_playlists_select)
         self.master.bind('<F1>', lambda *_: self.help_button.invoke())
@@ -231,12 +229,20 @@ class UiMixin:
 
 
     def make_player_bindings(self):
+        def play_pause(button):
+            self.a_playlist_pane.treeview.focus_set()
+            button.invoke()
+
+        self.a_playlist_pane.treeview.bind(
+            '<Double-Button-1>', lambda *_: self.play_pause_button.invoke())
+        self.master.bind('<Return>',
+                         lambda *_: play_pause(self.play_pause_button))
         self.master.bind('<space>',
-                         lambda *_: self.play_pause_button.invoke())
+                         lambda *_: play_pause(self.play_pause_button))
         self.master.bind('<Control-p>',
-                         lambda *_: self.previous_button.invoke())
+                         lambda *_: play_pause(self.previous_button))
         self.master.bind('<Control-t>',
-                         lambda *_: self.next_button.invoke())
+                         lambda *_: play_pause(self.next_button))
 
 
 ABOUT_ICON = 'help-about.png'
