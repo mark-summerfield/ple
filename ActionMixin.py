@@ -12,7 +12,7 @@ import HelpForm
 import Player
 import playlist
 import TrackForm
-from Const import APPNAME, ERROR_FG, PAUSE_ICON, PLAY_ICON
+from Const import APPNAME, ERROR_FG, PAUSE_ICON, PLAY_ICON, VERSION
 
 
 class ActionMixin:
@@ -63,6 +63,7 @@ class ActionMixin:
                     if i > -1:
                         text = text[:i].rstrip()
                     self.set_status_message(text, millisec=None)
+                    treeview.select(self.playing)
         except (OSError, playlist.Error) as err:
             self.tracks = None
             self.set_status_message(f'Failed to load playlist: {err}',
@@ -239,6 +240,7 @@ class ActionMixin:
                 Player.player.pause()
                 icon = PLAY_ICON
                 self.playing = None
+                self.winfo_toplevel().title(f'{APPNAME} v{VERSION}')
             self.play_pause_button.config(image=self.images[icon])
 
 
@@ -256,6 +258,7 @@ class ActionMixin:
                 self.a_playlist_pane.update(iid, track)
             self.update_volume()
             self.set_status_message(track.title, millisec=None)
+            self.winfo_toplevel().title(f'{track.title} • {APPNAME}')
         else:
             message = self.status_label.cget('text')
             self.set_status_message(err, fg=ERROR_FG)
