@@ -303,6 +303,8 @@ class ActionMixin:
 
 
     def maybe_update_times(self, name):
+        if not Player.player.valid:
+            return
         top = self.winfo_toplevel()
         try:
             top.config(cursor='watch')
