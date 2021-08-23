@@ -42,7 +42,8 @@ class Form(tkdialog.Dialog):
         self.caption_label = ttk.Label(
             master, foreground='navy', anchor=tk.CENTER, justify=tk.CENTER,
             text=f'{APPNAME} v{VERSION}', font=font)
-        desc = 'An application for creating and editing playlists'
+        desc = ('PlayList Editor\n'
+                'An application for creating and editing playlists')
         desc += ('\nand for playing tracks and entire playlists.'
                  if Player.player.valid else '.')
         distro = subprocess.check_output(
@@ -50,11 +51,10 @@ class Form(tkdialog.Dialog):
         distro, codename = distro.split('\n', 1)
         distro = f'{distro} ({codename.rstrip()})'
         self.body_label = ttk.Label(master, anchor=tk.CENTER,
-                                    justify=tk.CENTER, text=f'''
+                                    justify=tk.CENTER, text=f'''{desc}
+
 Copyright © {year} Mark Summerfield. All Rights Reserved.
 License: GPLv3
-
-{desc}
 ________________________________________
 
 Python \

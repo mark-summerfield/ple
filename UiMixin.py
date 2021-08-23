@@ -2,7 +2,6 @@
 # Copyright © 2021 Mark Summerfield. All rights reserved.
 # License: GPLv3
 
-
 import tkinter as tk
 import tkinter.ttk as ttk
 

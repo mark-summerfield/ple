@@ -18,4 +18,8 @@ playlist.py
 
 st.sh
 
+README.md
+
+LICENSE # GPLv3
+
 # vim: syn=yaml

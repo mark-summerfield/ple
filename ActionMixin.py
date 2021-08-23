@@ -310,18 +310,10 @@ class ActionMixin:
             top.config(cursor='watch')
             top.update_idletasks()
             self.volume_var.set(0.0)
-            changed = False
+            changed = 0
             for track in self.tracks:
                 if track.secs <= 0:
-                    ok, _ = Player.player.play(track.filename)
-                    if ok:
-                        length = round(Player.player.length)
-                        Player.player.stop()
-                        if length > 0:
-                            track.secs = length
-                            self.a_playlist_pane.update(track.filename,
-                                                        track)
-                            changed = True
+                    changed += self.update_time(track)
             if changed:
                 self.tracks.save()
                 self.set_status_message(
@@ -330,3 +322,15 @@ class ActionMixin:
         finally:
             top.config(cursor='arrow')
             self.volume_var.set(Config.config.current_volume or 0.5)
+
+
+    def update_time(self, track):
+        ok, _ = Player.player.play(track.filename)
+        if ok:
+            length = round(Player.player.length)
+            Player.player.stop()
+            if length > 0:
+                track.secs = length
+                self.a_playlist_pane.update(track.filename, track)
+                return 1
+        return 0

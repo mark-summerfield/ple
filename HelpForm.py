@@ -77,7 +77,7 @@ class Form(tk.Toplevel):
         def add(text, *tags):
             self.text.insert(tk.END, text, tags)
 
-        add(f'Help — {APPNAME}\n', 'title')
+        add('PlayList Editor\n', 'title')
         add('Input\tAction\n', 'rowtitle')
         if Player.player.valid:
             add('Double-Click', 'row', 'key')

@@ -36,8 +36,7 @@ class PlaylistPane(ttk.Frame):
 
 
     def append(self, track):
-        self.treeview.insert('', tk.END, track.filename,
-                             text=self._title(track), image=self.image)
+        self.insert('', tk.END, track)
 
 
     def insert(self, parent, index, track):
