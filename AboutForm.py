@@ -45,8 +45,10 @@ class Form(tkdialog.Dialog):
         desc = 'An application for creating and editing playlists'
         desc += ('\nand for playing tracks and entire playlists.'
                  if Player.player.valid else '.')
-        distro = subprocess.check_output(['lsb_release', '-ds']).decode(
-            'utf-8')
+        distro = subprocess.check_output(
+            ['lsb_release', '-ds', '-cs']).decode('utf-8')
+        distro, codename = distro.split('\n', 1)
+        distro = f'{distro} ({codename.rstrip()})'
         self.body_label = ttk.Label(master, anchor=tk.CENTER,
                                     justify=tk.CENTER, text=f'''
 Copyright © {year} Mark Summerfield. All Rights Reserved.
@@ -58,7 +60,8 @@ ________________________________________
 Python \
 {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}
 Tk {tk.TkVersion}
-{distro}{platform.platform()}''')
+{distro}
+{platform.platform()}''')
 
 
     def make_body_layout(self, master):
