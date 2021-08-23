@@ -96,6 +96,10 @@ else:
             self._playbin.set_state(Gst.State.PLAYING)
 
 
+        def stop(self):
+            self._playbin.set_state(Gst.State.NULL)
+
+
         def close(self):
             self._uri = None
             self._playbin.set_state(Gst.State.NULL)

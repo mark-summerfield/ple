@@ -35,6 +35,7 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
         self.make_layout()
         self.make_bindings()
         self.initialize()
+        self.playlists_pane.treeview.focus_set()
 
 
     def initialize(self):

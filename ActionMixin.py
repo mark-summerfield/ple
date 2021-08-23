@@ -56,7 +56,7 @@ class ActionMixin:
                 f'{len(self.tracks):,} tracks in {name} of '
                 f'{self.tracks.humanized_length}', millisec=None)
             if self.playing is None:
-                self.maybe_update_times()
+                self.maybe_update_times(name)
             else:
                 treeview = self.a_playlist_pane.treeview
                 if treeview.exists(self.playing):
@@ -302,20 +302,29 @@ class ActionMixin:
                 self.playing_timer_id = self.after(1000, self.while_playing)
 
 
-    def maybe_update_times(self):
-        volume = self.volume_var.get()
-        self.volume_var.set(0.0)
-        changed = False
-        for track in self.tracks:
-            if track.secs <= 0:
-                ok, _ = Player.player.play(track.filename)
-                if ok:
-                    length = round(Player.player.length)
-                    Player.player.pause()
-                    if length > 0:
-                        track.secs = length
-                        self.a_playlist_pane.update(track.filename, track)
-                        changed = True
-        if changed:
-            self.tracks.save()
-        self.volume_var.set(volume)
+    def maybe_update_times(self, name):
+        top = self.winfo_toplevel()
+        try:
+            top.config(cursor='watch')
+            top.update_idletasks()
+            self.volume_var.set(0.0)
+            changed = False
+            for track in self.tracks:
+                if track.secs <= 0:
+                    ok, _ = Player.player.play(track.filename)
+                    if ok:
+                        length = round(Player.player.length)
+                        Player.player.stop()
+                        if length > 0:
+                            track.secs = length
+                            self.a_playlist_pane.update(track.filename,
+                                                        track)
+                            changed = True
+            if changed:
+                self.tracks.save()
+                self.set_status_message(
+                    f'{len(self.tracks):,} tracks in {name} of '
+                    f'{self.tracks.humanized_length}', millisec=None)
+        finally:
+            top.config(cursor='arrow')
+            self.volume_var.set(Config.config.current_volume or 0.5)
