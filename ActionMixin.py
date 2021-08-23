@@ -55,7 +55,9 @@ class ActionMixin:
             self.set_status_message(
                 f'{len(self.tracks):,} tracks in {name} of '
                 f'{self.tracks.humanized_length}', millisec=None)
-            if self.playing is not None:
+            if self.playing is None:
+                self.maybe_update_times()
+            else:
                 treeview = self.a_playlist_pane.treeview
                 if treeview.exists(self.playing):
                     text = treeview.item(self.playing, 'text')
@@ -298,3 +300,22 @@ class ActionMixin:
                 self.set_progress(pos, length)
                 self.position_var.set(pos)
                 self.playing_timer_id = self.after(1000, self.while_playing)
+
+
+    def maybe_update_times(self):
+        volume = self.volume_var.get()
+        self.volume_var.set(0.0)
+        changed = False
+        for track in self.tracks:
+            if track.secs <= 0:
+                ok, _ = Player.player.play(track.filename)
+                if ok:
+                    length = round(Player.player.length)
+                    Player.player.pause()
+                    if length > 0:
+                        track.secs = length
+                        self.a_playlist_pane.update(track.filename, track)
+                        changed = True
+        if changed:
+            self.tracks.save()
+        self.volume_var.set(volume)
