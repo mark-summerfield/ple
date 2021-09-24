@@ -343,4 +343,5 @@ class ActionMixin:
             self.track_data_timer_id = None
         data = Player.player.track_data
         self.set_status_message(
-            f'{data.title} #{data.number} {data.album} by {data.artist}')
+            f'{data.title} #{data.number} {data.album} by {data.artist}',
+            millisec=None)
