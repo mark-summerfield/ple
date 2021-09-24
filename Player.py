@@ -3,6 +3,7 @@
 # License: GPLv3
 
 import atexit
+import collections
 import pathlib
 import threading
 
@@ -14,6 +15,10 @@ try: # 1..4 order must be preserved
     _GST = True
 except (ImportError, ValueError):
     _GST = False
+
+
+TrackData = collections.namedtuple(
+    'TrackData', 'title number album artist', defaults=('', 0, '', ''))
 
 
 if not _GST:
@@ -35,6 +40,9 @@ else:
             self._volume = 0.5
             self._uri = None
             self._playbin = Gst.ElementFactory.make('playbin', None)
+            self._bus = self._playbin.get_bus()
+            self._bus.add_signal_watch()
+            self._bus.connect('message', self.on_bus_call)
             if _Player._gloop_thread is None:
                 _Player._gloop_thread = threading.Thread(
                     target=GObject.MainLoop().run)
@@ -98,6 +106,22 @@ else:
 
         def stop(self):
             self._playbin.set_state(Gst.State.NULL)
+
+
+        def on_bus_call(self, _bus, message):
+            if message.type == Gst.MessageType.TAG:
+                tags = message.parse_tag()
+                d = {}
+                for i in range(tags.n_tags()):
+                    tag = tags.nth_tag_name(i)
+                    value = tags.get_value_index(tag, 0)
+                    if tag == 'track-number':
+                        tag = 'number'
+                    if tag in TrackData._fields:
+                        d[tag] = value
+                if d.get('title', ''):
+                    data = TrackData(**d)
+                    print(data) # TODO show in UI
 
 
         def close(self):
