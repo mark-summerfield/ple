@@ -261,6 +261,7 @@ class ActionMixin:
             self.update_volume()
             self.set_status_message(track.title, millisec=None)
             self.winfo_toplevel().title(f'{track.title} • {APPNAME}')
+            self.track_data_timer_id = self.after(100, self.show_track_data)
         else:
             message = self.status_label.cget('text')
             self.set_status_message(err, fg=ERROR_FG)
@@ -334,3 +335,12 @@ class ActionMixin:
                 self.a_playlist_pane.update(track.filename, track)
                 return 1
         return 0
+
+
+    def show_track_data(self, _event=None):
+        if self.track_data_timer_id is not None:
+            self.after_cancel(self.track_data_timer_id)
+            self.track_data_timer_id = None
+        data = Player.player.track_data
+        self.set_status_message(
+            f'{data.title} #{data.number} {data.album} by {data.artist}')

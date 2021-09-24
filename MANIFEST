@@ -7,7 +7,7 @@ PlaylistPane.py
 AboutForm.py
 HelpForm.py
 TrackForm.py
-Player.py # TODO show track number, album, artist in GUI
+Player.py
 Const.py # VERSION
 Config.py
 Treeview.py

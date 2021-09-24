@@ -39,6 +39,7 @@ else:
         def __init__(self):
             self._volume = 0.5
             self._uri = None
+            self._track_data = None
             self._playbin = Gst.ElementFactory.make('playbin', None)
             self._bus = self._playbin.get_bus()
             self._bus.add_signal_watch()
@@ -58,6 +59,11 @@ else:
         @property
         def filename(self): # strip leading file://
             return self._uri[7:] if self._uri is not None else None
+
+
+        @property
+        def track_data(self):
+            return self._track_data
 
 
         @property
@@ -84,6 +90,7 @@ else:
 
 
         def play(self, filename):
+            self._track_data = None
             self._uri = (filename if filename.startswith('file://') else
                          f'file://{filename}')
             self._playbin.set_state(Gst.State.READY)
@@ -120,8 +127,7 @@ else:
                     if tag in TrackData._fields:
                         d[tag] = value
                 if d.get('title', ''):
-                    data = TrackData(**d)
-                    print(data) # TODO show in UI
+                    self._track_data = TrackData(**d)
 
 
         def close(self):

@@ -27,6 +27,7 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
         self.deleted_index = -1 # for Undelete
         self.status_timer_id = None
         self.playing_timer_id = None
+        self.track_data_timer_id = None
         self.volume_var = tk.DoubleVar(value=config.current_volume)
         self.volume_var.trace_add('write', self.update_volume)
         self.position_var = tk.DoubleVar()
