@@ -17,6 +17,8 @@ from Const import APPNAME, ERROR_FG, PAUSE_ICON, PLAY_ICON, VERSION
 
 class ActionMixin:
 
+    __slots__ = ()
+
     def on_playlists_select(self, _event=None):
         self.a_playlist_pane.clear()
         name = self.playlists_pane.treeview.focus()

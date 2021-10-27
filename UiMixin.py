@@ -15,6 +15,8 @@ from Const import APPNAME, NSWE, PAD, PAUSE_ICON, PLAY_ICON, WE
 
 class UiMixin:
 
+    __slots__ = ()
+
     def make_images(self, imagepath):
         for name in (ABOUT_ICON, ADD_ICON, EDIT_ICON, FILENEW_ICON,
                      HELP_ICON, MOVE_DOWN_ICON, MOVE_UP_ICON, NEXT_ICON,

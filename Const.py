@@ -5,7 +5,7 @@
 import tkinter as tk
 
 APPNAME = 'PLE'
-VERSION = '1.1.2'
+VERSION = '1.1.3'
 
 PAUSE_ICON = 'media-playback-pause.png'
 PLAY_ICON = 'media-playback-start.png'
