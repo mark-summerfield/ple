@@ -110,6 +110,10 @@ class ActionMixin:
             count += 1
 
 
+    def on_options(self, _event=None):
+        print('on_options')
+
+
     def on_about(self, _event=None):
         AboutForm.Form(self)
         self.focus_set()

@@ -20,8 +20,8 @@ class UiMixin:
     def make_images(self, imagepath):
         for name in (ABOUT_ICON, ADD_ICON, EDIT_ICON, FILENEW_ICON,
                      HELP_ICON, MOVE_DOWN_ICON, MOVE_UP_ICON, NEXT_ICON,
-                     PAUSE_ICON, PLAY_ICON, PREVIOUS_ICON, QUIT_ICON,
-                     REMOVE_ICON, UNREMOVE_ICON):
+                     OPTIONS_ICON, PAUSE_ICON, PLAY_ICON, PREVIOUS_ICON,
+                     QUIT_ICON, REMOVE_ICON, UNREMOVE_ICON):
             self.images[name] = tk.PhotoImage(file=imagepath / name)
 
 
@@ -42,11 +42,16 @@ class UiMixin:
 
     def make_main_buttons(self):
         self.file_new_button = ttk.Button(
-            self.button_frame, text='New', underline=0, takefocus=False,
+            self.button_frame, text='New…', underline=0, takefocus=False,
             image=self.images[FILENEW_ICON], command=self.on_new_playlist,
             compound=tk.LEFT)
         Tooltip.Tooltip(self.file_new_button,
                         'Create New Playlist • Ctrl+N')
+        self.options_button = ttk.Button(
+            self.button_frame, text='Options…', takefocus=False,
+            underline=0, image=self.images[OPTIONS_ICON],
+            command=self.on_options, compound=tk.LEFT)
+        Tooltip.Tooltip(self.options_button, 'Options • Ctrl+O')
         self.about_button = ttk.Button(
             self.button_frame, text='About', takefocus=False, underline=1,
             image=self.images[ABOUT_ICON], command=self.on_about,
@@ -67,12 +72,12 @@ class UiMixin:
 
     def make_playlist_buttons(self):
         self.add_button = ttk.Button(
-            self.button_frame, text='Add', underline=0, takefocus=False,
+            self.button_frame, text='Add…', underline=0, takefocus=False,
             image=self.images[ADD_ICON], command=self.on_add_track,
             compound=tk.LEFT)
         Tooltip.Tooltip(self.add_button, 'Add Track to Playlist • Ctrl+A')
         self.edit_button = ttk.Button(
-            self.button_frame, text='Edit', underline=0, takefocus=False,
+            self.button_frame, text='Edit…', underline=0, takefocus=False,
             image=self.images[EDIT_ICON], command=self.on_edit_track,
             compound=tk.LEFT)
         Tooltip.Tooltip(self.edit_button, 'Edit Track\'s Name • Ctrl+E')
@@ -164,9 +169,10 @@ class UiMixin:
         self.remove_button.grid(row=5, **common)
         self.unremove_button.grid(row=6, **common)
         common['sticky'] = WE + tk.S
-        self.about_button.grid(row=8, **common)
-        self.help_button.grid(row=9, **common)
-        self.quit_button.grid(row=10, **common)
+        self.options_button.grid(row=8, **common)
+        self.about_button.grid(row=9, **common)
+        self.help_button.grid(row=10, **common)
+        self.quit_button.grid(row=11, **common)
         self.button_frame.rowconfigure(8, weight=1)
 
 
@@ -216,6 +222,9 @@ class UiMixin:
                          lambda *_: self.file_new_button.invoke())
         self.master.bind('<Control-n>',
                          lambda *_: self.file_new_button.invoke())
+        self.master.bind('<Alt-o>', lambda *_: self.options_button.invoke())
+        self.master.bind('<Control-o>',
+                         lambda *_: self.options_button.invoke())
         self.master.bind('<Alt-q>', lambda *_: self.quit_button.invoke())
         self.master.bind('<Control-q>',
                          lambda *_: self.quit_button.invoke())
@@ -254,6 +263,7 @@ HELP_ICON = 'help-contents.png'
 MOVE_DOWN_ICON = 'go-next.png'
 MOVE_UP_ICON = 'go-previous.png'
 NEXT_ICON = 'media-seek-forward.png'
+OPTIONS_ICON = 'gtk-properties.png'
 PREVIOUS_ICON = 'media-seek-backward.png'
 QUIT_ICON = 'exit.png'
 REMOVE_ICON = 'list-remove.png'
