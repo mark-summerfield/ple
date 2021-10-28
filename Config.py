@@ -23,6 +23,7 @@ class _Config:
         self.geometry = None
         self.music_path = None
         self.playlists_path = None
+        self.cursor_blink_rate = None
         self._filename = None
         self.load()
 
@@ -43,6 +44,7 @@ class _Config:
 {_Key.GEOMETRY.value} = {self.geometry}
 {_Key.MUSICPATH.value} = {self.music_path}
 {_Key.PLAYLISTSPATH.value} = {self.playlists_path}
+{_Key.CURSORBLINKRATE.value} = {self.cursor_blink_rate}
 ''')
 
 
@@ -75,6 +77,7 @@ class _Config:
                 if not playlists.exists():
                     playlists = path
             self.playlists_path = playlists
+        self.cursor_blink_rate = 0 # no blinking
 
 
     def _load(self):
@@ -131,6 +134,11 @@ class _Config:
                             self.playlists_path = value
                         else:
                             err = 'invalid or non-existent path for'
+                    elif key is _Key.CURSORBLINKRATE:
+                        if value.isdecimal():
+                            self.cursor_blink_rate = int(value)
+                        else:
+                            err = 'invalid integer for'
                     if err:
                         print(f'{self._filename} #{lino}: skipping '
                               f'{err} {key.value} {value!r}')
@@ -146,6 +154,7 @@ class _Key(enum.Enum):
     GEOMETRY = 'Geometry'
     MUSICPATH = 'Music Path'
     PLAYLISTSPATH = 'Playlists Path'
+    CURSORBLINKRATE = 'Cursor Blink Rate'
 
 
     @classmethod

@@ -20,7 +20,7 @@ def main():
     app.geometry(config.geometry)
     app.title(f'{APPNAME} v{VERSION}')
     app.option_add('*tearOff', False)
-    app.option_add('*insertOffTime', 0) # Should be user customizable
+    app.option_add('*insertOffTime', config.cursor_blink_rate)
     imagepath = pathlib.Path(__file__).resolve().parent / 'images/'
     app.iconphoto(True, tk.PhotoImage(file=imagepath / 'ple.png'))
     window = Window.Window(app, imagepath)
