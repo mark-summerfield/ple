@@ -17,7 +17,7 @@ class Form(tk.Toplevel):
     def __init__(self, master):
         super().__init__(master)
         self.title(f'Help — {APPNAME}')
-        self.geometry('640x520')
+        self.geometry('640x480')
         self.make_widgets()
         self.make_layout()
         self.make_bindings()
@@ -120,6 +120,10 @@ class Form(tk.Toplevel):
         if Player.player.valid:
             add('Ctrl+P', 'row', 'key')
             add('\tPlay the previous track\n', 'row', 'col1')
+        add('Alt+O', 'row', 'key')
+        add(' or ', 'row', 'italic')
+        add('Ctrl+O', 'row', 'key')
+        add(f"\tEdit {APPNAME}'s options\n", 'row', 'col1')
         add('Esccape', 'row', 'key')
         add(' or\n', 'row', 'italic')
         add('    Alt+Q', 'row', 'key')
@@ -137,19 +141,6 @@ class Form(tk.Toplevel):
         add(' or ', 'row', 'italic')
         add('Ctrl+U', 'row', 'key')
         add('\tMove the current track up\n', 'row', 'col1')
-        config = Config.config
-        add('\n')
-        add('Configuration\n', 'rowtitle')
-        add('Filename', 'row', 'italic')
-        add(f'\t{config.filename}\n', 'row', 'col1')
-        add('Base Font Size', 'row', 'key')
-        add(f'\t{config.base_font_size}\n', 'row', 'col1')
-        add('Default Playlist Suffix', 'row', 'key')
-        add(f'\t{config.default_playlist_suffix.lower()}\n', 'row', 'col1')
-        add('Music Path', 'row', 'key')
-        add(f'\t{config.music_path}\n', 'row', 'col1')
-        add('Playlists Path', 'row', 'key')
-        add(f'\t{config.playlists_path}', 'row', 'col1')
 
 
     def quit(self, _event=None):

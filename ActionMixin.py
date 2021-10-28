@@ -9,6 +9,7 @@ import tkinter.filedialog
 import AboutForm
 import Config
 import HelpForm
+import OptionsForm
 import Player
 import playlist
 import TrackForm
@@ -111,7 +112,8 @@ class ActionMixin:
 
 
     def on_options(self, _event=None):
-        print('on_options')
+        OptionsForm.Form(self)
+        self.focus_set()
 
 
     def on_about(self, _event=None):
