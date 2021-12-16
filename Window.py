@@ -2,6 +2,7 @@
 # Copyright © 2021 Mark Summerfield. All rights reserved.
 # License: GPLv3
 
+import os
 import tkinter as tk
 import tkinter.ttk as ttk
 
@@ -36,6 +37,7 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
         self.make_layout()
         self.make_bindings()
         self.initialize()
+        self.update_history()
         self.playlists_pane.treeview.focus_set()
 
 
@@ -94,6 +96,15 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
             volume = self.volume_var.get()
             Player.player.volume = volume
             self.volume_label.configure(text=f'Volume {volume * 100:.0f}%')
+
+
+    def update_history(self, _even=None):
+        menu = tk.Menu(self.history_button)
+        for i, item in enumerate(Config.config.history, 1):
+            menu.add_command(
+                label=f'{i} {os.path.basename(item.track)}', underline=0,
+                command=lambda item=item: self.on_history_track(item))
+        self.history_button.config(menu=menu)
 
 
     def on_close(self, _event=None):

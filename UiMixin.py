@@ -19,9 +19,9 @@ class UiMixin:
 
     def make_images(self, imagepath):
         for name in (ABOUT_ICON, ADD_ICON, EDIT_ICON, FILENEW_ICON,
-                     HELP_ICON, MOVE_DOWN_ICON, MOVE_UP_ICON, NEXT_ICON,
-                     OPTIONS_ICON, PAUSE_ICON, PLAY_ICON, PREVIOUS_ICON,
-                     QUIT_ICON, REMOVE_ICON, UNREMOVE_ICON):
+                     HELP_ICON, HISTORY_ICON, MOVE_DOWN_ICON, MOVE_UP_ICON,
+                     NEXT_ICON, OPTIONS_ICON, PAUSE_ICON, PLAY_ICON,
+                     PREVIOUS_ICON, QUIT_ICON, REMOVE_ICON, UNREMOVE_ICON):
             self.images[name] = tk.PhotoImage(file=imagepath / name)
 
 
@@ -102,15 +102,11 @@ class UiMixin:
             command=self.on_unremove_track, compound=tk.LEFT)
         Tooltip.Tooltip(self.unremove_button,
                         'Unremove Last Removed Track • Ctrl+M')
-        # TODO
-        self.history_button = ttk.Button(
-            self.button_frame, text='History', underline=1,
-            takefocus=False,
-            #image=self.images[UNREMOVE_ICON],
-            #command=self.on_history_track,
-            compound=tk.LEFT)
+        self.history_button = ttk.Menubutton(
+            self.button_frame, text='History', takefocus=False,
+            image=self.images[HISTORY_ICON], compound=tk.LEFT)
         Tooltip.Tooltip(self.history_button,
-                        'Switch to a Previous Track • Ctrl+H')
+                        'Switch to a Previous Track • Ctrl+I')
 
 
     def make_player_buttons(self):
@@ -270,6 +266,7 @@ ADD_ICON = 'list-add.png'
 EDIT_ICON = 'stock_edit.png'
 FILENEW_ICON = 'filenew.png'
 HELP_ICON = 'help-contents.png'
+HISTORY_ICON = 'go-jump.png'
 MOVE_DOWN_ICON = 'go-next.png'
 MOVE_UP_ICON = 'go-previous.png'
 NEXT_ICON = 'media-seek-forward.png'

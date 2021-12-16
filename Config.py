@@ -9,11 +9,8 @@ import pathlib
 import re
 
 import Player
+from Const import HISTORY_SIZE, HistoryItem
 from playlist import M3U, PLS, XSPF
-
-HISTORY_SIZE = 7
-
-HistoryItem = collections.namedtuple('HistoryItem', 'playlist track')
 
 
 class _Config:
@@ -29,7 +26,7 @@ class _Config:
         self.music_path = None
         self.playlists_path = None
         self.cursor_blink_rate = None
-        self.history = [None] * HISTORY_SIZE
+        self.history = collections.deque()
         self._filename = None
         self.load()
 
@@ -52,11 +49,10 @@ class _Config:
 {_Key.PLAYLISTSPATH.value} = {self.playlists_path}
 {_Key.CURSORBLINKRATE.value} = {self.cursor_blink_rate}
 ''')
-            for i in range(HISTORY_SIZE):
-                item = self.history[i]
-                if item is not None:
-                    file.write(
-                        f'History{i} = {item.playlist} | {item.track}\n')
+            for i, item in enumerate(self.history, 1):
+                file.write(f'History{i} = {item.playlist} | {item.track}\n')
+                if i == HISTORY_SIZE:
+                    break
 
 
     def load(self):
@@ -92,6 +88,8 @@ class _Config:
 
 
     def _load(self):
+        self.history.clear()
+        history = []
         with open(self._filename, 'rt', encoding='utf-8') as file:
             for lino, line in enumerate(file, 1):
                 if not line or line[0] in ';#\n':
@@ -156,11 +154,13 @@ class _Config:
                                  _Key.HISTORY7}:
                         index = int(key.name[-1])
                         playlist, track = value.split('|')
-                        self.history[index] = HistoryItem(playlist.strip(),
-                                                          track.strip())
+                        history.append((index, HistoryItem(playlist.strip(),
+                                                           track.strip())))
                     if err:
                         print(f'{self._filename} #{lino}: skipping '
                               f'{err} {key.value} {value!r}')
+            if history:
+                self.history += [item for _, item in sorted(history)]
 
 
 @enum.unique

@@ -13,7 +13,8 @@ import OptionsForm
 import Player
 import playlist
 import TrackForm
-from Const import APPNAME, ERROR_FG, PAUSE_ICON, PLAY_ICON, VERSION
+from Const import (
+    APPNAME, ERROR_FG, PAUSE_ICON, PLAY_ICON, VERSION, HistoryItem)
 
 
 class ActionMixin:
@@ -255,6 +256,7 @@ class ActionMixin:
 
 
     def play_track(self, treeview, iid):
+        print('play_track',iid)
         self.position_var.set(0)
         ok, err = Player.player.play(iid)
         if ok:
@@ -271,6 +273,12 @@ class ActionMixin:
             self.winfo_toplevel().title(f'{track.title} • {APPNAME}')
             self.track_data_timer_id = self.after(
                 100, lambda _event=None: self.show_track_data(track.title))
+            item = HistoryItem(self.playlists_pane.treeview.focus(),
+                               self.a_playlist_pane.treeview.focus())
+            history = set(Config.config.history)
+            if item not in history:
+                Config.config.history.append(item)
+                self.update_history()
         else:
             message = self.status_label.cget('text')
             self.set_status_message(err, fg=ERROR_FG)
@@ -294,6 +302,18 @@ class ActionMixin:
                 self.on_play_or_pause_track() # Pause/Stop
             treeview.select(next_iid)
             self.on_play_or_pause_track() # Play
+
+
+    def on_history_track(self, item): ## TODO
+        if self.playing is not None:
+            self.on_play_or_pause_track() # Pause/Stop
+        path = os.path.dirname(item.playlist)
+        playlist = item.playlist
+        treeview = self.a_playlist_pane.treeview
+        treeview.clear()
+        self.playlists_pane.set_path(path)
+        self.playlists_pane.treeview.select(playlist)
+        self.play_track(treeview, item.track)
 
 
     def while_playing(self, _event=None):
