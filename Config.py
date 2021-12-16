@@ -3,12 +3,17 @@
 # License: GPLv3
 
 import atexit
+import collections
 import enum
 import pathlib
 import re
 
 import Player
 from playlist import M3U, PLS, XSPF
+
+HISTORY_SIZE = 7
+
+HistoryItem = collections.namedtuple('HistoryItem', 'playlist track')
 
 
 class _Config:
@@ -24,6 +29,7 @@ class _Config:
         self.music_path = None
         self.playlists_path = None
         self.cursor_blink_rate = None
+        self.history = [None] * HISTORY_SIZE
         self._filename = None
         self.load()
 
@@ -46,6 +52,11 @@ class _Config:
 {_Key.PLAYLISTSPATH.value} = {self.playlists_path}
 {_Key.CURSORBLINKRATE.value} = {self.cursor_blink_rate}
 ''')
+            for i in range(HISTORY_SIZE):
+                item = self.history[i]
+                if item is not None:
+                    file.write(
+                        f'History{i} = {item.playlist} | {item.track}\n')
 
 
     def load(self):
@@ -139,6 +150,14 @@ class _Config:
                             self.cursor_blink_rate = int(value)
                         else:
                             err = 'invalid integer for'
+                    elif key in {_Key.HISTORY1, _Key.HISTORY2,
+                                 _Key.HISTORY3, _Key.HISTORY4,
+                                 _Key.HISTORY5, _Key.HISTORY6,
+                                 _Key.HISTORY7}:
+                        index = int(key.name[-1])
+                        playlist, track = value.split('|')
+                        self.history[index] = HistoryItem(playlist.strip(),
+                                                          track.strip())
                     if err:
                         print(f'{self._filename} #{lino}: skipping '
                               f'{err} {key.value} {value!r}')
@@ -155,7 +174,13 @@ class _Key(enum.Enum):
     MUSICPATH = 'Music Path'
     PLAYLISTSPATH = 'Playlists Path'
     CURSORBLINKRATE = 'Cursor Blink Rate'
-
+    HISTORY1 = 'History1'
+    HISTORY2 = 'History2'
+    HISTORY3 = 'History3'
+    HISTORY4 = 'History4'
+    HISTORY5 = 'History5'
+    HISTORY6 = 'History6'
+    HISTORY7 = 'History7'
 
     @classmethod
     def from_name(Class, name):

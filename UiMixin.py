@@ -102,6 +102,15 @@ class UiMixin:
             command=self.on_unremove_track, compound=tk.LEFT)
         Tooltip.Tooltip(self.unremove_button,
                         'Unremove Last Removed Track • Ctrl+M')
+        # TODO
+        self.history_button = ttk.Button(
+            self.button_frame, text='History', underline=1,
+            takefocus=False,
+            #image=self.images[UNREMOVE_ICON],
+            #command=self.on_history_track,
+            compound=tk.LEFT)
+        Tooltip.Tooltip(self.history_button,
+                        'Switch to a Previous Track • Ctrl+H')
 
 
     def make_player_buttons(self):
@@ -168,17 +177,18 @@ class UiMixin:
         self.move_down_button.grid(row=4, **common)
         self.remove_button.grid(row=5, **common)
         self.unremove_button.grid(row=6, **common)
+        self.history_button.grid(row=7, **common)
         common['sticky'] = WE + tk.S
-        self.options_button.grid(row=8, **common)
-        self.about_button.grid(row=9, **common)
-        self.help_button.grid(row=10, **common)
-        self.quit_button.grid(row=11, **common)
-        self.button_frame.rowconfigure(8, weight=1)
+        self.options_button.grid(row=9, **common)
+        self.about_button.grid(row=10, **common)
+        self.help_button.grid(row=11, **common)
+        self.quit_button.grid(row=12, **common)
+        self.button_frame.rowconfigure(9, weight=1)
 
 
     def make_player_layout(self):
         common = dict(sticky=WE, pady=PAD, padx=PAD)
-        self.player_frame.grid(row=7, sticky=WE)
+        self.player_frame.grid(row=8, sticky=WE)
         self.previous_button.grid(row=2, column=0, **common)
         self.play_pause_button.grid(row=2, column=1, **common)
         self.next_button.grid(row=2, column=2, **common)

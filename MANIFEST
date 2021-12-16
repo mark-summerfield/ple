@@ -7,7 +7,7 @@ PlaylistPane.py
 AboutForm.py
 HelpForm.py
 TrackForm.py
-OptionsForm.py # TODO
+OptionsForm.py
 Player.py
 Const.py # VERSION
 Config.py
