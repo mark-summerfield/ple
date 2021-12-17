@@ -6,7 +6,7 @@ import collections
 import tkinter as tk
 
 APPNAME = 'PLE'
-VERSION = '1.2.0'
+VERSION = '1.3.0'
 
 PAUSE_ICON = 'media-playback-pause.png'
 PLAY_ICON = 'media-playback-start.png'

@@ -19,7 +19,7 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
     def __init__(self, master, imagepath):
         super().__init__(master, padding=PAD)
         self.images = {}
-        self.startup = True
+        self.startup_or_history = True
         self.playing = None
         self.tracks = None # playlist.Playlist
         config = Config.config
@@ -101,8 +101,12 @@ class Window(ttk.Frame, UiMixin.UiMixin, ActionMixin.ActionMixin):
     def update_history(self, _even=None):
         menu = tk.Menu(self.history_button)
         for i, item in enumerate(Config.config.history, 1):
+            name = (os.path.basename(item.track).lstrip(' -_0123456789')
+                    .replace('_', ' '))
+            if name[-4:].upper().endswith('.OGG'):
+                name = name[:-4]
             menu.add_command(
-                label=f'{i} {os.path.basename(item.track)}', underline=0,
+                label=f'{i} {name}', underline=0,
                 command=lambda item=item: self.on_history_track(item))
         self.history_button.config(menu=menu)
 

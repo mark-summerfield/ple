@@ -52,10 +52,10 @@ class ActionMixin:
         try:
             self.tracks = playlist.Playlist(name)
             self.a_playlist_pane.set_tracks(self.tracks)
-            if self.startup:
+            if self.startup_or_history:
                 self.a_playlist_pane.treeview.select(
                     Config.config.current_track)
-                self.startup = False
+                self.startup_or_history = False
             self.set_status_message(
                 f'{len(self.tracks):,} tracks in {name} of '
                 f'{self.tracks.humanized_length}', millisec=None)
@@ -256,7 +256,6 @@ class ActionMixin:
 
 
     def play_track(self, treeview, iid):
-        print('play_track',iid)
         self.position_var.set(0)
         ok, err = Player.player.play(iid)
         if ok:
@@ -304,16 +303,12 @@ class ActionMixin:
             self.on_play_or_pause_track() # Play
 
 
-    def on_history_track(self, item): ## TODO
-        if self.playing is not None:
-            self.on_play_or_pause_track() # Pause/Stop
-        path = os.path.dirname(item.playlist)
-        playlist = item.playlist
-        treeview = self.a_playlist_pane.treeview
-        treeview.clear()
-        self.playlists_pane.set_path(path)
-        self.playlists_pane.treeview.select(playlist)
-        self.play_track(treeview, item.track)
+    def on_history_track(self, item):
+        config = Config.config
+        config.current_playlist = item.playlist
+        config.current_track = item.track
+        self.startup_or_history = True
+        self.playlists_pane.treeview.select(item.playlist)
 
 
     def while_playing(self, _event=None):
