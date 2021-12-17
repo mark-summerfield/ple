@@ -181,6 +181,8 @@ class _Key(enum.Enum):
     HISTORY5 = 'History5'
     HISTORY6 = 'History6'
     HISTORY7 = 'History7'
+    HISTORY8 = 'History8'
+    HISTORY9 = 'History9'
 
     @classmethod
     def from_name(Class, name):
