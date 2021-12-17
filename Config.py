@@ -152,7 +152,7 @@ class _Config:
                                  _Key.HISTORY3, _Key.HISTORY4,
                                  _Key.HISTORY5, _Key.HISTORY6,
                                  _Key.HISTORY7, _Key.HISTORY8,
-                                 _Key.HISTORY}:
+                                 _Key.HISTORY9}:
                         index = int(key.name[-1])
                         playlist, track = value.split('|')
                         history.append((index, HistoryItem(playlist.strip(),
