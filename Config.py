@@ -151,7 +151,8 @@ class _Config:
                     elif key in {_Key.HISTORY1, _Key.HISTORY2,
                                  _Key.HISTORY3, _Key.HISTORY4,
                                  _Key.HISTORY5, _Key.HISTORY6,
-                                 _Key.HISTORY7}:
+                                 _Key.HISTORY7, _Key.HISTORY8,
+                                 _Key.HISTORY}:
                         index = int(key.name[-1])
                         playlist, track = value.split('|')
                         history.append((index, HistoryItem(playlist.strip(),
