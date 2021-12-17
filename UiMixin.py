@@ -103,7 +103,7 @@ class UiMixin:
         Tooltip.Tooltip(self.unremove_button,
                         'Unremove Last Removed Track • Ctrl+M')
         self.history_button = ttk.Menubutton(
-            self.button_frame, text='History', takefocus=False,
+            self.button_frame, text='History', underline=1, takefocus=False,
             image=self.images[HISTORY_ICON], compound=tk.LEFT)
         Tooltip.Tooltip(self.history_button,
                         'Switch to a Previous Track • Ctrl+I')
@@ -220,6 +220,12 @@ class UiMixin:
         self.master.bind('<Alt-h>', lambda *_: self.help_button.invoke())
         self.master.bind('<Control-h>',
                          lambda *_: self.help_button.invoke())
+        self.master.bind(
+            '<Control-i>',
+            lambda *_: self.history_button.event_generate('<<Invoke>>'))
+        self.master.bind(
+            '<Alt-i>',
+            lambda *_: self.history_button.event_generate('<<Invoke>>'))
         self.master.bind('<Alt-m>',
                          lambda *_: self.unremove_button.invoke())
         self.master.bind('<Control-m>',
