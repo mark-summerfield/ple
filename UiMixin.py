@@ -106,7 +106,7 @@ class UiMixin:
             self.button_frame, text='History', underline=1, takefocus=False,
             image=self.images[HISTORY_ICON], compound=tk.LEFT)
         Tooltip.Tooltip(self.history_button,
-                        'Switch to a Previous Track • Ctrl+I')
+                        'Switch to a Bookmarked Track • Ctrl+I')
 
 
     def make_player_buttons(self):

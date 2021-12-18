@@ -6,12 +6,10 @@ import collections
 import tkinter as tk
 
 APPNAME = 'PLE'
-VERSION = '1.3.0'
+VERSION = '1.3.3'
 
 PAUSE_ICON = 'media-playback-pause.png'
 PLAY_ICON = 'media-playback-start.png'
-
-HISTORY_SIZE = 7
 
 INFO_FG = 'navy'
 WARN_FG = 'darkmagenta'
@@ -22,4 +20,6 @@ PAD3 = '3m'
 NSWE = tk.N + tk.S + tk.W + tk.E
 WE = tk.W + tk.E
 
-HistoryItem = collections.namedtuple('HistoryItem', 'playlist track')
+HISTORY_LEN = 9
+
+Bookmark = collections.namedtuple('Bookmark', 'playlist track')

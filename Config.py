@@ -9,7 +9,7 @@ import pathlib
 import re
 
 import Player
-from Const import HISTORY_SIZE, HistoryItem
+from Const import HISTORY_LEN, Bookmark
 from playlist import M3U, PLS, XSPF
 
 
@@ -51,7 +51,7 @@ class _Config:
 ''')
             for i, item in enumerate(self.history, 1):
                 file.write(f'History{i} = {item.playlist} | {item.track}\n')
-                if i == HISTORY_SIZE:
+                if i == HISTORY_LEN:
                     break
 
 
@@ -148,14 +148,11 @@ class _Config:
                             self.cursor_blink_rate = int(value)
                         else:
                             err = 'invalid integer for'
-                    elif key in {_Key.HISTORY1, _Key.HISTORY2,
-                                 _Key.HISTORY3, _Key.HISTORY4,
-                                 _Key.HISTORY5, _Key.HISTORY6,
-                                 _Key.HISTORY7}:
-                        index = int(key.name[-1])
+                    elif key.name.startswith('HISTORY'):
                         playlist, track = value.split('|')
-                        history.append((index, HistoryItem(playlist.strip(),
-                                                           track.strip())))
+                        history.append((key.name[-1],
+                                        Bookmark(playlist.strip(),
+                                                 track.strip())))
                     if err:
                         print(f'{self._filename} #{lino}: skipping '
                               f'{err} {key.value} {value!r}')
@@ -163,31 +160,27 @@ class _Config:
                 self.history += [item for _, item in sorted(history)]
 
 
-@enum.unique
-class _Key(enum.Enum):
-    BASEFONTSIZE = 'Base Font Size'
-    CURRENTPLAYLIST = 'Current Playlist'
-    CURRENTTRACK = 'Current Track'
-    CURRENTVOLUME = 'Current Volume'
-    DEFAULTPLAYLISTSUFFIX = 'Default Playlist Suffix'
-    GEOMETRY = 'Geometry'
-    MUSICPATH = 'Music Path'
-    PLAYLISTSPATH = 'Playlists Path'
-    CURSORBLINKRATE = 'Cursor Blink Rate'
-    HISTORY1 = 'History1'
-    HISTORY2 = 'History2'
-    HISTORY3 = 'History3'
-    HISTORY4 = 'History4'
-    HISTORY5 = 'History5'
-    HISTORY6 = 'History6'
-    HISTORY7 = 'History7'
-
+class _KeyBase:
     @classmethod
     def from_name(Class, name):
         name = re.sub(r'[-_.\s]+', '', name).upper()
         for key, member in Class.__members__.items():
             if key == name:
                 return member
+
+
+_Key = enum.unique(enum.Enum('_Key', [
+    ('BASEFONTSIZE', 'Base Font Size'),
+    ('CURRENTPLAYLIST', 'Current Playlist'),
+    ('CURRENTTRACK', 'Current Track'),
+    ('CURRENTVOLUME', 'Current Volume'),
+    ('DEFAULTPLAYLISTSUFFIX', 'Default Playlist Suffix'),
+    ('GEOMETRY', 'Geometry'),
+    ('MUSICPATH', 'Music Path'),
+    ('PLAYLISTSPATH', 'Playlists Path'),
+    ('CURSORBLINKRATE', 'Cursor Blink Rate')] +
+    [(f'HISTORY{n}', f'History{n}') for n in range(1, HISTORY_LEN + 1)],
+    type=_KeyBase))
 
 
 config = _Config()

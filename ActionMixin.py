@@ -14,7 +14,8 @@ import Player
 import playlist
 import TrackForm
 from Const import (
-    APPNAME, ERROR_FG, PAUSE_ICON, PLAY_ICON, VERSION, HistoryItem)
+    APPNAME, ERROR_FG, HISTORY_LEN, PAUSE_ICON, PLAY_ICON, VERSION,
+    Bookmark)
 
 
 class ActionMixin:
@@ -52,10 +53,10 @@ class ActionMixin:
         try:
             self.tracks = playlist.Playlist(name)
             self.a_playlist_pane.set_tracks(self.tracks)
-            if self.startup_or_history:
+            if self.startup_or_bookmark:
                 self.a_playlist_pane.treeview.select(
                     Config.config.current_track)
-                self.startup_or_history = False
+                self.startup_or_bookmark = False
             self.set_status_message(
                 f'{len(self.tracks):,} tracks in {name} of '
                 f'{self.tracks.humanized_length}', millisec=None)
@@ -272,12 +273,7 @@ class ActionMixin:
             self.winfo_toplevel().title(f'{track.title} • {APPNAME}')
             self.track_data_timer_id = self.after(
                 100, lambda _event=None: self.show_track_data(track.title))
-            item = HistoryItem(self.playlists_pane.treeview.focus(),
-                               self.a_playlist_pane.treeview.focus())
-            history = set(Config.config.history)
-            if item not in history:
-                Config.config.history.append(item)
-                self.update_history()
+            self.add_to_history()
         else:
             message = self.status_label.cget('text')
             self.set_status_message(err, fg=ERROR_FG)
@@ -286,6 +282,21 @@ class ActionMixin:
                     10_000, lambda: self.set_status_message(message,
                                                             millisec=None))
         return ok
+
+
+    def add_to_history(self):
+        new_item = Bookmark(self.playlists_pane.treeview.focus(),
+                            self.a_playlist_pane.treeview.focus())
+        config = Config.config
+        history = list(config.history)
+        config.history.clear()
+        for item in history:
+            if item.playlist != new_item.playlist:
+                config.history.append(item)
+        config.history.appendleft(new_item)
+        while len(config.history) > HISTORY_LEN:
+            config.history.pop()
+        self.update_history()
 
 
     def on_next_track(self, _event=None):
@@ -307,7 +318,7 @@ class ActionMixin:
         config = Config.config
         config.current_playlist = item.playlist
         config.current_track = item.track
-        self.startup_or_history = True
+        self.startup_or_bookmark = True
         self.playlists_pane.treeview.select(item.playlist)
 
 
