@@ -323,11 +323,11 @@ class ActionMixin:
 
 
     def on_volume_down(self, _event=None):
-        self.volume_var.set(self.volume_var.get() * 0.95)
+        self.volume_var.set(max(self.volume_var.get() - 0.05, 0))
 
 
     def on_volume_up(self, _event=None):
-        self.volume_var.set(self.volume_var.get() * 1.05)
+        self.volume_var.set(min(self.volume_var.get() + 0.05, 1))
 
 
     def while_playing(self, _event=None):
