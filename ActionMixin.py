@@ -322,6 +322,14 @@ class ActionMixin:
         self.playlists_pane.treeview.select(item.playlist)
 
 
+    def on_volume_down(self, _event=None):
+        self.volume_var.set(self.volume_var.get() * 0.95)
+
+
+    def on_volume_up(self, _event=None):
+        self.volume_var.set(self.volume_var.get() * 1.05)
+
+
     def while_playing(self, _event=None):
         if self.playing_timer_id is not None:
             self.after_cancel(self.playing_timer_id)

@@ -202,6 +202,9 @@ class UiMixin:
     def make_bindings(self):
         self.playlists_pane.treeview.bind('<<TreeviewSelect>>',
                                           self.on_playlists_select)
+        self.master.bind('+', self.on_volume_up)
+        self.master.bind('=', self.on_volume_up)
+        self.master.bind('-', self.on_volume_down)
         self.master.bind('<F1>', lambda *_: self.help_button.invoke())
         self.master.bind('<Escape>', lambda *_: self.quit_button.invoke())
         self.master.bind('<Alt-a>', lambda *_: self.add_button.invoke())

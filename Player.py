@@ -2,6 +2,7 @@
 # Copyright © 2021 Mark Summerfield. All rights reserved.
 # License: GPLv3
 
+# See https://brettviren.github.io/pygst-tutorial-org/pygst-tutorial.html
 import atexit
 import collections
 import pathlib
@@ -82,6 +83,14 @@ else:
         def pos(self):
             ok, time_pos = self._playbin.query_position(Gst.Format.TIME)
             return (time_pos / Gst.SECOND) if ok else 0
+
+
+        @pos.setter
+        def pos(self, value):
+            if value >= 0:
+                self._playbin.seek_simple(
+                    Gst.Format.TIME, Gst.SeekFlags.FLUSH,
+                    value * Gst.SECOND)
 
 
         @property
