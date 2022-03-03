@@ -248,17 +248,18 @@ class Playlist:
         builder = etree.TreeBuilder()
         builder.start(XSPF_PLAYLIST, dict(version='1',
                                           xmlns=XSPF_NAMESPACE))
-        builder.start(XSPF_TRACKLIST)
+        builder.start(XSPF_TRACKLIST) # pytype: disable=missing-parameter
         for track in self._tracks:
-            builder.start(XSPF_TRACK)
-            builder.start(XSPF_LOCATION)
+            builder.start(XSPF_TRACK) # pytype: disable=missing-parameter
+            builder.start(XSPF_LOCATION) # pytype: disable=missing-parameter
             builder.data(f'{FILE_SCHEME}{track.filename}')
             builder.end(XSPF_LOCATION)
-            builder.start(XSPF_TITLE)
+            builder.start(XSPF_TITLE) # pytype: disable=missing-parameter
             builder.data(track.title)
             builder.end(XSPF_TITLE)
             if track.secs > 0:
-                builder.start(XSPF_DURATION)
+                builder.start(
+                    XSPF_DURATION) # pytype: disable=missing-parameter
                 builder.data(str(track.secs * 1000))
                 builder.end(XSPF_DURATION)
             builder.end(XSPF_TRACK)

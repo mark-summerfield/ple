@@ -164,8 +164,8 @@ class _KeyBase:
     @classmethod
     def from_name(Class, name):
         name = re.sub(r'[-_.\s]+', '', name).upper()
-        for key, member in Class.__members__.items():
-            if key == name:
+        for member in Class: # pytype: disable=attribute-error
+            if member.name == name:
                 return member
 
 

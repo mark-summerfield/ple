@@ -14,7 +14,8 @@ class Treeview(ttk.Treeview):
                                   command=self.yview)
         xscroller = ttk.Scrollbar(master, orient=tk.HORIZONTAL,
                                   command=self.xview)
-        self.configure(yscroll=yscroller.set, xscroll=xscroller.set)
+        self.configure(yscrollcommand=yscroller.set,
+                       xscrollcommand=xscroller.set)
         yscroller.grid(row=0, column=1, sticky=tk.N + tk.S)
         xscroller.grid(row=1, column=0, sticky=tk.W + tk.E)
 

@@ -20,7 +20,7 @@ except (ImportError, ValueError):
 
 TrackData = collections.namedtuple(
     'TrackData', 'title number album artist',
-    defaults=('', '?', 'Album?', 'Artist?'))
+    defaults=['', '?', 'Album?', 'Artist?'])
 
 
 if not _GST:
