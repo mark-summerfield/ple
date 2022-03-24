@@ -6,6 +6,9 @@ installed.
 
 Tested on Linux using Python 3.8 and Tk 8.6.
 
+This has been superceded by  [TLM (Track List
+Manager)](https://github.com/mark-summerfield/tlm).
+
 ![Screenshot](screenshot.png)
 
 ## License
